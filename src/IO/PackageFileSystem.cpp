@@ -57,7 +57,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     AmOsString PackageFileSystem::ResolvePath(const AmOsString& path) const
     {
-        return std::filesystem::path(path).lexically_normal().native();
+        auto resolvedPath= std::filesystem::path(path).lexically_normal().native();
+        std::ranges::replace(resolvedPath, '\\', '/');
+        return resolvedPath;
     }
 
     bool PackageFileSystem::Exists(const AmOsString& path) const

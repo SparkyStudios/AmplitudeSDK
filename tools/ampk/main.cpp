@@ -97,7 +97,9 @@ static int process(const AmOsString& inFileName, const AmOsString& outFileName, 
         DiskFile diskFile(absolute(file));
 
         PackageFileItemDescription item;
-        item.m_Name = relative(absolute(file), projectPath).string();
+        std::string relativePath = relative(absolute(file), projectPath).string();
+        std::ranges::replace(relativePath, '\\', '/');
+        item.m_Name = relativePath;
         item.m_Offset = lastOffset;
         item.m_Size = diskFile.Length();
 
