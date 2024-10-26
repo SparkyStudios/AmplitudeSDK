@@ -24,7 +24,7 @@ namespace SparkyStudios::Audio::Amplitude
     BFormat::~BFormat()
     {
         if (_buffer)
-            ampooldelete(MemoryPoolKind::SoundData, AudioBuffer, _buffer);
+            ampooldelete(eMemoryPoolKind_SoundData, AudioBuffer, _buffer);
 
         _buffer = nullptr;
     }
@@ -48,9 +48,9 @@ namespace SparkyStudios::Audio::Amplitude
             return false;
 
         if (_buffer)
-            ampooldelete(MemoryPoolKind::SoundData, AudioBuffer, _buffer);
+            ampooldelete(eMemoryPoolKind_SoundData, AudioBuffer, _buffer);
 
-        _buffer = ampoolnew(MemoryPoolKind::SoundData, AudioBuffer, sampleCount, GetChannelCount());
+        _buffer = ampoolnew(eMemoryPoolKind_SoundData, AudioBuffer, sampleCount, GetChannelCount());
 
         return true;
     }

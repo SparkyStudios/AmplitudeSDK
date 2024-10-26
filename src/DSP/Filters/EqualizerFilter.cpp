@@ -125,12 +125,12 @@ namespace SparkyStudios::Audio::Amplitude
 
     FilterInstance* EqualizerFilter::CreateInstance()
     {
-        return ampoolnew(MemoryPoolKind::Filtering, EqualizerFilterInstance, this);
+        return ampoolnew(eMemoryPoolKind_Filtering, EqualizerFilterInstance, this);
     }
 
     void EqualizerFilter::DestroyInstance(FilterInstance* instance)
     {
-        ampooldelete(MemoryPoolKind::Filtering, EqualizerFilterInstance, (EqualizerFilterInstance*)instance);
+        ampooldelete(eMemoryPoolKind_Filtering, EqualizerFilterInstance, (EqualizerFilterInstance*)instance);
     }
 
     EqualizerFilterInstance::EqualizerFilterInstance(EqualizerFilter* parent)

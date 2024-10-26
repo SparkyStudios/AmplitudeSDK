@@ -460,7 +460,8 @@ TEST_CASE("Curve Tests", "[curve][math][amplitude]")
 
         THEN("can be initialized with curve parts")
         {
-            curve.Initialize({ part1, part2 });
+            const std::vector<CurvePart> parts = { part1, part2 };
+            curve.Initialize(parts);
 
             REQUIRE(curve.Get(0.0) - 0.0f < kEpsilon);
             REQUIRE(curve.Get(0.5) - 1.0f < kEpsilon);

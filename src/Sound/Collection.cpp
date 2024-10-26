@@ -32,11 +32,11 @@ namespace SparkyStudios::Audio::Amplitude
 
     CollectionImpl::~CollectionImpl()
     {
-        ampooldelete(MemoryPoolKind::Engine, Scheduler, _worldScopeScheduler);
+        ampooldelete(eMemoryPoolKind_Engine, Scheduler, _worldScopeScheduler);
         _worldScopeScheduler = nullptr;
 
         for (const auto& scheduler : _entityScopeSchedulers | std::views::values)
-            ampooldelete(MemoryPoolKind::Engine, Scheduler, scheduler);
+            ampooldelete(eMemoryPoolKind_Engine, Scheduler, scheduler);
 
         _entityScopeSchedulers.clear();
 
@@ -86,7 +86,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (!definition->scheduler())
         {
             amLogDebug("Collection %s does not specify a scheduler, using the RandomScheduler by default.", definition->name()->c_str());
-            scheduler = ampoolnew(MemoryPoolKind::Engine, RandomScheduler, nullptr);
+            scheduler = ampoolnew(eMemoryPoolKind_Engine, RandomScheduler, nullptr);
         }
         else
         {
@@ -94,10 +94,10 @@ namespace SparkyStudios::Audio::Amplitude
             {
             default:
             case SoundSchedulerMode_Random:
-                scheduler = ampoolnew(MemoryPoolKind::Engine, RandomScheduler, schedulerSettings->config_as_Random());
+                scheduler = ampoolnew(eMemoryPoolKind_Engine, RandomScheduler, schedulerSettings->config_as_Random());
                 break;
             case SoundSchedulerMode_Sequence:
-                scheduler = ampoolnew(MemoryPoolKind::Engine, SequenceScheduler, schedulerSettings->config_as_Sequence());
+                scheduler = ampoolnew(eMemoryPoolKind_Engine, SequenceScheduler, schedulerSettings->config_as_Sequence());
                 break;
             }
         }

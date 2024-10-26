@@ -230,6 +230,46 @@ namespace SparkyStudios::Audio::Amplitude
         static void Swap(AmAlignedReal32Buffer& a, AmAlignedReal32Buffer& b);
 
         /**
+         * @brief Returns an iterator to the beginning of the buffer.
+         *
+         * @return An iterator to the beginning of the buffer.
+         */
+        [[nodiscard]] AM_INLINE const AmReal32* begin() const
+        {
+            return m_data;
+        }
+
+        /**
+         * @brief Returns an iterator to the end of the buffer.
+         *
+         * @return An iterator to the end of the buffer.
+         */
+        [[nodiscard]] AM_INLINE const AmReal32* end() const
+        {
+            return m_data + m_floats;
+        }
+
+        /**
+         * @brief Returns an iterator to the beginning of the buffer.
+         *
+         * @return An iterator to the beginning of the buffer.
+         */
+        [[nodiscard]] AM_INLINE AmReal32* begin()
+        {
+            return m_data;
+        }
+
+        /**
+         * @brief Returns an iterator to the end of the buffer.
+         *
+         * @return An iterator to the end of the buffer.
+         */
+        [[nodiscard]] AM_INLINE AmReal32* end()
+        {
+            return m_data + m_floats;
+        }
+
+        /**
          * @brief Returns a reference to the float at the specified index.
          *
          * @param[in] index The index of the float to retrieve.

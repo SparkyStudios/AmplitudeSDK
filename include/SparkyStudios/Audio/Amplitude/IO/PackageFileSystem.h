@@ -200,7 +200,7 @@ namespace SparkyStudios::Audio::Amplitude
         static void LoadPackage(AmVoidPtr pParam);
 
         std::filesystem::path _packagePath;
-        AmUniquePtr<MemoryPoolKind::IO, DiskFile> _packageFile;
+        AmUniquePtr<eMemoryPoolKind_IO, DiskFile> _packageFile;
 
         AmThreadHandle _loadingThreadHandle;
         mutable bool _initialized;

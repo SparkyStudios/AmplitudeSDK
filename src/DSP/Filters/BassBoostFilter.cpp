@@ -65,12 +65,12 @@ namespace SparkyStudios::Audio::Amplitude
 
     FilterInstance* BassBoostFilter::CreateInstance()
     {
-        return ampoolnew(MemoryPoolKind::Filtering, BassBoostFilterInstance, this);
+        return ampoolnew(eMemoryPoolKind_Filtering, BassBoostFilterInstance, this);
     }
 
     void BassBoostFilter::DestroyInstance(FilterInstance* instance)
     {
-        ampooldelete(MemoryPoolKind::Filtering, BassBoostFilterInstance, (BassBoostFilterInstance*)instance);
+        ampooldelete(eMemoryPoolKind_Filtering, BassBoostFilterInstance, (BassBoostFilterInstance*)instance);
     }
 
     BassBoostFilterInstance::BassBoostFilterInstance(BassBoostFilter* parent)

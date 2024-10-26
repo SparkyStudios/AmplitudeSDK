@@ -100,11 +100,11 @@ namespace SparkyStudios::Audio::Amplitude
 
     FilterInstance* MonoPoleFilter::CreateInstance()
     {
-        return ampoolnew(MemoryPoolKind::Filtering, MonoPoleFilterInstance, this);
+        return ampoolnew(eMemoryPoolKind_Filtering, MonoPoleFilterInstance, this);
     }
 
     void MonoPoleFilter::DestroyInstance(FilterInstance* instance)
     {
-        ampooldelete(MemoryPoolKind::Filtering, MonoPoleFilterInstance, (MonoPoleFilterInstance*)instance);
+        ampooldelete(eMemoryPoolKind_Filtering, MonoPoleFilterInstance, (MonoPoleFilterInstance*)instance);
     }
 } // namespace SparkyStudios::Audio::Amplitude

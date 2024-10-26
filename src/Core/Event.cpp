@@ -374,7 +374,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (_event == nullptr)
             return;
 
-        ampooldelete(MemoryPoolKind::Engine, EventInstanceImpl, (EventInstanceImpl*)_event);
+        ampooldelete(eMemoryPoolKind_Engine, EventInstanceImpl, (EventInstanceImpl*)_event);
         _event = nullptr;
     }
 

@@ -40,7 +40,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     EffectInstance* EffectImpl::CreateInstance() const
     {
-        auto* effect = ampoolnew(MemoryPoolKind::Engine, EffectInstanceImpl, this);
+        auto* effect = ampoolnew(eMemoryPoolKind_Engine, EffectInstanceImpl, this);
         _instances.push_back(effect);
         return effect;
     }
@@ -52,7 +52,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         _instances.erase(std::ranges::find(_instances, instance));
 
-        ampooldelete(MemoryPoolKind::Engine, EffectInstance, instance);
+        ampooldelete(eMemoryPoolKind_Engine, EffectInstance, instance);
     }
 
     void EffectImpl::Update()

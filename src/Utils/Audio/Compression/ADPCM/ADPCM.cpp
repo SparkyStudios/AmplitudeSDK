@@ -240,7 +240,7 @@ namespace SparkyStudios::Audio::Amplitude::Compression::ADPCM
 
     Context* CreateContext(int numChannels, int lookAhead, NoiseShapingMode noiseShaping, AmInt32 initialDeltas[2])
     {
-        Context* ctx = static_cast<Context*>(ampoolmalloc(MemoryPoolKind::Codec, sizeof(Context)));
+        Context* ctx = static_cast<Context*>(ampoolmalloc(eMemoryPoolKind_Codec, sizeof(Context)));
         int ch, i;
 
         memset(ctx, 0, sizeof(Context));
@@ -267,7 +267,7 @@ namespace SparkyStudios::Audio::Amplitude::Compression::ADPCM
 
     void FreeContext(Context* context)
     {
-        ampoolfree(MemoryPoolKind::Codec, context);
+        ampoolfree(eMemoryPoolKind_Codec, context);
     }
 
     bool Compress(Context* ctx, AmUInt8Buffer out, AmSize& outSize, AmConstInt16Buffer in, AmSize sampleCount)

@@ -347,7 +347,7 @@ int process(const AmOsString& inFileName, const AmOsString& outFileName, const P
             sorted_by_name.insert(file);
         }
 
-        AmUniquePtr<MemoryPoolKind::Default, Codec> wavCodec(amnew(WAVCodec));
+        AmUniquePtr<eMemoryPoolKind_Default, Codec> wavCodec(amnew(WAVCodec));
 
         std::vector<AmVec3> positions;
 
@@ -537,7 +537,7 @@ int process(const AmOsString& inFileName, const AmOsString& outFileName, const P
 
 int main(int argc, char* argv[])
 {
-    MemoryManager::Initialize(MemoryManagerConfig());
+    MemoryManager::Initialize();
 
     char *inFileName = nullptr, *outFileName = nullptr;
     bool noLogo = false, needHelp = false;
@@ -604,23 +604,19 @@ int main(int argc, char* argv[])
         }
         else if (!inFileName)
         {
-            inFileName = static_cast<char*>(ampoolmalloc(MemoryPoolKind::Default, strlen(argv[i]) + 10));
+            const auto len = strlen(argv[i]);
+            inFileName = static_cast<char*>(ampoolmalloc(eMemoryPoolKind_Default, len + 1));
 
-#if defined(AM_WINDOWS_VERSION)
-            strcpy_s(inFileName, strlen(argv[i]) + 10, *argv);
-#else
-            strcpy(inFileName, argv[i]);
-#endif
+            std::memcpy(inFileName, argv[i], len);
+            inFileName[len] = '\0';
         }
         else if (!outFileName)
         {
-            outFileName = static_cast<char*>(ampoolmalloc(MemoryPoolKind::Default, strlen(argv[i]) + 10));
+            const auto len = strlen(argv[i]);
+            outFileName = static_cast<char*>(ampoolmalloc(eMemoryPoolKind_Default, len + 1));
 
-#if defined(AM_WINDOWS_VERSION)
-            strcpy_s(outFileName, strlen(argv[i]) + 10, *argv);
-#else
-            strcpy(outFileName, argv[i]);
-#endif
+            std::memcpy(outFileName, argv[i], len);
+            outFileName[len] = '\0';
         }
         else
         {
@@ -676,6 +672,9 @@ int main(int argc, char* argv[])
     Engine::RegisterDefaultPlugins();
 
     const auto res = process(AM_STRING_TO_OS_STRING(inFileName), AM_STRING_TO_OS_STRING(outFileName), state);
+
+    ampoolfree(eMemoryPoolKind_Default, inFileName);
+    ampoolfree(eMemoryPoolKind_Default, outFileName);
 
     Engine::UnregisterDefaultPlugins();
 

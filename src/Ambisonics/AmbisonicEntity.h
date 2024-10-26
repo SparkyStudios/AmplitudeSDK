@@ -133,7 +133,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @return The vector of spherical harmonic coefficients.
          */
-        [[nodiscard]] AM_INLINE std::vector<AmReal32> GetCoefficients() const
+        [[nodiscard]] AM_INLINE AmAlignedReal32Buffer GetCoefficients() const
         {
             return m_coefficients;
         }
@@ -161,8 +161,8 @@ namespace SparkyStudios::Audio::Amplitude
     protected:
         SphericalPosition m_position;
         AmReal32 m_gain;
-        std::vector<AmReal32> m_coefficients;
-        std::vector<AmReal32> m_orderWeights;
+        AmAlignedReal32Buffer m_coefficients;
+        AmAlignedReal32Buffer m_orderWeights;
     };
 } // namespace SparkyStudios::Audio::Amplitude
 

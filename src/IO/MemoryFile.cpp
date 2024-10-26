@@ -104,7 +104,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     AmResult MemoryFile::Open(AmSize size)
     {
-        return OpenMem(static_cast<AmConstUInt8Buffer>(ampoolmalloc(MemoryPoolKind::IO, size)), size, false, true);
+        return OpenMem(static_cast<AmConstUInt8Buffer>(ampoolmalloc(eMemoryPoolKind_IO, size)), size, false, true);
     }
 
     AmResult MemoryFile::OpenMem(AmConstUInt8Buffer buffer, AmSize size, bool copy, bool takeOwnership)
@@ -119,7 +119,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (copy)
         {
             m_dataOwned = true;
-            m_dataPtr = static_cast<AmUInt8Buffer>(ampoolmalloc(MemoryPoolKind::IO, size));
+            m_dataPtr = static_cast<AmUInt8Buffer>(ampoolmalloc(eMemoryPoolKind_IO, size));
 
             if (m_dataPtr == nullptr)
                 return eErrorCode_OutOfMemory;
@@ -146,7 +146,7 @@ namespace SparkyStudios::Audio::Amplitude
             return res;
 
         m_dataSize = df.Length();
-        m_dataPtr = static_cast<AmUInt8Buffer>(ampoolmalloc(MemoryPoolKind::IO, m_dataSize));
+        m_dataPtr = static_cast<AmUInt8Buffer>(ampoolmalloc(eMemoryPoolKind_IO, m_dataSize));
 
         if (m_dataPtr == nullptr)
             return eErrorCode_OutOfMemory;
@@ -168,7 +168,7 @@ namespace SparkyStudios::Audio::Amplitude
         m_offset = file->Position();
 
         m_dataSize = file->Length();
-        m_dataPtr = static_cast<AmUInt8Buffer>(ampoolmalloc(MemoryPoolKind::IO, m_dataSize));
+        m_dataPtr = static_cast<AmUInt8Buffer>(ampoolmalloc(eMemoryPoolKind_IO, m_dataSize));
 
         if (m_dataPtr == nullptr)
             return eErrorCode_OutOfMemory;
@@ -185,7 +185,7 @@ namespace SparkyStudios::Audio::Amplitude
     void MemoryFile::Close()
     {
         if (m_dataOwned && m_dataPtr != nullptr)
-            ampoolfree(MemoryPoolKind::IO, m_dataPtr);
+            ampoolfree(eMemoryPoolKind_IO, m_dataPtr);
 
         m_dataPtr = nullptr;
         m_dataSize = 0;

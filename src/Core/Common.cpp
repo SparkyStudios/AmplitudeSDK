@@ -29,7 +29,7 @@ namespace SparkyStudios::Audio::Amplitude
     AmResult AmAlignedReal32Buffer::Init(AmUInt32 size, bool clear)
     {
         if (m_basePtr != nullptr)
-            ampoolfree(MemoryPoolKind::Default, m_basePtr);
+            ampoolfree(eMemoryPoolKind_Default, m_basePtr);
 
         if (size == 0)
             return eErrorCode_Success;

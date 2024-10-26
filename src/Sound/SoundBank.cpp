@@ -61,8 +61,8 @@ namespace SparkyStudios::Audio::Amplitude
             const AmOsString& filePath = fs->ResolvePath(fs->Join({ AM_OS_STRING("switch_containers"), filename }));
 
             // This is a new switch container, load it and update it.
-            AmUniquePtr<MemoryPoolKind::Engine, SwitchContainerImpl> switch_container(
-                ampoolnew(MemoryPoolKind::Engine, SwitchContainerImpl));
+            AmUniquePtr<eMemoryPoolKind_Engine, SwitchContainerImpl> switch_container(
+                ampoolnew(eMemoryPoolKind_Engine, SwitchContainerImpl));
             if (!switch_container->LoadDefinitionFromPath(filePath, engine->GetState()))
                 return false;
 
@@ -98,7 +98,7 @@ namespace SparkyStudios::Audio::Amplitude
             const AmOsString& filePath = fs->ResolvePath(fs->Join({ AM_OS_STRING("collections"), filename }));
 
             // This is a new collection, load it and update it.
-            AmUniquePtr<MemoryPoolKind::Engine, CollectionImpl> collection(ampoolnew(MemoryPoolKind::Engine, CollectionImpl));
+            AmUniquePtr<eMemoryPoolKind_Engine, CollectionImpl> collection(ampoolnew(eMemoryPoolKind_Engine, CollectionImpl));
             if (!collection->LoadDefinitionFromPath(filePath, engine->GetState()))
                 return false;
 
@@ -134,7 +134,7 @@ namespace SparkyStudios::Audio::Amplitude
             const AmOsString& filePath = fs->ResolvePath(fs->Join({ AM_OS_STRING("sounds"), filename }));
 
             // This is a new sound, load it and update it.
-            AmUniquePtr<MemoryPoolKind::Engine, SoundImpl> sound(ampoolnew(MemoryPoolKind::Engine, SoundImpl));
+            AmUniquePtr<eMemoryPoolKind_Engine, SoundImpl> sound(ampoolnew(eMemoryPoolKind_Engine, SoundImpl));
             if (!sound->LoadDefinitionFromPath(filePath, engine->GetState()))
                 return false;
 
@@ -172,7 +172,7 @@ namespace SparkyStudios::Audio::Amplitude
             const AmOsString& filePath = fs->ResolvePath(fs->Join({ AM_OS_STRING("events"), filename }));
 
             // This is a new event, load it and update it.
-            AmUniquePtr<MemoryPoolKind::Engine, EventImpl> event(ampoolnew(MemoryPoolKind::Engine, EventImpl));
+            AmUniquePtr<eMemoryPoolKind_Engine, EventImpl> event(ampoolnew(eMemoryPoolKind_Engine, EventImpl));
             if (!event->LoadDefinitionFromPath(filePath, engine->GetState()))
                 return false;
 
@@ -208,7 +208,7 @@ namespace SparkyStudios::Audio::Amplitude
             const AmOsString& filePath = fs->ResolvePath(fs->Join({ AM_OS_STRING("attenuators"), filename }));
 
             // This is a new event, load it and update it.
-            AmUniquePtr<MemoryPoolKind::Engine, AttenuationImpl> attenuation(ampoolnew(MemoryPoolKind::Engine, AttenuationImpl));
+            AmUniquePtr<eMemoryPoolKind_Engine, AttenuationImpl> attenuation(ampoolnew(eMemoryPoolKind_Engine, AttenuationImpl));
             if (!attenuation->LoadDefinitionFromPath(filePath, engine->GetState()))
                 return false;
 
@@ -244,7 +244,7 @@ namespace SparkyStudios::Audio::Amplitude
             const AmOsString& filePath = fs->ResolvePath(fs->Join({ AM_OS_STRING("switches"), filename }));
 
             // This is a new event, load it and update it.
-            AmUniquePtr<MemoryPoolKind::Engine, SwitchImpl> _switch(ampoolnew(MemoryPoolKind::Engine, SwitchImpl));
+            AmUniquePtr<eMemoryPoolKind_Engine, SwitchImpl> _switch(ampoolnew(eMemoryPoolKind_Engine, SwitchImpl));
             if (!_switch->LoadDefinitionFromPath(filePath, engine->GetState()))
             {
                 return false;
@@ -282,7 +282,7 @@ namespace SparkyStudios::Audio::Amplitude
             const AmOsString& filePath = fs->ResolvePath(fs->Join({ AM_OS_STRING("rtpc"), filename }));
 
             // This is a new rtpc, load it and update it.
-            AmUniquePtr<MemoryPoolKind::Engine, RtpcImpl> rtpc(ampoolnew(MemoryPoolKind::Engine, RtpcImpl));
+            AmUniquePtr<eMemoryPoolKind_Engine, RtpcImpl> rtpc(ampoolnew(eMemoryPoolKind_Engine, RtpcImpl));
             if (!rtpc->LoadDefinitionFromPath(filePath, engine->GetState()))
             {
                 return false;
@@ -320,7 +320,7 @@ namespace SparkyStudios::Audio::Amplitude
             const AmOsString& filePath = fs->ResolvePath(fs->Join({ AM_OS_STRING("effects"), filename }));
 
             // This is a new effect, load it and update it.
-            AmUniquePtr<MemoryPoolKind::Engine, EffectImpl> effect(ampoolnew(MemoryPoolKind::Engine, EffectImpl));
+            AmUniquePtr<eMemoryPoolKind_Engine, EffectImpl> effect(ampoolnew(eMemoryPoolKind_Engine, EffectImpl));
             if (!effect->LoadDefinitionFromPath(filePath, engine->GetState()))
             {
                 return false;

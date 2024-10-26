@@ -96,12 +96,6 @@ find_package(xsimd CONFIG REQUIRED)
 
 # ------------------------------------------------------------------------------
 
-# Setup mimalloc
-# ------------------------------------------------------------------------------
-find_package(mimalloc CONFIG REQUIRED)
-
-# ------------------------------------------------------------------------------
-
 # Setup miniaudio
 # ------------------------------------------------------------------------------
 find_path(MINIAUDIO_INCLUDE_DIRS "miniaudio.h")
@@ -473,6 +467,10 @@ set(SA_SOURCE
     src/Utils/pffft/pffft_double.h
     src/Utils/pffft/pffft_common.cpp
     src/Utils/pffft/pffft_priv_impl.h
+    src/Utils/SmMalloc/smmalloc.cpp
+    src/Utils/SmMalloc/smmalloc.h
+    src/Utils/SmMalloc/smmalloc_generic.cpp
+    src/Utils/SmMalloc/smmalloc_tls.cpp
     src/Utils/intrusive_list.h
     src/Utils/Utils.cpp
     src/Utils/Utils.h
@@ -529,9 +527,6 @@ foreach (build_type ${AM_BUILDSYSTEM_TYPE})
         target_compile_definitions(${build_type} PUBLIC AM_FFT_APPLE_ACCELERATE)
     endif ()
 endforeach ()
-
-target_link_libraries(Static PUBLIC mimalloc-static)
-target_link_libraries(Shared PUBLIC mimalloc)
 
 add_subdirectory(tools/amac)
 add_subdirectory(tools/ampk)

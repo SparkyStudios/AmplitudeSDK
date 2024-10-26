@@ -87,11 +87,11 @@ namespace SparkyStudios::Audio::Amplitude
 
     ResamplerInstance* LibsamplerateResampler::CreateInstance()
     {
-        return ampoolnew(MemoryPoolKind::Filtering, LibsamplerateResamplerInstance);
+        return ampoolnew(eMemoryPoolKind_Filtering, LibsamplerateResamplerInstance);
     }
 
     void LibsamplerateResampler::DestroyInstance(ResamplerInstance* instance)
     {
-        ampooldelete(MemoryPoolKind::Filtering, LibsamplerateResamplerInstance, (LibsamplerateResamplerInstance*)instance);
+        ampooldelete(eMemoryPoolKind_Filtering, LibsamplerateResamplerInstance, (LibsamplerateResamplerInstance*)instance);
     }
 } // namespace SparkyStudios::Audio::Amplitude

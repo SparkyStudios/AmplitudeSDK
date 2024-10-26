@@ -183,7 +183,7 @@ namespace SparkyStudios::Audio::Amplitude
                 amLogError("Linking a parameter to an invalid or uninitialized RTPC handle.");
             }
 
-            auto* curve = ampoolnew(MemoryPoolKind::Engine, Curve);
+            auto* curve = ampoolnew(eMemoryPoolKind_Engine, Curve);
             curve->Initialize(definition->rtpc()->curve());
 
             _curve = curve;
@@ -195,7 +195,7 @@ namespace SparkyStudios::Audio::Amplitude
     RtpcValue::~RtpcValue()
     {
         if (_ownCurve && _curve != nullptr)
-            ampooldelete(MemoryPoolKind::Engine, Curve, _curve);
+            ampooldelete(eMemoryPoolKind_Engine, Curve, _curve);
 
         _ownCurve = false;
         _curve = nullptr;

@@ -42,12 +42,12 @@ namespace SparkyStudios::Audio::Amplitude
 
         [[nodiscard]] AM_INLINE NodeInstance* CreateInstance() const override
         {
-            return ampoolnew(MemoryPoolKind::Amplimix, NearFieldEffectNodeInstance);
+            return ampoolnew(eMemoryPoolKind_Amplimix, NearFieldEffectNodeInstance);
         }
 
         AM_INLINE void DestroyInstance(NodeInstance* instance) const override
         {
-            ampooldelete(MemoryPoolKind::Amplimix, NearFieldEffectNodeInstance, (NearFieldEffectNodeInstance*)instance);
+            ampooldelete(eMemoryPoolKind_Amplimix, NearFieldEffectNodeInstance, (NearFieldEffectNodeInstance*)instance);
         }
     };
 } // namespace SparkyStudios::Audio::Amplitude

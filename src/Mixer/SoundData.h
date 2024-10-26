@@ -35,9 +35,9 @@ namespace SparkyStudios::Audio::Amplitude
 
         AudioBuffer* buffer;
 
-        MemoryPoolKind memoryPool;
+        eMemoryPoolKind memoryPool;
 
-        static SoundChunk* CreateChunk(AmUInt64 frames, AmUInt16 channels, MemoryPoolKind pool = MemoryPoolKind::SoundData);
+        static SoundChunk* CreateChunk(AmUInt64 frames, AmUInt16 channels, eMemoryPoolKind pool = eMemoryPoolKind_SoundData);
         static void DestroyChunk(SoundChunk* chunk);
 
         ~SoundChunk();
@@ -49,7 +49,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         SoundChunk* chunk;
         AmUInt64 length;
-        AmUniquePtr<MemoryPoolKind::Engine, SoundInstance> sound;
+        AmUniquePtr<eMemoryPoolKind_Engine, SoundInstance> sound;
         SoundFormat format;
         bool stream;
 

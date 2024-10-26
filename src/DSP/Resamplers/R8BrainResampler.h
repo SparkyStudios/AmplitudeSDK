@@ -39,8 +39,8 @@ namespace SparkyStudios::Audio::Amplitude
             AMPLITUDE_ASSERT(input.GetChannelCount() == _numChannels);
             AMPLITUDE_ASSERT(output.GetChannelCount() == _numChannels);
 
-            const AmUniquePtr<MemoryPoolKind::SoundData, AmReal64> input64(
-                static_cast<AmReal64Buffer>(ampoolmalloc(MemoryPoolKind::SoundData, inputFrames * sizeof(AmReal64))));
+            const AmUniquePtr<eMemoryPoolKind_SoundData, AmReal64> input64(
+                static_cast<AmReal64Buffer>(ampoolmalloc(eMemoryPoolKind_SoundData, inputFrames * sizeof(AmReal64))));
 
             for (AmUInt16 c = 0; c < _numChannels; c++)
             {
@@ -163,12 +163,12 @@ namespace SparkyStudios::Audio::Amplitude
 
         ResamplerInstance* CreateInstance() override
         {
-            return ampoolnew(MemoryPoolKind::Filtering, R8BrainResamplerInstance);
+            return ampoolnew(eMemoryPoolKind_Filtering, R8BrainResamplerInstance);
         }
 
         void DestroyInstance(ResamplerInstance* instance) override
         {
-            ampooldelete(MemoryPoolKind::Filtering, R8BrainResamplerInstance, (R8BrainResamplerInstance*)instance);
+            ampooldelete(eMemoryPoolKind_Filtering, R8BrainResamplerInstance, (R8BrainResamplerInstance*)instance);
         }
     };
 } // namespace SparkyStudios::Audio::Amplitude

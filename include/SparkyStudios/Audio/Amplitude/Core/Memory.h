@@ -90,7 +90,7 @@
  *
  * @ingroup memory
  */
-#define ammalloc(_size_) ampoolmalloc(SparkyStudios::Audio::Amplitude::MemoryPoolKind::Default, _size_)
+#define ammalloc(_size_) ampoolmalloc(SparkyStudios::Audio::Amplitude::eMemoryPoolKind_Default, _size_)
 
 /**
  * @brief Allocates a block of memory from the default memory pool.
@@ -102,7 +102,7 @@
  *
  * @ingroup memory
  */
-#define ammalign(_size_, _alignment_) ampoolmalign(SparkyStudios::Audio::Amplitude::MemoryPoolKind::Default, _size_, _alignment_)
+#define ammalign(_size_, _alignment_) ampoolmalign(SparkyStudios::Audio::Amplitude::eMemoryPoolKind_Default, _size_, _alignment_)
 
 /**
  * @brief Reallocates a block of memory from the default memory pool.
@@ -114,7 +114,7 @@
  *
  * @ingroup memory
  */
-#define amrealloc(_ptr_, _size_) ampoolrealloc(SparkyStudios::Audio::Amplitude::MemoryPoolKind::Default, _ptr_, _size_)
+#define amrealloc(_ptr_, _size_) ampoolrealloc(SparkyStudios::Audio::Amplitude::eMemoryPoolKind_Default, _ptr_, _size_)
 
 /**
  * @brief Reallocates an aligned block of memory from the default memory pool.
@@ -128,7 +128,7 @@
  * @ingroup memory
  */
 #define amrealign(_ptr_, _size_, _alignment_)                                                                                              \
-    ampoolrealign(SparkyStudios::Audio::Amplitude::MemoryPoolKind::Default, _ptr_, _size_, _alignment_)
+    ampoolrealign(SparkyStudios::Audio::Amplitude::eMemoryPoolKind_Default, _ptr_, _size_, _alignment_)
 
 /**
  * @brief Deallocates a block of memory from the default memory pool.
@@ -139,7 +139,7 @@
  *
  * @ingroup memory
  */
-#define amfree(_ptr_) ampoolfree(SparkyStudios::Audio::Amplitude::MemoryPoolKind::Default, _ptr_)
+#define amfree(_ptr_) ampoolfree(SparkyStudios::Audio::Amplitude::eMemoryPoolKind_Default, _ptr_)
 
 /**
  * @brief Allocates memory for a new object in the given memory pool.
@@ -192,7 +192,7 @@
  *
  * @ingroup memory
  */
-#define amnew(_type_, ...) ampoolnew(SparkyStudios::Audio::Amplitude::MemoryPoolKind::Default, _type_, __VA_ARGS__)
+#define amnew(_type_, ...) ampoolnew(SparkyStudios::Audio::Amplitude::eMemoryPoolKind_Default, _type_, __VA_ARGS__)
 
 /**
  * @brief Deallocates a memory allocated with @ref amnew amnew.
@@ -206,7 +206,7 @@
  *
  * @ingroup memory
  */
-#define amdelete(_type_, _ptr_) ampooldelete(SparkyStudios::Audio::Amplitude::MemoryPoolKind::Default, _type_, _ptr_)
+#define amdelete(_type_, _ptr_) ampooldelete(SparkyStudios::Audio::Amplitude::eMemoryPoolKind_Default, _type_, _ptr_)
 
 namespace SparkyStudios::Audio::Amplitude
 {
@@ -215,113 +215,50 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup memory
      */
-    enum class MemoryPoolKind : AmUInt8
+    enum eMemoryPoolKind : AmUInt8
     {
         /**
          * @brief Amplitude Engine allocations.
          */
-        Engine,
+        eMemoryPoolKind_Engine,
 
         /**
          * @brief Amplimix allocations.
          */
-        Amplimix,
+        eMemoryPoolKind_Amplimix,
 
         /**
          * @brief Sound data and streams.
          */
-        SoundData,
+        eMemoryPoolKind_SoundData,
 
         /**
          * @brief Filters related allocations.
          */
-        Filtering,
+        eMemoryPoolKind_Filtering,
 
         /**
          * @brief Encoding/Decoding allocations.
          *
          */
-        Codec,
+        eMemoryPoolKind_Codec,
 
         /**
          * @brief I/O and filesystem related allocations.
          */
-        IO,
+        eMemoryPoolKind_IO,
 
         /**
          * @brief Default allocations pool. Use this when the allocated memory pool is not available.
          *
          * @note `amnew` use this pool to allocate memory from the memory manager.
          */
-        Default,
+        eMemoryPoolKind_Default,
 
         /**
          * @brief The total number of memory pools.
          */
-        COUNT,
-    };
-
-    AM_CALLBACK(AmVoidPtr, AmMemoryMallocCallback)(MemoryPoolKind pool, AmSize size);
-
-    AM_CALLBACK(AmVoidPtr, AmMemoryReallocCallback)(MemoryPoolKind pool, AmVoidPtr address, AmSize size);
-
-    AM_CALLBACK(AmVoidPtr, AmMemoryMallocAlignedCallback)(MemoryPoolKind pool, AmSize size, AmUInt32 alignment);
-
-    AM_CALLBACK(AmVoidPtr, AmMemoryReallocAlignedCallback)(MemoryPoolKind pool, AmVoidPtr address, AmSize size, AmUInt32 alignment);
-
-    AM_CALLBACK(void, AmMemoryFreeCallback)(MemoryPoolKind pool, AmVoidPtr address);
-
-    AM_CALLBACK(AmSize, AmMemoryTotalReservedMemorySizeCallback)();
-
-    AM_CALLBACK(AmSize, AmMemorySizeOfCallback)(MemoryPoolKind pool, AmConstVoidPtr address);
-
-    /**
-     * @brief Configures the memory management system.
-     *
-     * @ingroup memory
-     */
-    struct AM_API_PUBLIC MemoryManagerConfig
-    {
-        /**
-         * @brief Memory allocation callback.
-         */
-        AmMemoryMallocCallback malloc;
-
-        /**
-         * @brief Memory reallocation callback.
-         */
-        AmMemoryReallocCallback realloc;
-
-        /**
-         * @brief Aligned memory allocation callback.
-         */
-        AmMemoryMallocAlignedCallback alignedMalloc;
-
-        /**
-         * @brief Aligned memory reallocation callback.
-         */
-        AmMemoryReallocAlignedCallback alignedRealloc;
-
-        /**
-         * @brief Memory release callback.
-         */
-        AmMemoryFreeCallback free;
-
-        /**
-         * @brief Callback to get the total size of the memory allocated across memory pools
-         *
-         */
-        AmMemoryTotalReservedMemorySizeCallback totalReservedMemorySize;
-
-        /**
-         * @brief Callback to get the total size of memory for a specific pool.
-         */
-        AmMemorySizeOfCallback sizeOf;
-
-        /**
-         * @brief Creates a new configuration set for the memory manager.
-         */
-        MemoryManagerConfig();
+        eMemoryPoolKind_COUNT,
     };
 
 #if !defined(AM_NO_MEMORY_STATS)
@@ -336,7 +273,7 @@ namespace SparkyStudios::Audio::Amplitude
         /**
          * @brief The pool for which this statistics is for.
          */
-        MemoryPoolKind pool;
+        eMemoryPoolKind pool;
 
         /**
          * @brief The maximum total memory used by this pool.
@@ -357,7 +294,7 @@ namespace SparkyStudios::Audio::Amplitude
          * @brief Default constructor.
          */
         MemoryPoolStats()
-            : MemoryPoolStats(MemoryPoolKind::COUNT)
+            : MemoryPoolStats(eMemoryPoolKind_COUNT)
         {}
 
         /**
@@ -365,7 +302,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @param[in] pool The pool to get the statistics for.
          */
-        explicit MemoryPoolStats(MemoryPoolKind pool);
+        explicit MemoryPoolStats(eMemoryPoolKind pool);
 
         /**
          * @brief Copy constructor.
@@ -382,6 +319,148 @@ namespace SparkyStudios::Audio::Amplitude
         MemoryPoolStats& operator=(const MemoryPoolStats& other);
     };
 #endif
+
+    /**
+     * @brief Memory Allocator Interface.
+     *
+     * @ingroup memory
+     */
+    class MemoryAllocator
+    {
+    public:
+        /**
+         * @brief Default Destructor.
+         */
+        virtual ~MemoryAllocator() = default;
+
+        /**
+         * @brief Allocates a block of memory.
+         *
+         * @param[in] pool The memory pool to allocate from.
+         * @param[in] size The size of the memory to allocate.
+         *
+         * @return A pointer to the allocated memory.
+         */
+        virtual AmVoidPtr Malloc(eMemoryPoolKind pool, AmSize size) = 0;
+
+        /**
+         * @brief Reallocates a block of memory.
+         *
+         * @param[in] pool The memory pool to reallocate from.
+         * @param[in] address The pointer to the memory to reallocate.
+         * @param[in] size The new size of the memory.
+         *
+         * @return A pointer to the reallocated memory.
+         */
+        virtual AmVoidPtr Realloc(eMemoryPoolKind pool, AmVoidPtr address, AmSize size) = 0;
+
+        /**
+         * @brief Allocates an aligned block of memory.
+         *
+         * @param[in] pool The memory pool to allocate from.
+         * @param[in] size The size of the memory to allocate.
+         * @param[in] alignment The alignment of the memory to allocate.
+         *
+         * @return A pointer to the allocated memory.
+         */
+        virtual AmVoidPtr Malign(eMemoryPoolKind pool, AmSize size, AmUInt32 alignment) = 0;
+
+        /**
+         * @brief Reallocates an aligned block of memory.
+         *
+         * @param[in] pool The memory pool to reallocate from.
+         * @param[in] address The pointer to the memory to reallocate.
+         * @param[in] size The new size of the memory.
+         * @param[in] alignment The alignment of the memory to reallocate.
+         *
+         * @return A pointer to the reallocated memory.
+         */
+        virtual AmVoidPtr Realign(eMemoryPoolKind pool, AmVoidPtr address, AmSize size, AmUInt32 alignment) = 0;
+
+        /**
+         * @brief Deallocates a block of memory.
+         *
+         * @param[in] pool The memory pool to deallocate from.
+         * @param[in] address The pointer to the memory to deallocate.
+         */
+        virtual void Free(eMemoryPoolKind pool, AmVoidPtr address) = 0;
+
+        /**
+         * @brief Gets the size of the memory at the given address.
+         *
+         * @param[in] pool The memory pool to get the size from.
+         * @param[in] address The address of the memory.
+         *
+         * @return The size of the memory at the given address.
+         */
+        virtual AmSize SizeOf(eMemoryPoolKind pool, AmVoidPtr address) = 0;
+    };
+
+    /**
+     * @brief Default memory allocator.
+     *
+     * This implementation uses a fast and efficient "proxy" allocator designed to handle many small allocations/deallocations in heavy
+     * multithreaded scenarios.
+     *
+     * @ingroup memory
+     */
+    class DefaultMemoryAllocator final : public MemoryAllocator
+    {
+    public:
+        /**
+         * @brief Initializes a new default memory allocator.
+         *
+         * This constructor will create the given number of allocator buckets, each of the
+         * given size.
+         *
+         * @param[in] bucketsCount The number of allocator buckets to create.
+         * @param[in] bucketSizeInBytes The size of each allocator bucket in bytes.
+         */
+        DefaultMemoryAllocator(AmUInt32 bucketsCount, AmSize bucketSizeInBytes);
+
+        /**
+         * @brief Destroy the allocator.
+         */
+        ~DefaultMemoryAllocator() override;
+
+        /**
+         * @inherit
+         */
+        AmVoidPtr Malloc(eMemoryPoolKind pool, AmSize size) override;
+
+        /**
+         * @inherit
+         */
+        AmVoidPtr Realloc(eMemoryPoolKind pool, AmVoidPtr address, AmSize size) override;
+
+        /**
+         * @inherit
+         */
+        AmVoidPtr Malign(eMemoryPoolKind pool, AmSize size, AmUInt32 alignment) override;
+
+        /**
+         * @inherit
+         */
+        AmVoidPtr Realign(eMemoryPoolKind pool, AmVoidPtr address, AmSize size, AmUInt32 alignment) override;
+
+        /**
+         * @inherit
+         */
+        void Free(eMemoryPoolKind pool, AmVoidPtr address) override;
+
+        /**
+         * @inherit
+         */
+        AmSize SizeOf(eMemoryPoolKind pool, AmVoidPtr address) override;
+
+    private:
+        /***
+         * @brief Internal allocator spaces, for each pool.
+         *
+         * @internal
+         */
+        void* _allocators[eMemoryPoolKind_COUNT];
+    };
 
     /**
      * @brief Manages memory allocations inside the engine.
@@ -402,7 +481,7 @@ namespace SparkyStudios::Audio::Amplitude
             /**
              * @brief The memory pool.
              */
-            MemoryPoolKind pool;
+            eMemoryPoolKind pool;
 
             /**
              * @brief The address of the allocation.
@@ -477,7 +556,7 @@ namespace SparkyStudios::Audio::Amplitude
          * @remarks This should be done prior to any call of @ref GetInstance `GetInstance()`
          * or any usage of `amMemory`.
          */
-        static void Initialize(const MemoryManagerConfig& config);
+        static void Initialize(std::unique_ptr<MemoryAllocator> allocator = nullptr);
 
         /**
          * @brief Unloads the memory manager.
@@ -506,7 +585,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @return A pointer to the allocated block.
          */
-        [[nodiscard]] AmVoidPtr Malloc(MemoryPoolKind pool, AmSize size, const char* file, AmUInt32 line);
+        [[nodiscard]] AmVoidPtr Malloc(eMemoryPoolKind pool, AmSize size, const char* file, AmUInt32 line);
 
         /**
          * @brief Allocates an aligned  block of memory.
@@ -519,7 +598,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @return A pointer to the allocated block.
          */
-        [[nodiscard]] AmVoidPtr Malign(MemoryPoolKind pool, AmSize size, AmUInt32 alignment, const char* file, AmUInt32 line);
+        [[nodiscard]] AmVoidPtr Malign(eMemoryPoolKind pool, AmSize size, AmUInt32 alignment, const char* file, AmUInt32 line);
 
         /**
          * @brief Updates the size of a previously allocated memory.
@@ -532,7 +611,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @return A pointer to the allocated block. Maybe equal to `address` if the original pointer had enough memory.
          */
-        [[nodiscard]] AmVoidPtr Realloc(MemoryPoolKind pool, AmVoidPtr address, AmSize size, const char* file, AmUInt32 line);
+        [[nodiscard]] AmVoidPtr Realloc(eMemoryPoolKind pool, AmVoidPtr address, AmSize size, const char* file, AmUInt32 line);
 
         /**
          * @brief Updates the size of a previously allocated aligned memory.
@@ -547,7 +626,7 @@ namespace SparkyStudios::Audio::Amplitude
          * @return A pointer to the allocated block. Maybe equal to `address` if the original pointer had enough memory.
          */
         [[nodiscard]] AmVoidPtr Realign(
-            MemoryPoolKind pool, AmVoidPtr address, AmSize size, AmUInt32 alignment, const char* file, AmUInt32 line);
+            eMemoryPoolKind pool, AmVoidPtr address, AmSize size, AmUInt32 alignment, const char* file, AmUInt32 line);
 
         /**
          * @brief Releases an allocated memory block.
@@ -555,7 +634,16 @@ namespace SparkyStudios::Audio::Amplitude
          * @param[in] pool The memory pool to release from.
          * @param[in] address The address of the memory to release.
          */
-        void Free(MemoryPoolKind pool, AmVoidPtr address);
+        void Free(eMemoryPoolKind pool, AmVoidPtr address);
+
+        /**
+         * @brief Gets the total allocated size of the specified pool.
+         *
+         * @param[in] pool The memory pool to get the total allocated size from.
+         *
+         * @return The total currently allocated size in the specified pool.
+         */
+        [[nodiscard]] AmSize TotalReservedMemorySize(eMemoryPoolKind pool) const;
 
         /**
          * @brief Gets the total allocated size.
@@ -572,7 +660,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @return The size of the given memory block.
          */
-        [[nodiscard]] AmSize SizeOf(MemoryPoolKind pool, AmConstVoidPtr address) const;
+        [[nodiscard]] AmSize SizeOf(eMemoryPoolKind pool, AmVoidPtr address) const;
 
 #if !defined(AM_NO_MEMORY_STATS)
         /**
@@ -582,14 +670,14 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @return The name of the memory pool.
          */
-        static AmString GetMemoryPoolName(MemoryPoolKind pool);
+        static AmString GetMemoryPoolName(eMemoryPoolKind pool);
 
         /**
          * @brief Returns the memory allocation statistics for the given pool.
          *
          * @param[in] pool The pool to get the statistics for.
          */
-        [[nodiscard]] const MemoryPoolStats& GetStats(MemoryPoolKind pool) const;
+        [[nodiscard]] const MemoryPoolStats& GetStats(eMemoryPoolKind pool) const;
 
         /**
          * @brief Inspects the memory manager for memory leaks.
@@ -603,15 +691,15 @@ namespace SparkyStudios::Audio::Amplitude
 #endif
 
     private:
-        explicit MemoryManager(const MemoryManagerConfig& config);
+        explicit MemoryManager(std::unique_ptr<MemoryAllocator> allocator);
         ~MemoryManager();
 
-        MemoryManagerConfig _config;
+        std::unique_ptr<MemoryAllocator> _allocator;
 
-        std::set<Allocation> _memAllocations = {};
+        std::set<Allocation> _memAllocations;
 
 #if !defined(AM_NO_MEMORY_STATS)
-        std::map<MemoryPoolKind, MemoryPoolStats> _memPoolsStats = {};
+        std::map<eMemoryPoolKind, MemoryPoolStats> _memPoolsStats;
 #endif
     };
 
@@ -632,17 +720,17 @@ namespace SparkyStudios::Audio::Amplitude
         ScopedMemoryAllocation() = default;
 
         /**
-         * @brief Creates a new new scoped memory allocation.
+         * @brief Creates a new scoped memory allocation.
          *
          * @param[in] pool The memory pool to allocate from.
          * @param[in] size The size of the block to allocate.
          * @param[in] file The file in which the allocation was made.
          * @param[in] line The line in which the allocation was made.
          */
-        ScopedMemoryAllocation(MemoryPoolKind pool, AmSize size, const char* file, AmUInt32 line);
+        ScopedMemoryAllocation(eMemoryPoolKind pool, AmSize size, const char* file, AmUInt32 line);
 
         /**
-         * @brief Creates a new new scoped aligned memory allocation.
+         * @brief Creates a new scoped aligned memory allocation.
          *
          * @param[in] pool The memory pool to allocate from.
          * @param[in] size The size of the block to allocate.
@@ -650,7 +738,7 @@ namespace SparkyStudios::Audio::Amplitude
          * @param[in] file The file in which the allocation was made.
          * @param[in] line The line in which the allocation was made.
          */
-        ScopedMemoryAllocation(MemoryPoolKind pool, AmSize size, AmUInt32 alignment, const char* file, AmUInt32 line);
+        ScopedMemoryAllocation(eMemoryPoolKind pool, AmSize size, AmUInt32 alignment, const char* file, AmUInt32 line);
 
         /**
          * @brief Releases the allocated memory.
@@ -665,7 +753,7 @@ namespace SparkyStudios::Audio::Amplitude
         template<typename T>
         [[nodiscard]] AM_INLINE T* PointerOf() const
         {
-            return reinterpret_cast<T*>(_address);
+            return static_cast<T*>(_address);
         }
 
         /**
@@ -690,7 +778,7 @@ namespace SparkyStudios::Audio::Amplitude
         }
 
     private:
-        MemoryPoolKind _pool = MemoryPoolKind::Default;
+        eMemoryPoolKind _pool = eMemoryPoolKind_Default;
         void* _address = nullptr;
     };
 
@@ -709,7 +797,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup memory
      */
-    template<MemoryPoolKind Pool, class T>
+    template<eMemoryPoolKind Pool, class T>
     struct am_delete
     {
         constexpr am_delete() noexcept = default;
@@ -729,7 +817,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup memory
      */
-    template<MemoryPoolKind Pool, class T>
+    template<eMemoryPoolKind Pool, class T>
     using AmUniquePtr = std::unique_ptr<T, am_delete<Pool, T>>;
 } // namespace SparkyStudios::Audio::Amplitude
 

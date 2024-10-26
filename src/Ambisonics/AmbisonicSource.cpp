@@ -36,7 +36,9 @@ namespace SparkyStudios::Audio::Amplitude
     void AmbisonicSource::SetPosition(const SphericalPosition& position, AmTime duration)
     {
         _interpolationDuration = duration;
-        _oldCoefficients = m_coefficients;
+
+        _oldCoefficients.Resize(m_coefficients.GetSize());
+        _oldCoefficients.CopyFrom(m_coefficients);
 
         // Update the coefficients
         AmbisonicEntity::SetPosition(position);

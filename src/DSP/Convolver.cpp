@@ -49,8 +49,8 @@ namespace SparkyStudios::Audio::Amplitude
     {
         for (AmSize i = 0; i < _segCount; ++i)
         {
-            ampooldelete(MemoryPoolKind::Filtering, SplitComplex, _segments[i]);
-            ampooldelete(MemoryPoolKind::Filtering, SplitComplex, _segmentsIR[i]);
+            ampooldelete(eMemoryPoolKind_Filtering, SplitComplex, _segments[i]);
+            ampooldelete(eMemoryPoolKind_Filtering, SplitComplex, _segmentsIR[i]);
         }
 
         _blockSize = 0;
@@ -104,12 +104,12 @@ namespace SparkyStudios::Audio::Amplitude
 
         // Prepare segments
         for (AmSize i = 0; i < _segCount; ++i)
-            _segments.push_back(ampoolnew(MemoryPoolKind::Filtering, SplitComplex, _fftComplexSize));
+            _segments.push_back(ampoolnew(eMemoryPoolKind_Filtering, SplitComplex, _fftComplexSize));
 
         // Prepare IR
         for (AmSize i = 0; i < _segCount; ++i)
         {
-            auto* segment = ampoolnew(MemoryPoolKind::Filtering, SplitComplex, _fftComplexSize);
+            auto* segment = ampoolnew(eMemoryPoolKind_Filtering, SplitComplex, _fftComplexSize);
             const AmSize remaining = irLen - (i * _blockSize);
             const AmSize sizeCopy = (remaining >= _blockSize) ? _blockSize : remaining;
             CopyAndPad(_fftBuffer, &ir[i * _blockSize], sizeCopy);

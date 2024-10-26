@@ -69,7 +69,7 @@ namespace SparkyStudios::Audio::Amplitude
             const AudioBufferChannel& input, AmUInt32 samples, BFormat* output, AmUInt32 offset = 0, AmReal32 gain = 1.0f);
 
     private:
-        std::vector<AmReal32> _oldCoefficients; // The previous HOA coefficients
+        AmAlignedReal32Buffer _oldCoefficients; // The previous HOA coefficients
         AmTime _interpolationDuration; // The interpolation duration
     };
 } // namespace SparkyStudios::Audio::Amplitude

@@ -51,10 +51,8 @@
 #define AM_RESTRICT __restrict
 
 // Alignment required for SIMD data processing
-#define AM_SIMD_ALIGNMENT 16
 #define AM_TYPE_ALIGN(_declaration_, _alignment_) __declspec(align(_alignment_)) _declaration_
 #define AM_TYPE_ALIGN_SIMD(_declaration_) AM_TYPE_ALIGN(_declaration_, AM_SIMD_ALIGNMENT)
-#define AM_BUFFER_ALIGNMENT AM_SIMD_ALIGNMENT
 
 // Windows platforms supports wchar_t
 #define AM_WCHAR_SUPPORTED

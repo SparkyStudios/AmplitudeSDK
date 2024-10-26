@@ -22,17 +22,17 @@ namespace SparkyStudios::Audio::Amplitude
 {
     static void* onMalloc(size_t sz, void* pUserData)
     {
-        return ampoolmalloc(MemoryPoolKind::Codec, sz);
+        return ampoolmalloc(eMemoryPoolKind_Codec, sz);
     }
 
     static void* onRealloc(void* p, size_t sz, void* pUserData)
     {
-        return ampoolrealloc(MemoryPoolKind::Codec, p, sz);
+        return ampoolrealloc(eMemoryPoolKind_Codec, p, sz);
     }
 
     static void onFree(void* p, void* pUserData)
     {
-        ampoolfree(MemoryPoolKind::Codec, p);
+        ampoolfree(eMemoryPoolKind_Codec, p);
     }
 
     static size_t onRead(void* pUserData, void* pBufferOut, size_t bytesToRead)
@@ -206,22 +206,22 @@ namespace SparkyStudios::Audio::Amplitude
 
     Codec::Decoder* WAVCodec::CreateDecoder()
     {
-        return ampoolnew(MemoryPoolKind::Codec, WAVDecoder, this);
+        return ampoolnew(eMemoryPoolKind_Codec, WAVDecoder, this);
     }
 
     void WAVCodec::DestroyDecoder(Decoder* decoder)
     {
-        ampooldelete(MemoryPoolKind::Codec, WAVDecoder, (WAVDecoder*)decoder);
+        ampooldelete(eMemoryPoolKind_Codec, WAVDecoder, (WAVDecoder*)decoder);
     }
 
     Codec::Encoder* WAVCodec::CreateEncoder()
     {
-        return ampoolnew(MemoryPoolKind::Codec, WAVEncoder, this);
+        return ampoolnew(eMemoryPoolKind_Codec, WAVEncoder, this);
     }
 
     void WAVCodec::DestroyEncoder(Encoder* encoder)
     {
-        ampooldelete(MemoryPoolKind::Codec, WAVEncoder, (WAVEncoder*)encoder);
+        ampooldelete(eMemoryPoolKind_Codec, WAVEncoder, (WAVEncoder*)encoder);
     }
 
     bool WAVCodec::CanHandleFile(std::shared_ptr<File> file) const

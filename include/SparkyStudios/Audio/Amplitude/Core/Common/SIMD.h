@@ -76,16 +76,20 @@
 #if defined(AM_SIMD_ARCH_AVX2)
 #define MA_SUPPORT_AVX2
 #define MA_PREFER_AVX2
+#define AM_SIMD_ALIGNMENT 32
 #elif defined(AM_SIMD_ARCH_SSE2)
 #define MA_SUPPORT_SSE2
 #define MA_PREFER_SSE2
+#define AM_SIMD_ALIGNMENT 16
 #elif defined(AM_SIMD_ARCH_SSE3)
 #define MA_SUPPORT_SSE3
 #define MA_PREFER_SSE3
+#define AM_SIMD_ALIGNMENT 16
 #elif defined(AM_SIMD_ARCH_NEON)
 #define MA_SUPPORT_NEON
 #define MA_PREFER_NEON
 #define PFFFT_ENABLE_NEON
+#define AM_SIMD_ALIGNMENT 16
 #endif
 
 #endif

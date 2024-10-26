@@ -73,7 +73,7 @@ namespace SparkyStudios::Audio::Amplitude
         _channelStateId = 0;
 
         for (const auto& sound : _eventsMap | std::views::values)
-            ampooldelete(MemoryPoolKind::Engine, ChannelEventListener, sound);
+            ampooldelete(eMemoryPoolKind_Engine, ChannelEventListener, sound);
 
         _eventsMap.clear();
     }
@@ -653,7 +653,7 @@ namespace SparkyStudios::Audio::Amplitude
             return;
 
         if (_eventsMap[event] == nullptr)
-            _eventsMap[event] = ampoolnew(MemoryPoolKind::Engine, ChannelEventListener);
+            _eventsMap[event] = ampoolnew(eMemoryPoolKind_Engine, ChannelEventListener);
 
         _eventsMap[event]->Add(callback, userData);
     }
@@ -664,7 +664,7 @@ namespace SparkyStudios::Audio::Amplitude
             return;
 
         if (_eventsMap[event] == nullptr)
-            _eventsMap[event] = ampoolnew(MemoryPoolKind::Engine, ChannelEventListener);
+            _eventsMap[event] = ampoolnew(eMemoryPoolKind_Engine, ChannelEventListener);
 
         _eventsMap[event]->Call(this);
     }
@@ -752,7 +752,7 @@ namespace SparkyStudios::Audio::Amplitude
             settings.m_effectID = definition->effect();
 
             instances.push_back(ampoolnew(
-                MemoryPoolKind::Engine, SoundInstance, sound, settings, static_cast<const EffectImpl*>(_switchContainer->GetEffect())));
+                eMemoryPoolKind_Engine, SoundInstance, sound, settings, static_cast<const EffectImpl*>(_switchContainer->GetEffect())));
         }
 
         return _realChannel.Play(instances);

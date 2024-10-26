@@ -64,7 +64,7 @@ namespace SparkyStudios::Audio::Amplitude
     SoundInstance* SoundImpl::CreateInstance()
     {
         AMPLITUDE_ASSERT(m_id != kAmInvalidObjectId);
-        return ampoolnew(MemoryPoolKind::Engine, SoundInstance, this, _settings, m_effect);
+        return ampoolnew(eMemoryPoolKind_Engine, SoundInstance, this, _settings, m_effect);
     }
 
     SoundInstance* SoundImpl::CreateInstance(const CollectionImpl* collection)
@@ -74,7 +74,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         AMPLITUDE_ASSERT(m_id != kAmInvalidObjectId);
 
-        auto* sound = ampoolnew(MemoryPoolKind::Engine, SoundInstance, this, collection->_soundSettings.at(m_id), collection->m_effect);
+        auto* sound = ampoolnew(eMemoryPoolKind_Engine, SoundInstance, this, collection->_soundSettings.at(m_id), collection->m_effect);
         sound->_collection = collection;
 
         return sound;

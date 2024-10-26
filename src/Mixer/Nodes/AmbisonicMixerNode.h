@@ -29,12 +29,12 @@ namespace SparkyStudios::Audio::Amplitude
 
         [[nodiscard]] AM_INLINE NodeInstance* CreateInstance() const override
         {
-            return ampoolnew(MemoryPoolKind::Amplimix, MixerNodeInstance);
+            return ampoolnew(eMemoryPoolKind_Amplimix, MixerNodeInstance);
         }
 
         AM_INLINE void DestroyInstance(NodeInstance* instance) const override
         {
-            ampooldelete(MemoryPoolKind::Amplimix, MixerNodeInstance, (MixerNodeInstance*)instance);
+            ampooldelete(eMemoryPoolKind_Amplimix, MixerNodeInstance, (MixerNodeInstance*)instance);
         }
     };
 } // namespace SparkyStudios::Audio::Amplitude

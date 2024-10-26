@@ -144,7 +144,7 @@ namespace SparkyStudios::Audio::Amplitude
     private:
         AmReal64 _maxDistance;
 
-        AmUniquePtr<MemoryPoolKind::Engine, AttenuationZone> _shape;
+        AmUniquePtr<eMemoryPoolKind_Engine, AttenuationZone> _shape;
 
         Curve _gainCurve;
 

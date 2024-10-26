@@ -28,12 +28,12 @@ namespace SparkyStudios::Audio::Amplitude
 
     FFT::FFT()
     {
-        _implementation = ampoolnew(MemoryPoolKind::Filtering, AudioFFT);
+        _implementation = ampoolnew(eMemoryPoolKind_Filtering, AudioFFT);
     }
 
     FFT::~FFT()
     {
-        ampooldelete(MemoryPoolKind::Filtering, AudioFFT, (AudioFFT*)_implementation);
+        ampooldelete(eMemoryPoolKind_Filtering, AudioFFT, (AudioFFT*)_implementation);
     }
 
     void FFT::Initialize(const AmSize size) const

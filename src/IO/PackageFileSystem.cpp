@@ -109,8 +109,8 @@ namespace SparkyStudios::Audio::Amplitude
             return nullptr;
 
         return std::shared_ptr<PackageItemFile>(
-            ampoolnew(MemoryPoolKind::IO, PackageItemFile, &*it, _packagePath, _headerSize),
-            am_delete<MemoryPoolKind::IO, PackageItemFile>{});
+            ampoolnew(eMemoryPoolKind_IO, PackageItemFile, &*it, _packagePath, _headerSize),
+            am_delete<eMemoryPoolKind_IO, PackageItemFile>{});
     }
 
     void PackageFileSystem::StartOpenFileSystem()
@@ -150,7 +150,7 @@ namespace SparkyStudios::Audio::Amplitude
     {
         auto* pFileSystem = static_cast<PackageFileSystem*>(pParam);
 
-        pFileSystem->_packageFile.reset(ampoolnew(MemoryPoolKind::IO, DiskFile, pFileSystem->_packagePath));
+        pFileSystem->_packageFile.reset(ampoolnew(eMemoryPoolKind_IO, DiskFile, pFileSystem->_packagePath));
 
         if (!pFileSystem->_packageFile->IsValid())
         {

@@ -25,7 +25,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     ReflectionsNodeInstance::~ReflectionsNodeInstance()
     {
-        ampooldelete(MemoryPoolKind::Amplimix, ReflectionsProcessor, _reflectionsProcessor);
+        ampooldelete(eMemoryPoolKind_Amplimix, ReflectionsProcessor, _reflectionsProcessor);
         _reflectionsProcessor = nullptr;
     }
 
@@ -37,7 +37,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         _orientationProcessor.Configure(1, true);
         _reflectionsProcessor = ampoolnew(
-            MemoryPoolKind::Amplimix, ReflectionsProcessor, deviceConfig.mDeviceOutputSampleRate, amEngine->GetSamplesPerStream());
+            eMemoryPoolKind_Amplimix, ReflectionsProcessor, deviceConfig.mDeviceOutputSampleRate, amEngine->GetSamplesPerStream());
 
         _output.Configure(1, true, amEngine->GetSamplesPerStream());
         _silenceBuffer = AudioBuffer(amEngine->GetSamplesPerStream(), kAmMonoChannelCount);

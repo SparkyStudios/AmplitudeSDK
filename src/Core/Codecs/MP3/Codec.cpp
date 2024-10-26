@@ -22,17 +22,17 @@ namespace SparkyStudios::Audio::Amplitude
 {
     static void* onMalloc(size_t sz, void* pUserData)
     {
-        return ampoolmalloc(MemoryPoolKind::Codec, sz);
+        return ampoolmalloc(eMemoryPoolKind_Codec, sz);
     }
 
     static void* onRealloc(void* p, size_t sz, void* pUserData)
     {
-        return ampoolrealloc(MemoryPoolKind::Codec, p, sz);
+        return ampoolrealloc(eMemoryPoolKind_Codec, p, sz);
     }
 
     static void onFree(void* p, void* pUserData)
     {
-        ampoolfree(MemoryPoolKind::Codec, p);
+        ampoolfree(eMemoryPoolKind_Codec, p);
     }
 
     static size_t onRead(void* pUserData, void* pBufferOut, size_t bytesToRead)
@@ -159,22 +159,22 @@ namespace SparkyStudios::Audio::Amplitude
 
     Codec::Decoder* MP3Codec::CreateDecoder()
     {
-        return ampoolnew(MemoryPoolKind::Codec, MP3Decoder, this);
+        return ampoolnew(eMemoryPoolKind_Codec, MP3Decoder, this);
     }
 
     void MP3Codec::DestroyDecoder(Decoder* decoder)
     {
-        ampooldelete(MemoryPoolKind::Codec, MP3Decoder, (MP3Decoder*)decoder);
+        ampooldelete(eMemoryPoolKind_Codec, MP3Decoder, (MP3Decoder*)decoder);
     }
 
     Codec::Encoder* MP3Codec::CreateEncoder()
     {
-        return ampoolnew(MemoryPoolKind::Codec, MP3Encoder, this);
+        return ampoolnew(eMemoryPoolKind_Codec, MP3Encoder, this);
     }
 
     void MP3Codec::DestroyEncoder(Encoder* encoder)
     {
-        ampooldelete(MemoryPoolKind::Codec, MP3Encoder, (MP3Encoder*)encoder);
+        ampooldelete(eMemoryPoolKind_Codec, MP3Encoder, (MP3Encoder*)encoder);
     }
 
     bool MP3Codec::CanHandleFile(std::shared_ptr<File> file) const

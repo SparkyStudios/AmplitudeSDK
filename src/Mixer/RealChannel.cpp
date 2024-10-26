@@ -169,7 +169,7 @@ namespace SparkyStudios::Audio::Amplitude
 
             _channelLayersId.erase(layer);
 
-            ampooldelete(MemoryPoolKind::Engine, SoundInstance, _activeSounds[layer]);
+            ampooldelete(eMemoryPoolKind_Engine, SoundInstance, _activeSounds[layer]);
             _activeSounds.erase(layer);
 
             return true;

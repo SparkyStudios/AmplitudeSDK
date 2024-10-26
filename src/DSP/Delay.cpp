@@ -38,7 +38,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         if (_buffer == nullptr)
         {
-            _buffer.reset(ampoolnew(MemoryPoolKind::Filtering, AudioBuffer, newFramesCount, kAmMonoChannelCount));
+            _buffer.reset(ampoolnew(eMemoryPoolKind_Filtering, AudioBuffer, newFramesCount, kAmMonoChannelCount));
             _buffer->Clear();
             return;
         }
@@ -48,8 +48,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         if (_maxDelay > oldFramesCount - _framesCount)
         {
-            AmUniquePtr<MemoryPoolKind::Filtering, AudioBuffer> newBuffer(
-                ampoolnew(MemoryPoolKind::Filtering, AudioBuffer, newFramesCount, kAmMonoChannelCount));
+            AmUniquePtr<eMemoryPoolKind_Filtering, AudioBuffer> newBuffer(
+                ampoolnew(eMemoryPoolKind_Filtering, AudioBuffer, newFramesCount, kAmMonoChannelCount));
             newBuffer->Clear();
 
             std::copy(channel->begin() + _writePos, channel->end(), newBuffer->GetChannel(0).begin());

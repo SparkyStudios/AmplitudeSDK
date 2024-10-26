@@ -29,7 +29,7 @@ namespace SparkyStudios::Audio::Amplitude
     class BusInternalState;
     class DuckBusInternalState;
 
-    typedef std::vector<AmUniquePtr<MemoryPoolKind::Engine, DuckBusInternalState>> DuckBusList;
+    typedef std::vector<AmUniquePtr<eMemoryPoolKind_Engine, DuckBusInternalState>> DuckBusList;
 
     class DuckBusInternalState
     {

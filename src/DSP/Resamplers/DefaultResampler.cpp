@@ -364,11 +364,11 @@ namespace SparkyStudios::Audio::Amplitude
 
     ResamplerInstance* DefaultResampler::CreateInstance()
     {
-        return ampoolnew(MemoryPoolKind::Filtering, DefaultResamplerInstance);
+        return ampoolnew(eMemoryPoolKind_Filtering, DefaultResamplerInstance);
     }
 
     void DefaultResampler::DestroyInstance(ResamplerInstance* instance)
     {
-        ampooldelete(MemoryPoolKind::Filtering, DefaultResamplerInstance, (DefaultResamplerInstance*)instance);
+        ampooldelete(eMemoryPoolKind_Filtering, DefaultResamplerInstance, (DefaultResamplerInstance*)instance);
     }
 } // namespace SparkyStudios::Audio::Amplitude

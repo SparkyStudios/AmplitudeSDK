@@ -43,10 +43,8 @@
 #endif
 
 // Alignment required for SIMD data processing
-#define AM_SIMD_ALIGNMENT 16
 #define AM_TYPE_ALIGN(_declaration_, _alignment_) _declaration_ __attribute__((aligned(_alignment_)))
 #define AM_TYPE_ALIGN_SIMD(_declaration_) AM_TYPE_ALIGN(_declaration_, AM_SIMD_ALIGNMENT)
-#define AM_BUFFER_ALIGNMENT AM_SIMD_ALIGNMENT
 
 #if defined(AM_WCHAR_SUPPORTED)
 #include <sstream>

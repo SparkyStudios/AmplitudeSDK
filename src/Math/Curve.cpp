@@ -35,6 +35,16 @@ namespace SparkyStudios::Audio::Amplitude
         , _fader(nullptr)
     {}
 
+    CurvePart::CurvePart(const CurvePart& other)
+        : CurvePart()
+    {
+        SetStart(other._start);
+        SetEnd(other._end);
+
+        if (other._fader != nullptr)
+            SetFader(other._faderFactory->GetName());
+    }
+
     CurvePart::~CurvePart()
     {
         if (_fader != nullptr)
@@ -108,6 +118,19 @@ namespace SparkyStudios::Audio::Amplitude
         return _fader->GetFromPercentage(percentage);
     }
 
+    CurvePart& CurvePart::operator=(const CurvePart& other)
+    {
+        if (this == &other)
+            return *this;
+
+        SetStart(other._start);
+        SetEnd(other._end);
+
+        SetFader(other._faderFactory->GetName());
+
+        return *this;
+    }
+
     Curve::Curve()
         : _parts()
     {}
@@ -129,12 +152,7 @@ namespace SparkyStudios::Audio::Amplitude
         _parts.resize(parts.size());
 
         for (size_t i = 0; i < parts.size(); ++i)
-        {
-            _parts[i].SetStart(parts[i].GetStart());
-            _parts[i].SetEnd(parts[i].GetEnd());
-
-            _parts[i].SetFader(parts[i]._faderFactory->GetName());
-        }
+            _parts[i] = parts[i];
     }
 
     AmReal32 Curve::Get(AmReal64 x) const

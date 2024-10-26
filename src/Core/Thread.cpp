@@ -53,7 +53,7 @@ namespace SparkyStudios::Audio::Amplitude::Thread
 
     AmMutexHandle CreateMutex(AmUInt64 spinCount)
     {
-        auto* cs = ampoolnew(MemoryPoolKind::IO, CRITICAL_SECTION);
+        auto* cs = ampoolnew(eMemoryPoolKind_IO, CRITICAL_SECTION);
         AMPLITUDE_ASSERT(::InitializeCriticalSectionAndSpinCount(cs, spinCount) == TRUE);
         return static_cast<AmMutexHandle>(cs);
     }
@@ -65,7 +65,7 @@ namespace SparkyStudios::Audio::Amplitude::Thread
 
         auto* cs = static_cast<CRITICAL_SECTION*>(handle);
         ::DeleteCriticalSection(cs);
-        ampooldelete(MemoryPoolKind::IO, CRITICAL_SECTION, cs);
+        ampooldelete(eMemoryPoolKind_IO, CRITICAL_SECTION, cs);
     }
 
     void LockMutex(AmMutexHandle handle)
@@ -88,7 +88,7 @@ namespace SparkyStudios::Audio::Amplitude::Thread
 
     AmThreadHandle CreateThread(AmThreadFunction threadFunction, AmVoidPtr parameter)
     {
-        auto* d = ampoolnew(MemoryPoolKind::IO, AmThreadData);
+        auto* d = ampoolnew(eMemoryPoolKind_IO, AmThreadData);
         d->mFunc = threadFunction;
         d->mParam = parameter;
 
@@ -97,7 +97,7 @@ namespace SparkyStudios::Audio::Amplitude::Thread
         if (nullptr == h)
             return nullptr;
 
-        auto* threadHandle = ampoolnew(MemoryPoolKind::IO, AmThreadHandleData);
+        auto* threadHandle = ampoolnew(eMemoryPoolKind_IO, AmThreadHandleData);
         threadHandle->thread = h;
         threadHandle->data = d;
 
@@ -119,8 +119,8 @@ namespace SparkyStudios::Audio::Amplitude::Thread
     {
         auto* threadHandleData = static_cast<AmThreadHandleData*>(threadHandle);
         ::CloseHandle(threadHandleData->thread);
-        ampooldelete(MemoryPoolKind::IO, AmThreadData, threadHandleData->data);
-        ampooldelete(MemoryPoolKind::IO, AmThreadHandleData, threadHandleData);
+        ampooldelete(eMemoryPoolKind_IO, AmThreadData, threadHandleData->data);
+        ampooldelete(eMemoryPoolKind_IO, AmThreadHandleData, threadHandleData);
         threadHandle = nullptr;
     }
 
@@ -159,7 +159,7 @@ namespace SparkyStudios::Audio::Amplitude::Thread
 
     AmMutexHandle CreateMutex(AmUInt64 spinCount)
     {
-        auto* lock = ampoolnew(MemoryPoolKind::IO, AmSpinLockData);
+        auto* lock = ampoolnew(eMemoryPoolKind_IO, AmSpinLockData);
         lock->spinLocked = false;
 
 #if !defined(AM_NO_PTHREAD_SPINLOCK)
@@ -188,7 +188,7 @@ namespace SparkyStudios::Audio::Amplitude::Thread
 
         pthread_mutex_destroy(&lock->fallBackMutex);
 
-        ampooldelete(MemoryPoolKind::IO, AmSpinLockData, lock);
+        ampooldelete(eMemoryPoolKind_IO, AmSpinLockData, lock);
     }
 
     void LockMutex(AmMutexHandle handle)
@@ -235,11 +235,11 @@ namespace SparkyStudios::Audio::Amplitude::Thread
 
     AmThreadHandle CreateThread(AmThreadFunction threadFunction, AmVoidPtr parameter)
     {
-        auto* d = ampoolnew(MemoryPoolKind::IO, AmThreadData);
+        auto* d = ampoolnew(eMemoryPoolKind_IO, AmThreadData);
         d->mFunc = threadFunction;
         d->mParam = parameter;
 
-        auto* threadHandle = ampoolnew(MemoryPoolKind::IO, AmThreadHandleData);
+        auto* threadHandle = ampoolnew(eMemoryPoolKind_IO, AmThreadHandleData);
         threadHandle->data = d;
 
         pthread_create(&threadHandle->thread, nullptr, ThreadFunc, (AmVoidPtr)threadHandle->data);
@@ -275,8 +275,8 @@ namespace SparkyStudios::Audio::Amplitude::Thread
     {
         auto* threadHandleData = static_cast<AmThreadHandleData*>(threadHandle);
         pthread_detach(threadHandleData->thread);
-        ampooldelete(MemoryPoolKind::IO, AmThreadData, threadHandleData->data);
-        ampooldelete(MemoryPoolKind::IO, AmThreadHandleData, threadHandleData);
+        ampooldelete(eMemoryPoolKind_IO, AmThreadData, threadHandleData->data);
+        ampooldelete(eMemoryPoolKind_IO, AmThreadHandleData, threadHandleData);
         threadHandle = nullptr;
     }
 
@@ -367,7 +367,7 @@ namespace SparkyStudios::Audio::Amplitude::Thread
             Release(_thread[i]);
         }
 
-        ampoolfree(MemoryPoolKind::IO, _thread);
+        ampoolfree(eMemoryPoolKind_IO, _thread);
 
         if (_workMutex)
             DestroyMutex(_workMutex);
@@ -382,7 +382,7 @@ namespace SparkyStudios::Audio::Amplitude::Thread
         _workMutex = CreateMutex();
         _running = true;
         _threadCount = threadCount;
-        _thread = static_cast<AmThreadHandle*>(ampoolmalloc(MemoryPoolKind::IO, sizeof(void*) * threadCount));
+        _thread = static_cast<AmThreadHandle*>(ampoolmalloc(eMemoryPoolKind_IO, sizeof(void*) * threadCount));
 
         for (AmUInt32 i = 0; i < _threadCount; i++)
             _thread[i] = CreateThread(PoolWorker, this);

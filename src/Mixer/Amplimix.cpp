@@ -472,7 +472,7 @@ namespace SparkyStudios::Audio::Amplitude
             AMPLIMIX_STORE(&lay->sampleRateRatio, baseRatio * pitch * speed);
 
             // Initialize the converter
-            lay->dataConverter = ampoolnew(MemoryPoolKind::Amplimix, AudioConverter);
+            lay->dataConverter = ampoolnew(eMemoryPoolKind_Amplimix, AudioConverter);
 
             const auto soundChannels = static_cast<AmUInt32>(sound->format.GetNumChannels());
 
@@ -805,9 +805,9 @@ namespace SparkyStudios::Audio::Amplitude
         inSamples = AM_VALUE_ALIGN(inSamples, kProcessedFramesCount);
 #endif // AM_SIMD_INTRINSICS
 
-        SoundChunk* in = SoundChunk::CreateChunk(inSamples, soundChannels, MemoryPoolKind::Amplimix);
-        SoundChunk* transient = SoundChunk::CreateChunk(outSamples, 1, MemoryPoolKind::Amplimix);
-        SoundChunk* out = SoundChunk::CreateChunk(transient->frames, 2, MemoryPoolKind::Amplimix);
+        SoundChunk* in = SoundChunk::CreateChunk(inSamples, soundChannels, eMemoryPoolKind_Amplimix);
+        SoundChunk* transient = SoundChunk::CreateChunk(outSamples, 1, eMemoryPoolKind_Amplimix);
+        SoundChunk* out = SoundChunk::CreateChunk(transient->frames, 2, eMemoryPoolKind_Amplimix);
 
         // if this sound is streaming, and we have a stream event callback
         if (layer->snd->stream)
@@ -1040,7 +1040,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void AmplimixLayerImpl::Reset()
     {
-        ampooldelete(MemoryPoolKind::Amplimix, AudioConverter, dataConverter);
+        ampooldelete(eMemoryPoolKind_Amplimix, AudioConverter, dataConverter);
     }
 
     void AmplimixLayerImpl::ResetPipeline()

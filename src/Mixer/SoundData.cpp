@@ -26,7 +26,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (format.GetNumChannels() < 1 || format.GetNumChannels() > 2 || frames < 1)
             return nullptr;
 
-        auto* sound = ampoolnew(MemoryPoolKind::SoundData, SoundData);
+        auto* sound = ampoolnew(eMemoryPoolKind_SoundData, SoundData);
 
         sound->chunk = chunk;
         sound->length = frames;
@@ -37,7 +37,7 @@ namespace SparkyStudios::Audio::Amplitude
         return sound;
     }
 
-    SoundChunk* SoundChunk::CreateChunk(AmUInt64 frames, AmUInt16 channels, MemoryPoolKind pool)
+    SoundChunk* SoundChunk::CreateChunk(AmUInt64 frames, AmUInt16 channels, eMemoryPoolKind pool)
     {
 #if defined(AM_SIMD_INTRINSICS)
         const AmUInt64 alignedFrames = AM_VALUE_ALIGN(frames, GetSimdBlockSize());
@@ -46,7 +46,7 @@ namespace SparkyStudios::Audio::Amplitude
 #endif // AM_SIMD_INTRINSICS
         const AmUInt64 alignedLength = alignedFrames * channels;
 
-        auto* chunk = ampoolnew(MemoryPoolKind::SoundData, SoundChunk);
+        auto* chunk = ampoolnew(eMemoryPoolKind_SoundData, SoundChunk);
 
         chunk->frames = alignedFrames;
         chunk->length = alignedLength;
@@ -59,7 +59,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void SoundChunk::DestroyChunk(SoundChunk* chunk)
     {
-        ampooldelete(MemoryPoolKind::SoundData, SoundChunk, chunk);
+        ampooldelete(eMemoryPoolKind_SoundData, SoundChunk, chunk);
     }
 
     SoundChunk::~SoundChunk()
@@ -98,6 +98,6 @@ namespace SparkyStudios::Audio::Amplitude
         if (destroyChunk)
             SoundChunk::DestroyChunk(soundData->chunk);
 
-        ampooldelete(MemoryPoolKind::SoundData, SoundData, soundData);
+        ampooldelete(eMemoryPoolKind_SoundData, SoundData, soundData);
     }
 } // namespace SparkyStudios::Audio::Amplitude

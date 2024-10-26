@@ -29,7 +29,7 @@ namespace SparkyStudios::Audio::Amplitude
     PipelineInstanceImpl::~PipelineInstanceImpl()
     {
         for (const auto& node : _nodeInstances)
-            ampooldelete(MemoryPoolKind::Amplimix, NodeInstance, node.second);
+            ampooldelete(eMemoryPoolKind_Amplimix, NodeInstance, node.second);
 
         _inputNode = nullptr;
         _outputNode = nullptr;
@@ -80,7 +80,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     PipelineInstance* PipelineImpl::CreateInstance(const AmplimixLayer* layer) const
     {
-        auto* instance = ampoolnew(MemoryPoolKind::Amplimix, PipelineInstanceImpl, this, static_cast<const AmplimixLayerImpl*>(layer));
+        auto* instance = ampoolnew(eMemoryPoolKind_Amplimix, PipelineInstanceImpl, this, static_cast<const AmplimixLayerImpl*>(layer));
 
         const auto* definition = GetDefinition();
         const auto* nodes = definition->nodes();
@@ -96,12 +96,12 @@ namespace SparkyStudios::Audio::Amplitude
             NodeInstance* node = nullptr;
             if (nodeName.compare("Input") == 0)
             {
-                node = ampoolnew(MemoryPoolKind::Amplimix, InputNodeInstance);
+                node = ampoolnew(eMemoryPoolKind_Amplimix, InputNodeInstance);
                 instance->_inputNode = static_cast<InputNodeInstance*>(node);
             }
             else if (nodeName.compare("Output") == 0)
             {
-                node = ampoolnew(MemoryPoolKind::Amplimix, OutputNodeInstance);
+                node = ampoolnew(eMemoryPoolKind_Amplimix, OutputNodeInstance);
                 instance->_outputNode = static_cast<OutputNodeInstance*>(node);
             }
             else
@@ -153,7 +153,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void PipelineImpl::DestroyInstance(PipelineInstance* instance) const
     {
-        ampooldelete(MemoryPoolKind::Amplimix, PipelineInstanceImpl, (PipelineInstanceImpl*)instance);
+        ampooldelete(eMemoryPoolKind_Amplimix, PipelineInstanceImpl, (PipelineInstanceImpl*)instance);
     }
 
     bool PipelineImpl::LoadDefinition(const PipelineDefinition* definition, EngineInternalState* state)

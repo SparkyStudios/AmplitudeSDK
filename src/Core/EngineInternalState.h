@@ -59,23 +59,23 @@ namespace SparkyStudios::Audio::Amplitude
     typedef std::map<AmOsString, AmEventID> EventIdMap;
     typedef std::map<AmOsString, AmBankID> SoundBankIdMap;
 
-    typedef std::map<AmSwitchContainerID, AmUniquePtr<MemoryPoolKind::Engine, SwitchContainerImpl>> SwitchContainerMap;
+    typedef std::map<AmSwitchContainerID, AmUniquePtr<eMemoryPoolKind_Engine, SwitchContainerImpl>> SwitchContainerMap;
 
-    typedef std::map<AmCollectionID, AmUniquePtr<MemoryPoolKind::Engine, CollectionImpl>> CollectionMap;
+    typedef std::map<AmCollectionID, AmUniquePtr<eMemoryPoolKind_Engine, CollectionImpl>> CollectionMap;
 
-    typedef std::map<AmSoundID, AmUniquePtr<MemoryPoolKind::Engine, SoundImpl>> SoundMap;
+    typedef std::map<AmSoundID, AmUniquePtr<eMemoryPoolKind_Engine, SoundImpl>> SoundMap;
 
-    typedef std::map<AmAttenuationID, AmUniquePtr<MemoryPoolKind::Engine, AttenuationImpl>> AttenuationMap;
+    typedef std::map<AmAttenuationID, AmUniquePtr<eMemoryPoolKind_Engine, AttenuationImpl>> AttenuationMap;
 
-    typedef std::map<AmSwitchID, AmUniquePtr<MemoryPoolKind::Engine, SwitchImpl>> SwitchMap;
+    typedef std::map<AmSwitchID, AmUniquePtr<eMemoryPoolKind_Engine, SwitchImpl>> SwitchMap;
 
-    typedef std::map<AmRtpcID, AmUniquePtr<MemoryPoolKind::Engine, RtpcImpl>> RtpcMap;
+    typedef std::map<AmRtpcID, AmUniquePtr<eMemoryPoolKind_Engine, RtpcImpl>> RtpcMap;
 
-    typedef std::map<AmEffectID, AmUniquePtr<MemoryPoolKind::Engine, EffectImpl>> EffectMap;
+    typedef std::map<AmEffectID, AmUniquePtr<eMemoryPoolKind_Engine, EffectImpl>> EffectMap;
 
-    typedef std::map<AmEventID, AmUniquePtr<MemoryPoolKind::Engine, EventImpl>> EventMap;
+    typedef std::map<AmEventID, AmUniquePtr<eMemoryPoolKind_Engine, EventImpl>> EventMap;
 
-    typedef std::map<AmBankID, AmUniquePtr<MemoryPoolKind::Engine, SoundBank>> SoundBankMap;
+    typedef std::map<AmBankID, AmUniquePtr<eMemoryPoolKind_Engine, SoundBank>> SoundBankMap;
 
     typedef std::vector<EventInstanceImpl> EventInstanceVector;
 

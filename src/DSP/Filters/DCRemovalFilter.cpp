@@ -35,12 +35,12 @@ namespace SparkyStudios::Audio::Amplitude
 
     FilterInstance* DCRemovalFilter::CreateInstance()
     {
-        return ampoolnew(MemoryPoolKind::Filtering, DCRemovalFilterInstance, this);
+        return ampoolnew(eMemoryPoolKind_Filtering, DCRemovalFilterInstance, this);
     }
 
     void DCRemovalFilter::DestroyInstance(FilterInstance* instance)
     {
-        ampooldelete(MemoryPoolKind::Filtering, DCRemovalFilterInstance, (DCRemovalFilterInstance*)instance);
+        ampooldelete(eMemoryPoolKind_Filtering, DCRemovalFilterInstance, (DCRemovalFilterInstance*)instance);
     }
 
     DCRemovalFilterInstance::DCRemovalFilterInstance(DCRemovalFilter* parent)

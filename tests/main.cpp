@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
     ConsoleLogger logger;
     Logger::SetLogger(&logger);
 
-    MemoryManager::Initialize({});
+    MemoryManager::Initialize();
 
     const auto res = Catch::Session().run(argc, argv);
 

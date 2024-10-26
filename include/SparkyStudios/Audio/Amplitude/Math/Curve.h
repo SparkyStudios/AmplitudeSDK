@@ -65,6 +65,13 @@ namespace SparkyStudios::Audio::Amplitude
         CurvePart();
 
         /**
+         * @brief Copy constructor.
+         *
+         * @param[in] other The `CurvePart` to copy.
+         */
+        CurvePart(const CurvePart& other);
+
+        /**
          * @brief Destroys this `CurvePart`.
          */
         ~CurvePart();
@@ -127,6 +134,15 @@ namespace SparkyStudios::Audio::Amplitude
          * @return The Y coordinates of the point.
          */
         [[nodiscard]] AmReal32 Get(AmReal64 x) const;
+
+        /**
+         * @brief Copy assignment operator.
+         *
+         * @param[in] other The other `CurvePart` to copy.
+         *
+         * @return A copy of this `CurvePart`.
+         */
+        CurvePart& operator=(const CurvePart& other);
 
     private:
         friend class Curve;

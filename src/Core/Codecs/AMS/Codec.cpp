@@ -376,34 +376,34 @@ namespace SparkyStudios::Audio::Amplitude
         const AmUInt32 frameSize = format.GetFrameSize();
         const AmUInt32 samplesPerBlock = (blockSize - numChannels * 4) * (numChannels ^ 3) + 1;
 
-        auto pcm_block = static_cast<AmInt16Buffer>(ampoolmalloc(MemoryPoolKind::Codec, samplesPerBlock * frameSize));
-        auto adpcm_block = static_cast<AmUInt8Buffer>(ampoolmalloc(MemoryPoolKind::Codec, blockSize));
+        auto pcm_block = static_cast<AmInt16Buffer>(ampoolmalloc(eMemoryPoolKind_Codec, samplesPerBlock * frameSize));
+        auto adpcm_block = static_cast<AmUInt8Buffer>(ampoolmalloc(eMemoryPoolKind_Codec, blockSize));
 
         if (!pcm_block || !adpcm_block)
         {
             return 0;
         }
 
-        auto* output16 = static_cast<AmInt16Buffer>(ampoolmalloc(MemoryPoolKind::Codec, length * numChannels * sizeof(AmInt16)));
+        auto* output16 = static_cast<AmInt16Buffer>(ampoolmalloc(eMemoryPoolKind_Codec, length * numChannels * sizeof(AmInt16)));
 
         if (!output16)
         {
-            ampoolfree(MemoryPoolKind::Codec, pcm_block);
-            ampoolfree(MemoryPoolKind::Codec, adpcm_block);
+            ampoolfree(eMemoryPoolKind_Codec, pcm_block);
+            ampoolfree(eMemoryPoolKind_Codec, adpcm_block);
             return 0;
         }
 
         if (file->Read(adpcm_block, blockSize) != blockSize)
         {
-            ampoolfree(MemoryPoolKind::Codec, pcm_block);
-            ampoolfree(MemoryPoolKind::Codec, adpcm_block);
+            ampoolfree(eMemoryPoolKind_Codec, pcm_block);
+            ampoolfree(eMemoryPoolKind_Codec, adpcm_block);
             return 0;
         }
 
         if (Decompress(pcm_block, adpcm_block, blockSize, numChannels) != samplesPerBlock)
         {
-            ampoolfree(MemoryPoolKind::Codec, pcm_block);
-            ampoolfree(MemoryPoolKind::Codec, adpcm_block);
+            ampoolfree(eMemoryPoolKind_Codec, pcm_block);
+            ampoolfree(eMemoryPoolKind_Codec, adpcm_block);
             return 0;
         }
 
@@ -417,9 +417,9 @@ namespace SparkyStudios::Audio::Amplitude
                 channel[i] = AmInt16ToReal32(output16[i * numChannels + c]);
         }
 
-        ampoolfree(MemoryPoolKind::Codec, output16);
-        ampoolfree(MemoryPoolKind::Codec, pcm_block);
-        ampoolfree(MemoryPoolKind::Codec, adpcm_block);
+        ampoolfree(eMemoryPoolKind_Codec, output16);
+        ampoolfree(eMemoryPoolKind_Codec, pcm_block);
+        ampoolfree(eMemoryPoolKind_Codec, adpcm_block);
 
         return length;
     }
@@ -436,14 +436,14 @@ namespace SparkyStudios::Audio::Amplitude
         const AmUInt32 numChannels = format.GetNumChannels();
         AmUInt32 blockSize = (samplesPerBlock - 1) / (numChannels ^ 3) + (numChannels * 4);
 
-        auto adpcm_block = static_cast<AmUInt8Buffer>(ampoolmalloc(MemoryPoolKind::Codec, blockSize));
+        auto adpcm_block = static_cast<AmUInt8Buffer>(ampoolmalloc(eMemoryPoolKind_Codec, blockSize));
 
         Context* ctx = nullptr;
 
         if (!adpcm_block)
             return 0;
 
-        auto* input16 = static_cast<AmInt16Buffer>(ampoolmalloc(MemoryPoolKind::Codec, length * numChannels * sizeof(AmInt16)));
+        auto* input16 = static_cast<AmInt16Buffer>(ampoolmalloc(eMemoryPoolKind_Codec, length * numChannels * sizeof(AmInt16)));
 
         if (!input16)
             return 0;
@@ -529,13 +529,13 @@ namespace SparkyStudios::Audio::Amplitude
 
             if (num_bytes != blockSize)
             {
-                ampoolfree(MemoryPoolKind::Codec, adpcm_block);
+                ampoolfree(eMemoryPoolKind_Codec, adpcm_block);
                 return 0;
             }
 
             if (file->Write(adpcm_block, blockSize) != blockSize)
             {
-                ampoolfree(MemoryPoolKind::Codec, adpcm_block);
+                ampoolfree(eMemoryPoolKind_Codec, adpcm_block);
                 return 0;
             }
 
@@ -548,8 +548,8 @@ namespace SparkyStudios::Audio::Amplitude
             FreeContext(ctx);
         }
 
-        ampoolfree(MemoryPoolKind::Codec, input16);
-        ampoolfree(MemoryPoolKind::Codec, adpcm_block);
+        ampoolfree(eMemoryPoolKind_Codec, input16);
+        ampoolfree(eMemoryPoolKind_Codec, adpcm_block);
 
         return offset;
     }
@@ -665,22 +665,22 @@ namespace SparkyStudios::Audio::Amplitude
 
     Codec::Decoder* AMSCodec::CreateDecoder()
     {
-        return ampoolnew(MemoryPoolKind::Codec, AMSDecoder, this);
+        return ampoolnew(eMemoryPoolKind_Codec, AMSDecoder, this);
     }
 
     void AMSCodec::DestroyDecoder(Decoder* decoder)
     {
-        ampooldelete(MemoryPoolKind::Codec, AMSDecoder, (AMSDecoder*)decoder);
+        ampooldelete(eMemoryPoolKind_Codec, AMSDecoder, (AMSDecoder*)decoder);
     }
 
     Codec::Encoder* AMSCodec::CreateEncoder()
     {
-        return ampoolnew(MemoryPoolKind::Codec, AMSEncoder, this);
+        return ampoolnew(eMemoryPoolKind_Codec, AMSEncoder, this);
     }
 
     void AMSCodec::DestroyEncoder(Encoder* encoder)
     {
-        ampooldelete(MemoryPoolKind::Codec, AMSEncoder, (AMSEncoder*)encoder);
+        ampooldelete(eMemoryPoolKind_Codec, AMSEncoder, (AMSEncoder*)encoder);
     }
 
     bool AMSCodec::CanHandleFile(std::shared_ptr<File> file) const

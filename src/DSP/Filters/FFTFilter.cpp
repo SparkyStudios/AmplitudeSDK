@@ -36,12 +36,12 @@ namespace SparkyStudios::Audio::Amplitude
 
     FilterInstance* FFTFilter::CreateInstance()
     {
-        return ampoolnew(MemoryPoolKind::Filtering, FFTFilterInstance, this);
+        return ampoolnew(eMemoryPoolKind_Filtering, FFTFilterInstance, this);
     }
 
     void FFTFilter::DestroyInstance(FilterInstance* instance)
     {
-        ampooldelete(MemoryPoolKind::Filtering, FFTFilterInstance, (FFTFilterInstance*)instance);
+        ampooldelete(eMemoryPoolKind_Filtering, FFTFilterInstance, (FFTFilterInstance*)instance);
     }
 
     FFTFilterInstance::FFTFilterInstance(FFTFilter* parent)
@@ -53,25 +53,25 @@ namespace SparkyStudios::Audio::Amplitude
 
     FFTFilterInstance::~FFTFilterInstance()
     {
-        ampoolfree(MemoryPoolKind::Filtering, _temp);
+        ampoolfree(eMemoryPoolKind_Filtering, _temp);
         _temp = nullptr;
 
         if (_sumPhase != nullptr)
         {
-            ampoolfree(MemoryPoolKind::Filtering, _sumPhase);
+            ampoolfree(eMemoryPoolKind_Filtering, _sumPhase);
             _sumPhase = nullptr;
         }
 
         if (_lastPhase != nullptr)
         {
-            ampoolfree(MemoryPoolKind::Filtering, _lastPhase);
+            ampoolfree(eMemoryPoolKind_Filtering, _lastPhase);
             _lastPhase = nullptr;
         }
     }
 
     void FFTFilterInstance::InitializeFFT()
     {
-        _temp = static_cast<AmReal32Buffer>(ampoolmalloc(MemoryPoolKind::Filtering, STFT_WINDOW_SIZE * sizeof(AmReal32)));
+        _temp = static_cast<AmReal32Buffer>(ampoolmalloc(eMemoryPoolKind_Filtering, STFT_WINDOW_SIZE * sizeof(AmReal32)));
     }
 
     void FFTFilterInstance::Process(const AudioBuffer& in, AudioBuffer& out, AmUInt64 frames, AmUInt32 sampleRate)
@@ -79,7 +79,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (_sumPhase == nullptr)
         {
             _sumPhase = static_cast<AmReal32Buffer>(
-                ampoolmalloc(MemoryPoolKind::Filtering, STFT_WINDOW_SIZE * in.GetChannelCount() * sizeof(AmReal32)));
+                ampoolmalloc(eMemoryPoolKind_Filtering, STFT_WINDOW_SIZE * in.GetChannelCount() * sizeof(AmReal32)));
 
             std::memset(_sumPhase, 0, sizeof(AmReal32) * STFT_WINDOW_SIZE * in.GetChannelCount());
         }
@@ -87,7 +87,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (_lastPhase == nullptr)
         {
             _lastPhase = static_cast<AmReal32Buffer>(
-                ampoolmalloc(MemoryPoolKind::Filtering, STFT_WINDOW_SIZE * in.GetChannelCount() * sizeof(AmReal32)));
+                ampoolmalloc(eMemoryPoolKind_Filtering, STFT_WINDOW_SIZE * in.GetChannelCount() * sizeof(AmReal32)));
 
             std::memset(_lastPhase, 0, sizeof(AmReal32) * STFT_WINDOW_SIZE * in.GetChannelCount());
         }

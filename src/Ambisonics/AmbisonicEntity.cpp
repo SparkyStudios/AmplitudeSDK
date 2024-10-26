@@ -34,15 +34,18 @@ namespace SparkyStudios::Audio::Amplitude
         if (!AmbisonicComponent::Configure(order, is3D))
             return false;
 
-        m_coefficients.resize(m_channelCount, 0.0f);
-        m_orderWeights.resize(m_order + 1, 1.0f);
+        m_coefficients.Resize(m_channelCount, true);
+        m_orderWeights.Resize(m_order + 1, true);
+
+        for (AmUInt32 i = 0; i <= m_order; ++i)
+            m_orderWeights[i] = 1.0f;
 
         return true;
     }
 
     void AmbisonicEntity::Reset()
     {
-        std::memset(m_coefficients.data(), 0, m_channelCount * sizeof(AmReal32));
+        std::memset(m_coefficients.GetBuffer(), 0, m_channelCount * sizeof(AmReal32));
     }
 
     void AmbisonicEntity::Refresh()
@@ -115,6 +118,6 @@ namespace SparkyStudios::Audio::Amplitude
             }
         }
 
-        ScalarMultiply(m_coefficients.data(), m_coefficients.data(), m_gain, m_channelCount);
+        ScalarMultiply(m_coefficients.GetBuffer(), m_coefficients.GetBuffer(), m_gain, m_channelCount);
     }
 } // namespace SparkyStudios::Audio::Amplitude
