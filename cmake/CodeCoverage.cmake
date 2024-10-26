@@ -154,14 +154,14 @@ endif() # NOT GCOV_PATH
 # Check supported compiler (Clang, GNU and Flang)
 get_property(LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
 foreach(LANG ${LANGUAGES})
-    if("${CMAKE_${LANG}_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
-        if("${CMAKE_${LANG}_COMPILER_VERSION}" VERSION_LESS 3)
-            message(FATAL_ERROR "Clang version must be 3.0.0 or greater! Aborting...")
-        endif()
-    elseif(NOT "${CMAKE_${LANG}_COMPILER_ID}" MATCHES "GNU"
-        AND NOT "${CMAKE_${LANG}_COMPILER_ID}" MATCHES "(LLVM)?[Ff]lang")
-        message(FATAL_ERROR "Compiler is not GNU or Flang! Aborting...")
+  if("${CMAKE_${LANG}_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+    if("${CMAKE_${LANG}_COMPILER_VERSION}" VERSION_LESS 3)
+      message(FATAL_ERROR "Clang version must be 3.0.0 or greater! Aborting...")
     endif()
+  elseif(NOT "${CMAKE_${LANG}_COMPILER_ID}" MATCHES "GNU"
+         AND NOT "${CMAKE_${LANG}_COMPILER_ID}" MATCHES "(LLVM)?[Ff]lang")
+    message(FATAL_ERROR "Compiler is not GNU or Flang! Aborting...")
+  endif()
 endforeach()
 
 set(COVERAGE_COMPILER_FLAGS "-g --coverage"
@@ -268,7 +268,7 @@ function(setup_target_for_coverage_lcov)
 
     # Conditional arguments
     if(CPPFILT_PATH AND NOT ${Coverage_NO_DEMANGLE})
-        set(GENHTML_EXTRA_ARGS "--demangle-cpp")
+      set(GENHTML_EXTRA_ARGS "--demangle-cpp")
     endif()
 
     # Setting up commands which will be run to generate coverage data.
@@ -370,12 +370,12 @@ function(setup_target_for_coverage_lcov)
 
         # Set output files as GENERATED (will be removed on 'make clean')
         BYPRODUCTS
-        ${Coverage_NAME}.base
-        ${Coverage_NAME}.capture
-        ${Coverage_NAME}.total
-        ${Coverage_NAME}.info
-        ${GCOVR_XML_CMD_BYPRODUCTS}
-        ${Coverage_NAME}/index.html
+            ${Coverage_NAME}.base
+            ${Coverage_NAME}.capture
+            ${Coverage_NAME}.total
+            ${Coverage_NAME}.info
+            ${GCOVR_XML_CMD_BYPRODUCTS}
+            ${Coverage_NAME}/index.html
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS ${Coverage_DEPENDENCIES}
         VERBATIM # Protect arguments to commands
@@ -701,8 +701,8 @@ function(setup_target_for_coverage_fastcov)
 
         # Cleanup fastcov
         COMMAND ${FASTCOV_PATH} ${Coverage_FASTCOV_ARGS} --gcov ${GCOV_PATH}
-        --search-directory ${BASEDIR}
-        --zerocounters
+            --search-directory ${BASEDIR}
+            --zerocounters
 
         COMMAND ${FASTCOV_EXEC_TESTS_CMD}
         COMMAND ${FASTCOV_CAPTURE_CMD}
@@ -712,9 +712,9 @@ function(setup_target_for_coverage_fastcov)
 
         # Set output files as GENERATED (will be removed on 'make clean')
         BYPRODUCTS
-        ${Coverage_NAME}.info
-        ${Coverage_NAME}.json
-        ${Coverage_NAME}/index.html  # report directory
+             ${Coverage_NAME}.info
+             ${Coverage_NAME}.json
+             ${Coverage_NAME}/index.html  # report directory
 
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS ${Coverage_DEPENDENCIES}
