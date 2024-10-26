@@ -134,6 +134,12 @@ class CommandOptions(object):
             print_help(no_logo, script_name)
             sys.exit(1)
 
+        # Check if running on Windows
+        if sys.platform.startswith('win'):
+            self.flatc_path = self.flatc_path.replace('/', '\\')
+            if not self.flatc_path.endswith(".exe"):
+                self.flatc_path += ".exe"
+
 
 def run_subprocess(argv):
     """
