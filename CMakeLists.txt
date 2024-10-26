@@ -23,26 +23,31 @@ include(DetectAmplitudeVersion)
 option(BUILD_SAMPLES "Build samples" OFF)
 option(UNIT_TESTS "Enable Unit Testing" OFF)
 
+if(UNIT_TESTS)
+    list(APPEND VCPKG_MANIFEST_FEATURES "tests")
+    set(BUILD_SAMPLES ON)
+endif ()
+
 if (BUILD_SAMPLES)
     list(APPEND VCPKG_MANIFEST_FEATURES "samples")
 endif ()
 
-if(UNIT_TESTS)
-    list(APPEND VCPKG_MANIFEST_FEATURES "tests")
-
-    include(CodeCoverage)
-    append_coverage_compiler_flags()
-
-    if (NOT MSVC)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
-        set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-    endif ()
-endif ()
-
-project(Amplitude VERSION ${DETECTED_AM_VERSION})
+project(Amplitude
+    VERSION ${DETECTED_AM_VERSION}
+    DESCRIPTION "A cross-platform audio engine for games"
+    HOMEPAGE_URL "https://amplitudeaudiosdk.com"
+)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(UNIT_TESTS AND NOT MSVC)
+    include(CodeCoverage)
+    append_coverage_compiler_flags()
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif ()
 
 set(CMAKE_DEBUG_POSTFIX "_d")
 
@@ -553,12 +558,14 @@ if(BUILD_SAMPLES)
 endif ()
 
 if(UNIT_TESTS)
-    setup_target_for_coverage_lcov(
-        NAME ss_amplitude_audio_tests_coverage
-        EXECUTABLE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ss_amplitude_audio_tests
-        DEPENDENCIES ss_amplitude_audio_tests
-        EXCLUDE "/usr/*" "${CMAKE_BINARY_DIR}/vcpkg_installed/*" "${PROJECT_SOURCE_DIR}/src/Utils/*"
-    )
+    if (NOT MSVC)
+        setup_target_for_coverage_lcov(
+            NAME ss_amplitude_audio_tests_coverage
+            EXECUTABLE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ss_amplitude_audio_tests
+            DEPENDENCIES ss_amplitude_audio_tests
+            EXCLUDE "/usr/*" "${CMAKE_BINARY_DIR}/vcpkg_installed/*" "${PROJECT_SOURCE_DIR}/src/Utils/*"
+        )
+    endif ()
 
     enable_testing()
     add_subdirectory(tests)
