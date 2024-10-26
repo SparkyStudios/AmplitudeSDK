@@ -97,7 +97,7 @@ struct AmTestListener : Catch::EventListenerBase
         amEngine->DestroyInstance();
     }
 
-    AmThreadHandle threadHandle;
+    AmThreadHandle threadHandle = nullptr;
     DiskFileSystem fileSystem;
     bool running = false;
 };
