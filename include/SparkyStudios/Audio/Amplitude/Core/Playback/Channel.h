@@ -32,14 +32,37 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup engine
      */
-    enum class ChannelPlaybackState : AmUInt8
+    enum eChannelPlaybackState : AmUInt8
     {
-        Stopped = 0, ///< The channel is stopped and not rendering audio.
-        Playing = 1, ///< The channel is playing audio.
-        FadingIn = 2, ///< The channel has just been played or resumed and is fading in to the `Playing` state.
-        FadingOut = 3, ///< The channel has just been stopped or paused and is fading out to the `Stopped` or `Paused` state.
-        SwitchingState = 4, ///< The channel is updating the value of his linked switch state.
-        Paused = 5, ///< The channel is paused.
+        /**
+         * @brief The channel is stopped and not rendering audio.
+         */
+        eChannelPlaybackState_Stopped = 0,
+
+        /**
+         * @brief The channel is playing audio.
+         */
+        eChannelPlaybackState_Playing = 1,
+
+        /**
+         * @brief The channel has just been played or resumed and is fading in to the `Playing` state.
+         */
+        eChannelPlaybackState_FadingIn = 2,
+
+        /**
+         * @brief The channel has just been stopped or paused and is fading out to the `Stopped` or `Paused` state.
+         */
+        eChannelPlaybackState_FadingOut = 3,
+
+        /**
+         * @brief The channel is updating the value of his linked switch state.
+         */
+        eChannelPlaybackState_SwitchingState = 4,
+
+        /**
+         * @brief The channel is playing audio but in a paused state.
+         */
+        eChannelPlaybackState_Paused = 5,
     };
 
     /**
@@ -180,7 +203,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @return A `ChannelPlaybackState` enumeration value representing the current state of the `Channel`.
          */
-        [[nodiscard]] ChannelPlaybackState GetPlaybackState() const;
+        [[nodiscard]] eChannelPlaybackState GetPlaybackState() const;
 
         /**
          * @brief Returns the `Entity` associated with this `Channel`.

@@ -19,19 +19,28 @@
 
 #if defined(AM_SIMD_INTRINSICS)
 
-#if defined(__AVX2__) || defined(AM_BUILDSYSTEM_ARCH_X86_AVX2)
+#if defined(__AVX2__)
 #if !defined(AM_BUILDSYSTEM_ARCH_X86_AVX2)
 #define AM_BUILDSYSTEM_ARCH_X86_AVX2
 #endif
 #define AM_SIMD_ARCH_AVX2
-#elif defined(__AVX__) || defined(AM_BUILDSYSTEM_ARCH_X86_AVX)
+#elif defined(__AVX__)
 #if !defined(AM_BUILDSYSTEM_ARCH_X86_AVX)
 #define AM_BUILDSYSTEM_ARCH_X86_AVX
 #endif
 #define AM_SIMD_ARCH_AVX
 #endif
 
-#if (defined(__SSE4_2__) || defined(__SSE4_1__) || defined(__SSE4A__)) || defined(AM_BUILDSYSTEM_ARCH_X86_SSE4_1)
+#if defined(__SSE4_2__)
+#if !defined(AM_BUILDSYSTEM_ARCH_X86_SSE4_2)
+#define AM_BUILDSYSTEM_ARCH_X86_SSE4_2
+#endif
+#define AM_SIMD_ARCH_SSE4_2
+#define AM_SIMD_ARCH_SSE4_1
+#define AM_SIMD_ARCH_SSSE3
+#define AM_SIMD_ARCH_SSE3
+#define AM_SIMD_ARCH_SSE2
+#elif defined(__SSE4_1__)
 #if !defined(AM_BUILDSYSTEM_ARCH_X86_SSE4_1)
 #define AM_BUILDSYSTEM_ARCH_X86_SSE4_1
 #endif
@@ -39,57 +48,62 @@
 #define AM_SIMD_ARCH_SSSE3
 #define AM_SIMD_ARCH_SSE3
 #define AM_SIMD_ARCH_SSE2
-#elif defined(__SSSE3__) || defined(AM_BUILDSYSTEM_ARCH_X86_SSSE3) || defined(AM_BUILDSYSTEM_ARCH_X86_SSSE3)
+#elif defined(__SSSE3__)
 #if !defined(AM_BUILDSYSTEM_ARCH_X86_SSSE3)
 #define AM_BUILDSYSTEM_ARCH_X86_SSSE3
 #endif
 #define AM_SIMD_ARCH_SSSE3
 #define AM_SIMD_ARCH_SSE3
 #define AM_SIMD_ARCH_SSE2
-#elif defined(__SSE3__) || defined(AM_BUILDSYSTEM_ARCH_X86_SSE3)
+#elif defined(__SSE3__)
 #if !defined(AM_BUILDSYSTEM_ARCH_X86_SSE3)
 #define AM_BUILDSYSTEM_ARCH_X86_SSE3
 #endif
 #define AM_SIMD_ARCH_SSE3
 #define AM_SIMD_ARCH_SSE2
-#elif defined(__SSE2__) || defined(AM_BUILDSYSTEM_ARCH_X86_SSE2)
+#elif defined(__SSE2__)
 #if !defined(AM_BUILDSYSTEM_ARCH_X86_SSE2)
 #define AM_BUILDSYSTEM_ARCH_X86_SSE2
 #endif
 #define AM_SIMD_ARCH_SSE2
 #endif
 
-#if defined(__FMA__) || defined(AM_BUILDSYSTEM_ARCH_X86_FMA3)
+#if defined(__FMA__)
 #if !defined(AM_BUILDSYSTEM_ARCH_X86_FMA3)
 #define AM_BUILDSYSTEM_ARCH_X86_FMA3
 #endif
 #define AM_SIMD_ARCH_FMA3
 #endif
 
-#if defined(AM_CPU_ARM_NEON) || defined(AM_BUILDSYSTEM_ARCH_ARM_NEON)
+#if defined(AM_CPU_ARM_NEON)
 #if !defined(AM_BUILDSYSTEM_ARCH_ARM_NEON)
 #define AM_BUILDSYSTEM_ARCH_ARM_NEON
 #endif
 #define AM_SIMD_ARCH_NEON
 #endif
 
+#if defined(AM_SIMD_ARCH_AVX2) || defined(AM_SIMD_ARCH_AVX)
+#define AM_SIMD_ALIGNMENT 32
+#elif defined(AM_SIMD_ARCH_SSE4_1) || defined(AM_SIMD_ARCH_SSSE3) || defined(AM_SIMD_ARCH_SSE3) || defined(AM_SIMD_ARCH_SSE2) || defined(AM_SIMD_ARCH_SSE1)
+#define AM_SIMD_ALIGNMENT 16
+#elif defined(AM_SIMD_ARCH_NEON)
+#define AM_SIMD_ALIGNMENT 16
+#endif
+
 #if defined(AM_SIMD_ARCH_AVX2)
 #define MA_SUPPORT_AVX2
 #define MA_PREFER_AVX2
+#elif defined(AM_SIMD_ARCH_AVX)
+#define MA_SUPPORT_AVX
+#define MA_PREFER_AVX
 #define AM_SIMD_ALIGNMENT 32
 #elif defined(AM_SIMD_ARCH_SSE2)
 #define MA_SUPPORT_SSE2
 #define MA_PREFER_SSE2
-#define AM_SIMD_ALIGNMENT 16
-#elif defined(AM_SIMD_ARCH_SSE3)
-#define MA_SUPPORT_SSE3
-#define MA_PREFER_SSE3
-#define AM_SIMD_ALIGNMENT 16
 #elif defined(AM_SIMD_ARCH_NEON)
 #define MA_SUPPORT_NEON
 #define MA_PREFER_NEON
 #define PFFFT_ENABLE_NEON
-#define AM_SIMD_ALIGNMENT 16
 #endif
 
 #endif

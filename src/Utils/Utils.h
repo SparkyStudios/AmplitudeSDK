@@ -28,17 +28,41 @@
 namespace SparkyStudios::Audio::Amplitude
 {
 #if defined(AM_SIMD_INTRINSICS)
-    typedef xsimd::batch<AmReal32, xsimd::best_arch> AmAudioFrame;
+#if defined(AM_SIMD_ARCH_AVX2)
+#if defined(AM_SIMD_ARCH_FMA3)
+    typedef xsimd::batch<AmReal32, xsimd::fma3<xsimd::avx2>> simd_batch;
 #else
-    typedef AmReal32 AmAudioFrame;
-#endif // AM_SIMD_INTRINSICS
+    typedef xsimd::batch<AmReal32, xsimd::avx2> simd_batch;
+#endif // AM_SIMD_ARCH_FMA3
+#elif defined(AM_SIMD_ARCH_AVX)
+#if defined(AM_SIMD_ARCH_FMA3)
+    typedef xsimd::batch<AmReal32, xsimd::fma3<xsimd::avx>> simd_batch;
+#else
+    typedef xsimd::batch<AmReal32, xsimd::avx> simd_batch;
+#endif // AM_SIMD_ARCH_FMA3
+#elif defined(AM_SIMD_ARCH_SSE4_2)
+#if defined(AM_SIMD_ARCH_FMA3)
+    typedef xsimd::batch<AmReal32, xsimd::fma3<xsimd::sse4_2>> simd_batch;
+#else
+    typedef xsimd::batch<AmReal32, xsimd::sse4_2> simd_batch;
+#endif // AM_SIMD_ARCH_FMA3
+#elif defined(AM_SIMD_ARCH_SSE4_1)
+    typedef xsimd::batch<AmReal32, xsimd::sse4_1> simd_batch;
+#elif defined(AM_SIMD_ARCH_SSSE3)
+    typedef xsimd::batch<AmReal32, xsimd::ssse3> simd_batch;
+#elif defined(AM_SIMD_ARCH_SSE3)
+    typedef xsimd::batch<AmReal32, xsimd::sse3> simd_batch;
+#elif defined(AM_SIMD_ARCH_SSE2)
+    typedef xsimd::batch<AmReal32, xsimd::sse2> simd_batch;
+#endif // AM_SIMD_ARCH_AVX2
 
-    typedef AmAudioFrame* AmAudioFrameBuffer;
+    typedef simd_batch::arch_type simd_arch;
+#endif //  defined(AM_SIMD_INTRINSICS)
 
     AM_INLINE constexpr AmSize GetSimdBlockSize()
     {
 #if defined(AM_SIMD_INTRINSICS)
-        return AmAudioFrame::size;
+        return simd_batch::size;
 #else
         return 1;
 #endif // AM_SIMD_INTRINSICS
@@ -153,13 +177,13 @@ namespace SparkyStudios::Audio::Amplitude
         constexpr AmSize blockSize = GetSimdBlockSize();
         remaining = remaining - end;
 
-        const auto& bb = xsimd::batch(scalar);
+        const auto& bb = simd_batch(scalar);
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto& ba = xsimd::load_aligned(input + i);
+            const auto& ba = xsimd::load_aligned<simd_arch>(input + i);
 
-            auto res = xsimd::mul(ba, bb);
+            simd_batch res = xsimd::mul(ba, bb);
             res.store_aligned(output + i);
         }
 #endif
@@ -177,12 +201,12 @@ namespace SparkyStudios::Audio::Amplitude
         constexpr AmSize blockSize = GetSimdBlockSize();
         remaining = remaining - end;
 
-        const auto& bb = xsimd::batch(scalar);
+        const auto& bb = simd_batch(scalar);
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto& ba = xsimd::load_aligned(input + i);
-            const auto& bc = xsimd::load_aligned(output + i);
+            const auto& ba = xsimd::load_aligned<simd_arch>(input + i);
+            const auto& bc = xsimd::load_aligned<simd_arch>(output + i);
 
             auto res = xsimd::fma(ba, bb, bc);
             res.store_aligned(output + i);
@@ -204,8 +228,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto& ba = xsimd::load_aligned(inputA + i);
-            const auto& bb = xsimd::load_aligned(inputB + i);
+            const auto& ba = xsimd::load_aligned<simd_arch>(inputA + i);
+            const auto& bb = xsimd::load_aligned<simd_arch>(inputB + i);
 
             auto res = xsimd::mul(ba, bb);
             res.store_aligned(output + i);
@@ -227,9 +251,9 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto& ba = xsimd::load_aligned(inputA + i);
-            const auto& bb = xsimd::load_aligned(inputB + i);
-            const auto& bc = xsimd::load_aligned(output + i);
+            const auto& ba = xsimd::load_aligned<simd_arch>(inputA + i);
+            const auto& bb = xsimd::load_aligned<simd_arch>(inputB + i);
+            const auto& bc = xsimd::load_aligned<simd_arch>(output + i);
 
             auto res = xsimd::fma(ba, bb, bc);
             res.store_aligned(output + i);

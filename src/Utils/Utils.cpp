@@ -28,8 +28,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            auto c0 = xsimd::load_aligned(&channel0[i + inOffset]);
-            auto c1 = xsimd::load_aligned(&channel1[i + inOffset]);
+            auto c0 = xsimd::load_aligned<simd_arch>(&channel0[i + inOffset]);
+            auto c1 = xsimd::load_aligned<simd_arch>(&channel1[i + inOffset]);
 
             const AmSize k = 2 * (i + outOffset);
             xsimd::store_aligned(&out[k], xsimd::zip_lo(c0, c1));
@@ -74,8 +74,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto ba = xsimd::load_aligned(&a[i]);
-            const auto bb = xsimd::load_aligned(&b[i]);
+            const auto ba = xsimd::load_aligned<simd_arch>(&a[i]);
+            const auto bb = xsimd::load_aligned<simd_arch>(&b[i]);
 
             auto res = xsimd::add(ba, bb);
             res.store_aligned(&result[i]);
@@ -111,13 +111,13 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto ra = xsimd::load_aligned(&reA[i]);
-            const auto rb = xsimd::load_aligned(&reB[i]);
-            const auto ia = xsimd::load_aligned(&imA[i]);
-            const auto ib = xsimd::load_aligned(&imB[i]);
+            const auto ra = xsimd::load_aligned<simd_arch>(&reA[i]);
+            const auto rb = xsimd::load_aligned<simd_arch>(&reB[i]);
+            const auto ia = xsimd::load_aligned<simd_arch>(&imA[i]);
+            const auto ib = xsimd::load_aligned<simd_arch>(&imB[i]);
 
-            auto real = xsimd::load_aligned(&re[i]);
-            auto imag = xsimd::load_aligned(&im[i]);
+            auto real = xsimd::load_aligned<simd_arch>(&re[i]);
+            auto imag = xsimd::load_aligned<simd_arch>(&im[i]);
 
             real = xsimd::fma(ra, rb, real);
             real = xsimd::sub(real, xsimd::mul(ia, ib));

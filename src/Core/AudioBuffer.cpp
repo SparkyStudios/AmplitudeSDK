@@ -108,8 +108,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto ba = xsimd::load_aligned(_begin + i);
-            const auto bb = xsimd::load_aligned(channel._begin + i);
+            const auto ba = xsimd::load_aligned<simd_arch>(_begin + i);
+            const auto bb = xsimd::load_aligned<simd_arch>(channel._begin + i);
 
             auto res = xsimd::add(ba, bb);
             res.store_aligned(_begin + i);
@@ -137,8 +137,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto ba = xsimd::load_aligned(_begin + i);
-            const auto bb = xsimd::load_aligned(channel._begin + i);
+            const auto ba = xsimd::load_aligned<simd_arch>(_begin + i);
+            const auto bb = xsimd::load_aligned<simd_arch>(channel._begin + i);
 
             auto res = xsimd::sub(ba, bb);
             res.store_aligned(_begin + i);

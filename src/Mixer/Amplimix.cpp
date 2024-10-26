@@ -240,11 +240,11 @@ namespace SparkyStudios::Audio::Amplitude
         AMPLIMIX_STORE(&layer->flag, ePSF_MIN);
     }
 
-    static void MixMono(AmUInt64 index, const AmAudioFrame& gain, const AudioBufferChannel& in, AudioBufferChannel& out)
+    static void MixMono(AmUInt64 index, const simd_batch& gain, const AudioBufferChannel& in, AudioBufferChannel& out)
     {
 #if defined(AM_SIMD_INTRINSICS)
-        const auto x = xsimd::load_aligned(&in[index]);
-        const auto y = xsimd::load_aligned(&out[index]);
+        const auto x = xsimd::load_aligned<simd_arch>(&in[index]);
+        const auto y = xsimd::load_aligned<simd_arch>(&out[index]);
 
         xsimd::store_aligned(&out[index], xsimd::fma(x, gain, y));
 #else
@@ -784,7 +784,7 @@ namespace SparkyStudios::Audio::Amplitude
         const AmReal32 gain = AMPLIMIX_LOAD(&_masterGain) * AMPLIMIX_LOAD(&layer->gain);
 
 #if defined(AM_SIMD_INTRINSICS)
-        auto bGain = xsimd::batch(gain);
+        auto bGain = simd_batch(gain);
 #else
         const auto bGain = gain;
 #endif // AM_SIMD_INTRINSICS

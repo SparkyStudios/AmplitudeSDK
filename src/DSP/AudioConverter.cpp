@@ -158,7 +158,7 @@ namespace SparkyStudios::Audio::Amplitude
         auto& mono = output[0];
 
 #if defined(AM_SIMD_INTRINSICS)
-        const auto invSqrt2Vec = xsimd::batch(invSqrt2);
+        const auto invSqrt2Vec = simd_batch(invSqrt2);
         const AmSize end = GetNumSimdChunks(length);
         constexpr AmSize blockSize = GetSimdBlockSize();
 
@@ -166,8 +166,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (AmSize i = 0; i < end; i += blockSize)
         {
-            const auto ba = xsimd::load_unaligned(&left[i]);
-            const auto bb = xsimd::load_unaligned(&right[i]);
+            const auto ba = xsimd::load_aligned<simd_arch>(&left[i]);
+            const auto bb = xsimd::load_aligned<simd_arch>(&right[i]);
 
             auto res = invSqrt2Vec * (ba + bb);
             res.store_aligned(&mono[i]);
