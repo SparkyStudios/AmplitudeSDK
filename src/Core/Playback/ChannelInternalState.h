@@ -47,7 +47,7 @@ namespace SparkyStudios::Audio::Amplitude
     public:
         ChannelInternalState()
             : _realChannel(this)
-            , _channelState(ChannelPlaybackState::Stopped)
+            , _channelState(eChannelPlaybackState_Stopped)
             , _switchContainer(nullptr)
             , _collection(nullptr)
             , _sound(nullptr)
@@ -55,7 +55,7 @@ namespace SparkyStudios::Audio::Amplitude
             , _playingSwitchContainerStateId(kAmInvalidObjectId)
             , _previousSwitchContainerStateId(kAmInvalidObjectId)
             , _fader(nullptr)
-            , _targetFadeOutState(ChannelPlaybackState::Stopped)
+            , _targetFadeOutState(eChannelPlaybackState_Stopped)
             , _entity()
             , _userGain(1.0f)
             , _gain(1.0f)
@@ -149,7 +149,7 @@ namespace SparkyStudios::Audio::Amplitude
         // Get the current state of this channel (playing, stopped, paused, etc.). This
         // is tracked manually because not all ChannelInternalStates are backed by
         // real channels.
-        [[nodiscard]] AM_INLINE ChannelPlaybackState GetChannelState() const
+        [[nodiscard]] AM_INLINE eChannelPlaybackState GetChannelState() const
         {
             return _channelState;
         }
@@ -251,7 +251,7 @@ namespace SparkyStudios::Audio::Amplitude
         void FadeIn(AmTime duration);
 
         // Fade out over the specified number of milliseconds.
-        void FadeOut(AmTime duration, ChannelPlaybackState targetState = ChannelPlaybackState::Stopped);
+        void FadeOut(AmTime duration, eChannelPlaybackState targetState = eChannelPlaybackState_Stopped);
 
         // Sets the pan based on a position in a unit circle.
         void SetPan(const AmVec2& pan);
@@ -384,7 +384,7 @@ namespace SparkyStudios::Audio::Amplitude
         RealChannel _realChannel;
 
         // Whether this channel is currently playing, stopped, fading out, etc.
-        ChannelPlaybackState _channelState;
+        eChannelPlaybackState _channelState;
 
         // The collection of the sound being played on this channel.
         SwitchContainerImpl* _switchContainer;
@@ -404,7 +404,7 @@ namespace SparkyStudios::Audio::Amplitude
         AmString _faderName;
 
         // The target state of the fade out transition. Must be either Paused or Stopped.
-        ChannelPlaybackState _targetFadeOutState;
+        eChannelPlaybackState _targetFadeOutState;
 
         // The entity which is playing the sound of this channel.
         Entity _entity;

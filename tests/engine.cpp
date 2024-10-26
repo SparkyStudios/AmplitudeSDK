@@ -562,23 +562,25 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 THEN("a playing channel cannot be resumed")
                 {
                     channel.Resume();
-                    REQUIRE_FALSE(channel.GetPlaybackState() == ChannelPlaybackState::Paused);
-                    REQUIRE_FALSE(channel.GetPlaybackState() == ChannelPlaybackState::FadingOut);
+                    REQUIRE_FALSE(channel.GetPlaybackState() == eChannelPlaybackState_Paused);
+                    REQUIRE_FALSE(channel.GetPlaybackState() == eChannelPlaybackState_FadingOut);
                     REQUIRE(channel.Playing());
+
+                    channel.Stop(0);
                 }
 
                 THEN("it can be paused with delay")
                 {
                     channel.Pause();
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::FadingOut);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_FadingOut);
                     REQUIRE_FALSE(channel.Playing());
                     amEngine->WaitUntilFrames(2);
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::Paused);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_Paused);
 
                     channel.Resume();
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::FadingIn);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_FadingIn);
                     amEngine->WaitUntilFrames(2);
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::Playing);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_Playing);
                     REQUIRE(channel.Playing());
 
                     channel.Stop(0);
@@ -587,13 +589,13 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 THEN("it can be paused without delay")
                 {
                     channel.Pause(0);
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::Paused);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_Paused);
                     REQUIRE_FALSE(channel.Playing());
 
                     Thread::Sleep(kAmSecond); // wait for sixty frames
 
                     channel.Resume(0);
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::Playing);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_Playing);
                     REQUIRE(channel.Playing());
 
                     channel.Stop(0);
@@ -602,15 +604,15 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 THEN("it can be stopped with delay")
                 {
                     channel.Stop();
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::FadingOut);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_FadingOut);
                     REQUIRE_FALSE(channel.Playing());
-                    Thread::Sleep(kAmSecond); // wait for sixty frames
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::Stopped);
+                    amEngine->WaitUntilFrames(2);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_Stopped);
 
                     channel.Resume();
-                    Thread::Sleep(kAmSecond); // wait for sixty frames
-                    REQUIRE_FALSE(channel.GetPlaybackState() == ChannelPlaybackState::FadingIn);
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::Stopped);
+                    REQUIRE_FALSE(channel.GetPlaybackState() == eChannelPlaybackState_FadingIn);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_Stopped);
+                    REQUIRE_FALSE(channel.Playing());
 
                     channel.Stop(0);
                 }
@@ -618,14 +620,12 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 THEN("it can be stopped without delay")
                 {
                     channel.Stop(0);
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::Stopped);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_Stopped);
                     REQUIRE_FALSE(channel.Playing());
 
-                    Thread::Sleep(kAmSecond); // wait for sixty frames
-
                     channel.Resume(0);
-                    REQUIRE_FALSE(channel.GetPlaybackState() == ChannelPlaybackState::Playing);
-                    REQUIRE(channel.GetPlaybackState() == ChannelPlaybackState::Stopped);
+                    REQUIRE_FALSE(channel.GetPlaybackState() == eChannelPlaybackState_FadingIn);
+                    REQUIRE(channel.GetPlaybackState() == eChannelPlaybackState_Stopped);
                     REQUIRE_FALSE(channel.Playing());
 
                     channel.Stop(0);

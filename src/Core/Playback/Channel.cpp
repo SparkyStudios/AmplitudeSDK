@@ -84,7 +84,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (duration == 0.0)
             _state->Halt();
         else
-            _state->FadeOut(duration, ChannelPlaybackState::Stopped);
+            _state->FadeOut(duration, eChannelPlaybackState_Stopped);
     }
 
     void Channel::Pause(AmTime duration) const
@@ -99,7 +99,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (duration == 0.0)
             _state->Pause();
         else
-            _state->FadeOut(duration, ChannelPlaybackState::Paused);
+            _state->FadeOut(duration, eChannelPlaybackState_Paused);
     }
 
     void Channel::Resume(AmTime duration) const
@@ -149,7 +149,7 @@ namespace SparkyStudios::Audio::Amplitude
         return 0.0f;
     }
 
-    ChannelPlaybackState Channel::GetPlaybackState() const
+    eChannelPlaybackState Channel::GetPlaybackState() const
     {
         AMPLITUDE_ASSERT(Valid());
         return _state->GetChannelState();

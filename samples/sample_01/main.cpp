@@ -183,7 +183,7 @@ static void run(AmVoidPtr param)
                 ctx->switchContainerChannel.Stop(kAmSecond);
 
             if (!ctx->mainMenuBackgroundChannel.Valid() ||
-                ctx->mainMenuBackgroundChannel.GetPlaybackState() == ChannelPlaybackState::Stopped)
+                ctx->mainMenuBackgroundChannel.GetPlaybackState() == eChannelPlaybackState_Stopped)
             {
                 ctx->mainMenuBackgroundChannel = amEngine->Play(mainMenuBackgroundHandle);
                 ctx->mainMenuBackgroundChannel.On(
@@ -217,7 +217,7 @@ static void run(AmVoidPtr param)
                         amLogInfo("[CALLBACK] Sound started playing again (loop)");
                     });
             }
-            else if (ctx->mainMenuBackgroundChannel.GetPlaybackState() == ChannelPlaybackState::Paused)
+            else if (ctx->mainMenuBackgroundChannel.GetPlaybackState() == eChannelPlaybackState_Paused)
                 ctx->mainMenuBackgroundChannel.Resume(kAmSecond);
         }
         else

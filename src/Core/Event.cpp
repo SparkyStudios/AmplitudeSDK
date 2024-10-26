@@ -252,7 +252,7 @@ namespace SparkyStudios::Audio::Amplitude
             {
                 bool active = false;
                 for (auto&& channel : _playingChannels)
-                    active |= channel.GetPlaybackState() == ChannelPlaybackState::Playing;
+                    active |= channel.GetPlaybackState() == eChannelPlaybackState_Playing;
 
                 return active;
             }
@@ -261,7 +261,7 @@ namespace SparkyStudios::Audio::Amplitude
             {
                 bool active = false;
                 for (auto&& channel : _playingChannels)
-                    active |= channel.GetPlaybackState() == ChannelPlaybackState::Paused;
+                    active |= channel.GetPlaybackState() == eChannelPlaybackState_Paused;
 
                 return active;
             }
@@ -270,7 +270,7 @@ namespace SparkyStudios::Audio::Amplitude
             {
                 bool active = false;
                 for (auto&& channel : _playingChannels)
-                    active |= channel.GetPlaybackState() == ChannelPlaybackState::Playing;
+                    active |= channel.GetPlaybackState() == eChannelPlaybackState_Playing;
 
                 return active;
             }
@@ -279,7 +279,7 @@ namespace SparkyStudios::Audio::Amplitude
             {
                 bool active = false;
                 for (auto&& channel : _playingChannels)
-                    active |= channel.GetPlaybackState() == ChannelPlaybackState::Stopped;
+                    active |= channel.GetPlaybackState() == eChannelPlaybackState_Stopped;
 
                 return active;
             }

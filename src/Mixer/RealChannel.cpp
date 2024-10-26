@@ -268,22 +268,22 @@ namespace SparkyStudios::Audio::Amplitude
         return _gain.contains(layer) ? _gain.at(layer) : 0.0f;
     }
 
-    void RealChannel::Halt(AmUInt32 layer)
+    bool RealChannel::Halt(AmUInt32 layer)
     {
         AMPLITUDE_ASSERT(Valid());
-        _mixer->SetPlayState(_channelId, _channelLayersId[layer], ePSF_STOP);
+        return _mixer->SetPlayState(_channelId, _channelLayersId[layer], ePSF_STOP);
     }
 
-    void RealChannel::Pause(AmUInt32 layer)
+    bool RealChannel::Pause(AmUInt32 layer)
     {
         AMPLITUDE_ASSERT(Valid());
-        _mixer->SetPlayState(_channelId, _channelLayersId[layer], ePSF_HALT);
+        return _mixer->SetPlayState(_channelId, _channelLayersId[layer], ePSF_HALT);
     }
 
-    void RealChannel::Resume(AmUInt32 layer)
+    bool RealChannel::Resume(AmUInt32 layer)
     {
         AMPLITUDE_ASSERT(Valid());
-        _mixer->SetPlayState(_channelId, _channelLayersId[layer], _loop[layer] ? ePSF_LOOP : ePSF_PLAY);
+        return _mixer->SetPlayState(_channelId, _channelLayersId[layer], _loop[layer] ? ePSF_LOOP : ePSF_PLAY);
     }
 
     void RealChannel::SetPan(const AmVec2& pan)

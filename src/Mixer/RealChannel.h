@@ -75,17 +75,17 @@ namespace SparkyStudios::Audio::Amplitude
         /**
          * @brief Halt the real channel so it may be re-used. However this virtual channel may still be considered playing.
          */
-        void Halt(AmUInt32 layer = kAmInvalidObjectId);
+        bool Halt(AmUInt32 layer = kAmInvalidObjectId);
 
         /**
          * @brief Pause the real channel.
          */
-        void Pause(AmUInt32 layer = kAmInvalidObjectId);
+        bool Pause(AmUInt32 layer = kAmInvalidObjectId);
 
         /**
          * @brief Resume the paused real channel.
          */
-        void Resume(AmUInt32 layer = kAmInvalidObjectId);
+        bool Resume(AmUInt32 layer = kAmInvalidObjectId);
 
         void Destroy(AmUInt32 layer = kAmInvalidObjectId);
 
