@@ -22,7 +22,7 @@ add_subdirectory(sample_01)
 add_subdirectory(sample_02)
 
 install(
-    CODE "execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/build_project.py -p ${CMAKE_SOURCE_DIR}/sample_project -b ${CMAKE_INSTALL_PREFIX}/${AM_BIN_DESTINATION}/samples/assets -f ${CMAKE_SOURCE_DIR}/bin/flatc WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})"
+    CODE "execute_process(COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/build_project.py -p ${CMAKE_SOURCE_DIR}/sample_project -b ${CMAKE_INSTALL_PREFIX}/${AM_BIN_DESTINATION}/samples/assets -f ${CMAKE_SOURCE_DIR}/bin/flatc WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})"
 )
 
 install(

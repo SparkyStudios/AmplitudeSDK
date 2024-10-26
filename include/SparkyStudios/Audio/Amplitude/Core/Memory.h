@@ -404,7 +404,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup memory
      */
-    class DefaultMemoryAllocator final : public MemoryAllocator
+    class AM_API_PUBLIC DefaultMemoryAllocator final : public MemoryAllocator
     {
     public:
         /**
@@ -528,7 +528,7 @@ namespace SparkyStudios::Audio::Amplitude
             /**
              * @brief Checks if the address matches the provided pointer.
              *
-             * @param[in] ptr The pointer to compare with.
+             * @param[in] other The pointer to compare with.
              *
              * @return `true` if the addresses match, `false` otherwise.
              */

@@ -496,7 +496,7 @@ AmInt32 main(AmInt32 argc, char* argv[])
     ConsoleLogger logger;
     Logger::SetLogger(&logger);
 
-    MemoryManager::Initialize(MemoryManagerConfig());
+    MemoryManager::Initialize();
 
     if (SampleState sample; !sample.Initialize())
         fprintf(stderr, "Failed to initialize!\n");

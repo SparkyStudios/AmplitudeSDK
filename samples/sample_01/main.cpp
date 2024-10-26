@@ -45,9 +45,9 @@ struct ExecutionContext
 #if !defined(AM_NO_MEMORY_STATS)
 static void printMemoryStats()
 {
-    std::vector<MemoryPoolKind> pools = {
-        MemoryPoolKind::Amplimix,  MemoryPoolKind::Codec, MemoryPoolKind::Engine,  MemoryPoolKind::Filtering,
-        MemoryPoolKind::SoundData, MemoryPoolKind::IO,    MemoryPoolKind::Default,
+    std::vector<eMemoryPoolKind> pools = {
+        eMemoryPoolKind_Amplimix,  eMemoryPoolKind_Codec, eMemoryPoolKind_Engine,  eMemoryPoolKind_Filtering,
+        eMemoryPoolKind_SoundData, eMemoryPoolKind_IO,    eMemoryPoolKind_Default,
     };
 
     for (auto&& kind : pools)
@@ -314,7 +314,7 @@ int main(int argc, char* argv[])
 
     Logger::SetLogger(&logger);
 
-    MemoryManager::Initialize(MemoryManagerConfig());
+    MemoryManager::Initialize();
 
     ExecutionContext ctx{};
     auto t = Thread::CreateThread(run, &ctx);
