@@ -43,6 +43,8 @@ add_custom_target(ss_amplitude_audio_test_package
 add_dependencies(ss_amplitude_audio_test_package
     ampk
     ss_amplitude_audio_sample_project
+    ss_amplitude_audio_sample_01
+    ss_amplitude_audio_sample_02
 )
 
 add_dependencies(${PROJECT_NAME}
