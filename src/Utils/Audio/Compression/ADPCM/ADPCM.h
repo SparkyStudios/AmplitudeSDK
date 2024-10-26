@@ -22,9 +22,17 @@
 
 #include <SparkyStudios/Audio/Amplitude/Amplitude.h>
 
+#ifndef WAVE_FORMAT_PCM
 #define WAVE_FORMAT_PCM 0x1
+#endif
+
+#ifndef WAVE_FORMAT_IMA_ADPCM
 #define WAVE_FORMAT_IMA_ADPCM 0x11
+#endif
+
+#ifndef WAVE_FORMAT_EXTENSIBLE
 #define WAVE_FORMAT_EXTENSIBLE 0xfffe
+#endif
 
 #define HEADER_FMT_CHUNK "4L"
 #define HEADER_FMT_FACT "4LL"

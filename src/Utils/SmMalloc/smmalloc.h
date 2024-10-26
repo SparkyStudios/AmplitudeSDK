@@ -901,7 +901,7 @@ struct TlsPoolBucket
     }
 };
 
-static_assert(std::is_pod<TlsPoolBucket>::value == true, "TlsPoolBucket must be POD type, stored in TLS");
+static_assert(std::is_standard_layout_v<TlsPoolBucket> && std::is_trivial_v<TlsPoolBucket>, "TlsPoolBucket must be POD type, stored in TLS");
 static_assert(sizeof(TlsPoolBucket) <= 64, "TlsPoolBucket sizeof must be less than CPU cache line");
 } // namespace internal
 
