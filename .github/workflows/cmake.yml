@@ -212,7 +212,7 @@ jobs:
           AM_SDK_PLATFORM: ${{ matrix.config.target_triplet }}
 
       - name: Generate coverage
-        if: matrix.build_type == 'debug'
+        if: matrix.build_type == 'debug' && !startsWith(matrix.config.os, 'windows')
         shell: bash
         working-directory: ${{ inputs.project-path }}/build
         run: |
@@ -221,7 +221,7 @@ jobs:
           lcov --list coverage.info  --ignore-errors inconsistent --ignore-errors range
 
       - name: Upload coverage to Codecov
-        if: matrix.build_type == 'debug'
+        if: matrix.build_type == 'debug' && !startsWith(matrix.config.os, 'windows')
         uses: codecov/codecov-action@v4
         with:
           file: ${{ inputs.project-path }}/build/coverage.info
