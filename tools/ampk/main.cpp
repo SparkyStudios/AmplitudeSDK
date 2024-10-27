@@ -77,10 +77,13 @@ static int process(const AmOsString& inFileName, const AmOsString& outFileName, 
     {
         if (!exists(projectPath / directory) || !is_directory(projectPath / directory))
         {
-            log(stderr, "Invalid project path. The \"attenuators\" directory is missing.\n");
+            log(stderr, "Invalid project path. The \"%s\" directory is missing.\n", directory);
             return EXIT_FAILURE;
         }
     }
+
+    if (state.verbose)
+        log(stdout, "Processing project directory: " AM_OS_CHAR_FMT "\n", projectPath.c_str());
 
     DiskFile packageFile(absolute(packagePath), eFileOpenMode_Write);
 
@@ -94,6 +97,9 @@ static int process(const AmOsString& inFileName, const AmOsString& outFileName, 
 
     const auto appendItem = [&](const std::filesystem::path& file)
     {
+        if (state.verbose)
+            log(stdout, "Adding item: " AM_OS_CHAR_FMT "\n", file.c_str());
+
         DiskFile diskFile(absolute(file));
 
         PackageFileItemDescription item;
@@ -129,6 +135,9 @@ static int process(const AmOsString& inFileName, const AmOsString& outFileName, 
         appendItem(file);
     }
 
+    if (state.verbose)
+        log(stdout, "Writing package file: " AM_OS_CHAR_FMT "\n", packagePath.c_str());
+
     packageFile.Write64(items.size());
 
     for (const auto& item : items)
@@ -139,6 +148,9 @@ static int process(const AmOsString& inFileName, const AmOsString& outFileName, 
     }
 
     packageFile.Write(buffer.data(), buffer.size());
+
+    if (state.verbose)
+        log(stdout, "Package file created successfully.\n");
 
     return EXIT_SUCCESS;
 }

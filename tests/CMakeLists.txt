@@ -36,7 +36,7 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2 Static)
 
 add_custom_target(ss_amplitude_audio_test_package
-    COMMAND $<TARGET_FILE:ampk> -q -c 0 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/samples/assets ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/samples/assets.ampk
+    COMMAND $<TARGET_FILE:ampk> -v -c 0 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/samples/assets ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/samples/assets.ampk
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
