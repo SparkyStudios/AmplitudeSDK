@@ -21,11 +21,18 @@ using namespace SparkyStudios::Audio::Amplitude;
 class DummyPoolTask : public Thread::PoolTask
 {
 public:
+    explicit DummyPoolTask(AmThreadID targetThreadId = 0)
+    {
+        _targetThreadId = targetThreadId;
+    }
+
     void Work() override
     {
-        Thread::Sleep(100);
-        _isExecuted = true;
         _executingThreadId = Thread::GetCurrentThreadId();
+        if (_targetThreadId != _executingThreadId)
+            Thread::Sleep(100);
+
+        _isExecuted = true;
     }
 
     [[nodiscard]] bool IsExecuted() const
@@ -41,6 +48,7 @@ public:
 private:
     bool _isExecuted = false;
     AmThreadID _executingThreadId = 0;
+    AmThreadID _targetThreadId = 0;
 };
 
 class AwaitableDummyPoolTask final : public Thread::AwaitablePoolTask
@@ -160,9 +168,11 @@ TEST_CASE("Thread Pool Tests", "[thread][amplitude]")
 
         WHEN("more than the maximum number of supported tasks is added to the pool")
         {
+            const AmThreadID threadId = Thread::GetCurrentThreadId();
+
             for (size_t i = 0; i < AM_MAX_THREAD_POOL_TASKS + 100; i++)
             {
-                auto task = std::make_shared<DummyPoolTask>();
+                auto task = std::make_shared<DummyPoolTask>(threadId);
                 REQUIRE_FALSE(task->IsExecuted());
 
                 bool willExecuteWorkInCallerThread = pool.GetTaskCount() >= AM_MAX_THREAD_POOL_TASKS;
@@ -171,9 +181,8 @@ TEST_CASE("Thread Pool Tests", "[thread][amplitude]")
 
                 if (willExecuteWorkInCallerThread)
                 {
-                    // Thread::Sleep(150);
                     REQUIRE(task->IsExecuted());
-                    REQUIRE(task->GetExecutingThreadId() == Thread::GetCurrentThreadId());
+                    REQUIRE(task->GetExecutingThreadId() == threadId);
                 }
             }
         }
