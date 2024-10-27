@@ -558,7 +558,7 @@ if(UNIT_TESTS)
             NAME ss_amplitude_audio_tests_coverage
             EXECUTABLE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ss_amplitude_audio_tests
             DEPENDENCIES ss_amplitude_audio_tests
-            EXCLUDE "/usr/*" "${CMAKE_BINARY_DIR}/vcpkg_installed/*" "${PROJECT_SOURCE_DIR}/src/Utils/*"
+            EXCLUDE "/usr/*" "${CMAKE_BINARY_DIR}/vcpkg_installed/*" "${PROJECT_SOURCE_DIR}/src/Utils/*" "${PROJECT_SOURCE_DIR}/samples/*"
         )
     endif ()
 
