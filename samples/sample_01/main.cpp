@@ -67,7 +67,24 @@ static void run(AmVoidPtr param)
 {
     auto* ctx = static_cast<ExecutionContext*>(param);
 
-    ctx->fileLoader.SetBasePath(AM_OS_STRING("../sample_project"));
+    auto cleanup = [&ctx]()
+    {
+        amEngine->Deinitialize();
+
+        // Wait for the file system to complete loading.
+        amEngine->StartCloseFileSystem();
+        while (!amEngine->TryFinalizeCloseFileSystem())
+            Thread::Sleep(1);
+
+        // Unregister all default plugins
+        Engine::UnregisterDefaultPlugins();
+
+        amEngine->DestroyInstance();
+
+        ctx->stop = true;
+    };
+
+    ctx->fileLoader.SetBasePath(AM_OS_STRING("./assets"));
     amEngine->SetFileSystem(&ctx->fileLoader);
 
     // Wait for the file system to complete loading.
@@ -93,10 +110,16 @@ static void run(AmVoidPtr param)
 
     // Initialize Amplitude.
     if (!amEngine->Initialize(AM_OS_STRING("pc.config.amconfig")))
+    {
+        cleanup();
         return;
+    }
 
     if (!amEngine->LoadSoundBank(AM_OS_STRING("sample_01.ambank")))
+    {
+        cleanup();
         return;
+    }
 
     // Start loading sound files.
     amEngine->StartLoadSoundFiles();
@@ -112,6 +135,7 @@ static void run(AmVoidPtr param)
     if (collectionHandle == nullptr)
     {
         fprintf(stderr, "Could not find collection handle %s\n", "throw_collection_1");
+        cleanup();
         return;
     }
 
@@ -120,6 +144,7 @@ static void run(AmVoidPtr param)
     if (footstepsHandle == nullptr)
     {
         fprintf(stderr, "Could not find switch container handle %s\n", "footsteps");
+        cleanup();
         return;
     }
 
@@ -128,6 +153,7 @@ static void run(AmVoidPtr param)
     if (playEventHandle == nullptr)
     {
         fprintf(stderr, "Could not find event handle %s\n", "play_throw");
+        cleanup();
         return;
     }
 
@@ -135,8 +161,11 @@ static void run(AmVoidPtr param)
     if (stopEventHandle == nullptr)
     {
         fprintf(stderr, "Could not find event handle %s\n", "stop_throw");
+        cleanup();
         return;
     }
+
+    AmUInt32 lastSwitch = 0;
 
     // Setup the default listener
     auto listener = amEngine->AddListener(1);
@@ -149,8 +178,6 @@ static void run(AmVoidPtr param)
     player.SetOrientation(Orientation::Zero());
 
     amEngine->SetDefaultListener(&listener);
-
-    AmUInt32 lastSwitch = 0;
 
     // Wait for the sound files to complete loading
     while (!amEngine->TryFinalizeLoadSoundFiles())
@@ -291,17 +318,7 @@ static void run(AmVoidPtr param)
         Thread::Sleep(static_cast<AmInt32>(delta));
     }
 
-    amEngine->Deinitialize();
-
-    // Wait for the file system to complete loading.
-    amEngine->StartCloseFileSystem();
-    while (!amEngine->TryFinalizeCloseFileSystem())
-        Thread::Sleep(1);
-
-    // Unregister all default plugins
-    Engine::UnregisterDefaultPlugins();
-
-    amEngine->DestroyInstance();
+    cleanup();
 }
 
 int main(int argc, char* argv[])
@@ -321,7 +338,7 @@ int main(int argc, char* argv[])
 
     std::cout << "Amplitude Audio SDK Sample 01." << std::endl;
 
-    while (true)
+    while (!ctx.stop)
     {
         if (ctx.appMode == kAppModeMainMenu)
         {

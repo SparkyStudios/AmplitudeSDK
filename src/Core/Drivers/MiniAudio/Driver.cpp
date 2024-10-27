@@ -194,6 +194,8 @@ namespace SparkyStudios::Audio::Amplitude
             if (!_initialized)
             {
                 amLogCritical("The miniaudio driver was not initialized successfully.");
+
+                ampoolfree(eMemoryPoolKind_Engine, deviceConfig.playback.pChannelMap);
                 return false;
             }
 
