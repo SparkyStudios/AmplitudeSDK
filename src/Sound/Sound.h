@@ -85,6 +85,13 @@ namespace SparkyStudios::Audio::Amplitude
         friend class SoundInstance;
 
     public:
+        /**
+         * @brief Destroys a SoundInstance.
+         *
+         * @param soundInstance The sound instance to destroy.
+         */
+        static void DestroyInstance(SoundInstance* soundInstance);
+
         SoundImpl();
 
         ~SoundImpl() override;
@@ -116,7 +123,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * If the reference equals 0, the SoundChunk is created.
          *
-         * This methods is used by the SoundInstance to get the SoundChunk
+         * This method is used by the SoundInstance to get the SoundChunk
          * only when the audio file is not streamed.
          *
          * @return The SoundChunk of this sound.
@@ -128,7 +135,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * If the reference counter reaches 0, the SoundChunk is deleted.
          *
-         * This methods is used by the SoundInstance to get the SoundChunk
+         * This method is used by the SoundInstance to get the SoundChunk
          * only when the audio file is not streamed.
          *
          * @return The SoundChunk of this sound.

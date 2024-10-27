@@ -24,6 +24,14 @@ namespace SparkyStudios::Audio::Amplitude
 {
     static AmObjectID gLastSoundInstanceID = 0;
 
+    void SoundImpl::DestroyInstance(SoundInstance* soundInstance)
+    {
+        if (soundInstance == nullptr)
+            return;
+
+        ampooldelete(eMemoryPoolKind_Amplimix, SoundInstance, soundInstance);
+    }
+
     SoundImpl::SoundImpl()
         : SoundObjectImpl()
         , _codec(nullptr)
@@ -64,7 +72,7 @@ namespace SparkyStudios::Audio::Amplitude
     SoundInstance* SoundImpl::CreateInstance()
     {
         AMPLITUDE_ASSERT(m_id != kAmInvalidObjectId);
-        return ampoolnew(eMemoryPoolKind_Engine, SoundInstance, this, _settings, m_effect);
+        return ampoolnew(eMemoryPoolKind_Amplimix, SoundInstance, this, _settings, m_effect);
     }
 
     SoundInstance* SoundImpl::CreateInstance(const CollectionImpl* collection)
@@ -74,7 +82,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         AMPLITUDE_ASSERT(m_id != kAmInvalidObjectId);
 
-        auto* sound = ampoolnew(eMemoryPoolKind_Engine, SoundInstance, this, collection->_soundSettings.at(m_id), collection->m_effect);
+        auto* sound = ampoolnew(eMemoryPoolKind_Amplimix, SoundInstance, this, collection->_soundSettings.at(m_id), collection->m_effect);
         sound->_collection = collection;
 
         return sound;
@@ -89,8 +97,10 @@ namespace SparkyStudios::Audio::Amplitude
         {
             if (_decoder == nullptr)
             {
-                amLogError("Could not load a sound instance. No decoder was initialized. Make sure the codec able to decode the audio file "
-                           "at '" AM_OS_CHAR_FMT "' is registered to the engine.", m_filename.c_str());
+                amLogError(
+                    "Could not load a sound instance. No decoder was initialized. Make sure the codec able to decode the audio file "
+                    "at '" AM_OS_CHAR_FMT "' is registered to the engine.",
+                    m_filename.c_str());
                 return nullptr;
             }
 
@@ -99,6 +109,8 @@ namespace SparkyStudios::Audio::Amplitude
             if (_decoder->Load(_soundData->buffer) != _format.GetFramesCount())
             {
                 SoundChunk::DestroyChunk(_soundData);
+                _soundData = nullptr;
+
                 amLogError("Could not load a sound instance. Unable to read data from the parent sound.");
                 return nullptr;
             }
@@ -448,9 +460,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (_userData != nullptr)
         {
             SoundData::Destroy(static_cast<SoundData*>(_userData), _parent->_stream);
-
-            if (!_parent->_stream)
-                _parent->ReleaseSoundData();
+            _parent->ReleaseSoundData();
         }
 
         _userData = nullptr;

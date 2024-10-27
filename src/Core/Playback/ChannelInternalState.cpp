@@ -697,8 +697,8 @@ namespace SparkyStudios::Audio::Amplitude
         if (!Valid())
             return;
 
-        _realChannel.Halt();
-        _channelState = eChannelPlaybackState_Stopped;
+        if (_realChannel.Halt())
+            _channelState = eChannelPlaybackState_Stopped;
     }
 
     bool ChannelInternalState::PlaySwitchContainerStateUpdate(
@@ -754,10 +754,15 @@ namespace SparkyStudios::Audio::Amplitude
             settings.m_effectID = definition->effect();
 
             instances.push_back(ampoolnew(
-                eMemoryPoolKind_Engine, SoundInstance, sound, settings, static_cast<const EffectImpl*>(_switchContainer->GetEffect())));
+                eMemoryPoolKind_Amplimix, SoundInstance, sound, settings, static_cast<const EffectImpl*>(_switchContainer->GetEffect())));
         }
 
-        return _realChannel.Play(instances);
+        const bool success = _realChannel.Play(instances);
+        if (!success)
+            for (SoundInstance* instance : instances)
+                SoundImpl::DestroyInstance(instance);
+
+        return success;
     }
 
     bool ChannelInternalState::PlaySwitchContainer()
@@ -804,7 +809,13 @@ namespace SparkyStudios::Audio::Amplitude
         if (_channelState != eChannelPlaybackState_FadingIn && _channelState != eChannelPlaybackState_FadingOut)
             _channelState = eChannelPlaybackState_Playing;
 
-        return !IsReal() || _realChannel.Play(sound->CreateInstance(_collection));
+        SoundInstance* instance = sound->CreateInstance();
+
+        const bool success = !IsReal() || _realChannel.Play(instance);
+        if (!success)
+            SoundImpl::DestroyInstance(instance);
+
+        return success;
     }
 
     bool ChannelInternalState::PlaySound()
@@ -819,6 +830,13 @@ namespace SparkyStudios::Audio::Amplitude
         _fader = Fader::Construct(_faderName);
 
         _channelState = eChannelPlaybackState_Playing;
-        return !IsReal() || _realChannel.Play(_sound->CreateInstance());
+
+        SoundInstance* instance = _sound->CreateInstance();
+
+        const bool success = !IsReal() || _realChannel.Play(instance);
+        if (!success)
+            SoundImpl::DestroyInstance(instance);
+
+        return success;
     }
 } // namespace SparkyStudios::Audio::Amplitude

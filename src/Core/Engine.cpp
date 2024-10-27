@@ -827,6 +827,9 @@ namespace SparkyStudios::Audio::Amplitude
         // Stop all sounds
         StopAll();
 
+        // Process one last frame to update stopped channel states
+        AdvanceFrame(0);
+
         // Release channels
         EraseFinishedSounds(_state);
 

@@ -82,6 +82,9 @@ namespace SparkyStudios::Audio::Amplitude
         AudioConverter* dataConverter; // miniaudio resampler & channel converter
         PipelineInstance* pipeline; // pipeline for this layer
 
+        AmMutexHandle mutex; // mutex for thread-safe access
+        std::unordered_map<AmThreadID, bool> mutexLocked; // true if mutex is locked
+
         /**
          * @brief Resets the layer.
          */
@@ -89,30 +92,30 @@ namespace SparkyStudios::Audio::Amplitude
 
         void ResetPipeline();
 
-        AmUInt32 GetId() const override;
-        AmUInt64 GetStartPosition() const override;
-        AmUInt64 GetEndPosition() const override;
-        AmUInt64 GetCurrentPosition() const override;
-        AmReal32 GetGain() const override;
-        AmReal32 GetStereoPan() const override;
-        AmReal32 GetPitch() const override;
-        AmReal32 GetObstruction() const override;
-        AmReal32 GetOcclusion() const override;
-        AmReal32 GetPlaySpeed() const override;
-        AmVec3 GetLocation() const override;
-        Entity GetEntity() const override;
-        Listener GetListener() const override;
-        Room GetRoom() const override;
-        Channel GetChannel() const override;
-        Bus GetBus() const override;
-        SoundFormat GetSoundFormat() const override;
-        eSpatialization GetSpatialization() const override;
-        bool IsLoopEnabled() const override;
-        bool IsStreamEnabled() const override;
-        const Sound* GetSound() const override;
-        const EffectInstance* GetEffect() const override;
-        const Attenuation* GetAttenuation() const override;
-        AmUInt32 GetSampleRate() const override;
+        [[nodiscard]] AmUInt32 GetId() const override;
+        [[nodiscard]] AmUInt64 GetStartPosition() const override;
+        [[nodiscard]] AmUInt64 GetEndPosition() const override;
+        [[nodiscard]] AmUInt64 GetCurrentPosition() const override;
+        [[nodiscard]] AmReal32 GetGain() const override;
+        [[nodiscard]] AmReal32 GetStereoPan() const override;
+        [[nodiscard]] AmReal32 GetPitch() const override;
+        [[nodiscard]] AmReal32 GetObstruction() const override;
+        [[nodiscard]] AmReal32 GetOcclusion() const override;
+        [[nodiscard]] AmReal32 GetPlaySpeed() const override;
+        [[nodiscard]] AmVec3 GetLocation() const override;
+        [[nodiscard]] Entity GetEntity() const override;
+        [[nodiscard]] Listener GetListener() const override;
+        [[nodiscard]] Room GetRoom() const override;
+        [[nodiscard]] Channel GetChannel() const override;
+        [[nodiscard]] Bus GetBus() const override;
+        [[nodiscard]] SoundFormat GetSoundFormat() const override;
+        [[nodiscard]] eSpatialization GetSpatialization() const override;
+        [[nodiscard]] bool IsLoopEnabled() const override;
+        [[nodiscard]] bool IsStreamEnabled() const override;
+        [[nodiscard]] const Sound* GetSound() const override;
+        [[nodiscard]] const EffectInstance* GetEffect() const override;
+        [[nodiscard]] const Attenuation* GetAttenuation() const override;
+        [[nodiscard]] AmUInt32 GetSampleRate() const override;
     };
 
     struct MixerCommand

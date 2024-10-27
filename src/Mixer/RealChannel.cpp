@@ -133,20 +133,20 @@ namespace SparkyStudios::Audio::Amplitude
         _activeSounds[layer]->SetChannel(this);
         _activeSounds[layer]->Load();
 
-        if (_activeSounds[layer]->GetUserData() == nullptr)
+        if (sound->GetUserData() == nullptr)
         {
             _channelLayersId[layer] = kAmInvalidObjectId;
             amLogError("The sound was not loaded successfully.");
             return false;
         }
 
-        _loop[layer] = _activeSounds[layer]->GetSound()->IsLoop();
-        _stream[layer] = _activeSounds[layer]->GetSound()->IsStream();
+        _loop[layer] = sound->GetSound()->IsLoop();
+        _stream[layer] = sound->GetSound()->IsStream();
 
         const PlayStateFlag loops = _loop[layer] ? ePSF_LOOP : ePSF_PLAY;
 
-        _channelLayersId[layer] = _mixer->Play(
-            static_cast<SoundData*>(_activeSounds[layer]->GetUserData()), loops, _gain[layer], _pan, _pitch, _playSpeed, _channelId, 0);
+        _channelLayersId[layer] =
+            _mixer->Play(static_cast<SoundData*>(sound->GetUserData()), loops, _gain[layer], _pan, _pitch, _playSpeed, _channelId, 0);
 
         // Check if playing the sound was successful, and display the error if it was not.
         const bool success = _channelLayersId[layer] != kAmInvalidObjectId;
@@ -274,16 +274,49 @@ namespace SparkyStudios::Audio::Amplitude
         return _mixer->SetPlayState(_channelId, _channelLayersId[layer], ePSF_STOP);
     }
 
+    bool RealChannel::Halt()
+    {
+        AMPLITUDE_ASSERT(Valid());
+
+        bool success = true;
+        for (const auto& layer : _channelLayersId | std::views::keys)
+            success &= Halt(layer);
+
+        return success;
+    }
+
     bool RealChannel::Pause(AmUInt32 layer)
     {
         AMPLITUDE_ASSERT(Valid());
         return _mixer->SetPlayState(_channelId, _channelLayersId[layer], ePSF_HALT);
     }
 
+    bool RealChannel::Pause()
+    {
+        AMPLITUDE_ASSERT(Valid());
+
+        bool success = true;
+        for (const auto& layer : _channelLayersId | std::views::keys)
+            success &= Pause(layer);
+
+        return success;
+    }
+
     bool RealChannel::Resume(AmUInt32 layer)
     {
         AMPLITUDE_ASSERT(Valid());
         return _mixer->SetPlayState(_channelId, _channelLayersId[layer], _loop[layer] ? ePSF_LOOP : ePSF_PLAY);
+    }
+
+    bool RealChannel::Resume()
+    {
+        AMPLITUDE_ASSERT(Valid());
+
+        bool success = true;
+        for (const auto& layer : _channelLayersId | std::views::keys)
+            success &= Resume(layer);
+
+        return success;
     }
 
     void RealChannel::SetPan(const AmVec2& pan)

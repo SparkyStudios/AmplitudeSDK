@@ -65,12 +65,54 @@ namespace SparkyStudios::Audio::Amplitude
         bool m_locked = false;
     };
 
+    struct AmplimixLayerMutexLocker
+    {
+        explicit AmplimixLayerMutexLocker(AmplimixLayerImpl* layer)
+            : m_layer(layer)
+        {
+            Lock();
+        }
+
+        ~AmplimixLayerMutexLocker()
+        {
+            Unlock();
+        }
+
+        [[nodiscard]] bool IsLocked() const
+        {
+            return m_layer->mutexLocked[Thread::GetCurrentThreadId()];
+        }
+
+        void Lock() const
+        {
+            if (IsLocked())
+                return;
+
+            Thread::LockMutex(m_layer->mutex);
+            m_layer->mutexLocked[Thread::GetCurrentThreadId()] = true;
+        }
+
+        void Unlock() const
+        {
+            if (!IsLocked())
+                return;
+
+            Thread::UnlockMutex(m_layer->mutex);
+            m_layer->mutexLocked[Thread::GetCurrentThreadId()] = false;
+        }
+
+    private:
+        AmplimixLayerImpl* m_layer;
+    };
+
     constexpr AmUInt32 kProcessedFramesCount = GetSimdBlockSize();
 
     static void OnSoundDestroyed(AmplimixImpl* mixer, AmplimixLayerImpl* layer);
 
     static bool ShouldLoopSound(AmplimixImpl* mixer, AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         const auto* sound = layer->snd->sound.get();
         const AmUInt32 loopCount = sound->GetSettings().m_loopCount;
 
@@ -79,6 +121,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     static void OnSoundStarted(AmplimixImpl* mixer, AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         const auto* sound = layer->snd->sound.get();
         amLogDebug("Started sound: '" AM_OS_CHAR_FMT "'.", sound->GetSound()->GetPath().c_str());
 
@@ -90,6 +134,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     static void OnSoundPaused(AmplimixImpl* mixer, AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         const auto* sound = layer->snd->sound.get();
         amLogDebug("Paused sound: '" AM_OS_CHAR_FMT "'.", sound->GetSound()->GetPath().c_str());
 
@@ -101,6 +147,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     static void OnSoundResumed(AmplimixImpl* mixer, AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         const auto* sound = layer->snd->sound.get();
         amLogDebug("Resumed sound: '" AM_OS_CHAR_FMT "'.", sound->GetSound()->GetPath().c_str());
 
@@ -112,6 +160,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     static void OnSoundStopped(AmplimixImpl* mixer, AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         const auto* sound = layer->snd->sound.get();
         amLogDebug("Stopped sound: '" AM_OS_CHAR_FMT "'.", sound->GetSound()->GetPath().c_str());
 
@@ -123,6 +173,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     static bool OnSoundLooped(AmplimixImpl* mixer, AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         auto* sound = layer->snd->sound.get();
         amLogDebug("Looped sound: '" AM_OS_CHAR_FMT "'.", sound->GetSound()->GetPath().c_str());
 
@@ -143,6 +195,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     static AmUInt64 OnSoundStream(AmplimixImpl* mixer, AmplimixLayerImpl* layer, AmUInt64 offset, AmUInt64 frames)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         if (!layer->snd->stream)
             return 0;
 
@@ -152,6 +206,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     static void OnSoundEnded(AmplimixImpl* mixer, AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         auto* sound = layer->snd->sound.get();
         amLogDebug("Ended sound: '" AM_OS_CHAR_FMT "'.", sound->GetSound()->GetPath().c_str());
 
@@ -227,6 +283,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     static void OnSoundDestroyed(AmplimixImpl* mixer, AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         if (layer->snd == nullptr)
             return;
 
@@ -246,7 +304,7 @@ namespace SparkyStudios::Audio::Amplitude
         const auto x = xsimd::load_aligned<simd_arch>(&in[index]);
         const auto y = xsimd::load_aligned<simd_arch>(&out[index]);
 
-        xsimd::store_aligned(&out[index], xsimd::fma(x, gain, y));
+        xsimd::store_aligned<simd_arch>(&out[index], xsimd::fma(x, gain, y));
 #else
         out[index] += in[index] * gain;
 #endif // AM_SIMD_INTRINSICS
@@ -502,6 +560,7 @@ namespace SparkyStudios::Audio::Amplitude
     bool AmplimixImpl::SetObstruction(AmUInt32 id, AmUInt32 layer, AmReal32 obstruction)
     {
         auto* lay = GetLayer(layer);
+        AmplimixLayerMutexLocker lock(lay);
 
         // check id and state flag to make sure the id is valid
         if (id != lay->id || AMPLIMIX_LOAD(&lay->flag) <= ePSF_STOP)
@@ -520,6 +579,7 @@ namespace SparkyStudios::Audio::Amplitude
     bool AmplimixImpl::SetOcclusion(AmUInt32 id, AmUInt32 layer, AmReal32 occlusion)
     {
         auto* lay = GetLayer(layer);
+        AmplimixLayerMutexLocker lock(lay);
 
         // check id and state flag to make sure the id is valid
         if (id != lay->id || AMPLIMIX_LOAD(&lay->flag) <= ePSF_STOP)
@@ -538,6 +598,7 @@ namespace SparkyStudios::Audio::Amplitude
     bool AmplimixImpl::SetGainPan(AmUInt32 id, AmUInt32 layer, AmReal32 gain, AmReal32 pan)
     {
         auto* lay = GetLayer(layer);
+        AmplimixLayerMutexLocker lock(lay);
 
         // check id and state flag to make sure the id is valid
         if (id != lay->id || AMPLIMIX_LOAD(&lay->flag) <= ePSF_STOP)
@@ -561,6 +622,7 @@ namespace SparkyStudios::Audio::Amplitude
     bool AmplimixImpl::SetPitch(AmUInt32 id, AmUInt32 layer, AmReal32 pitch)
     {
         auto* lay = GetLayer(layer);
+        AmplimixLayerMutexLocker lock(lay);
 
         // check id and state flag to make sure the id is valid
         if ((id == lay->id) && (AMPLIMIX_LOAD(&lay->flag) > ePSF_STOP))
@@ -578,6 +640,7 @@ namespace SparkyStudios::Audio::Amplitude
     bool AmplimixImpl::SetCursor(AmUInt32 id, AmUInt32 layer, AmUInt64 cursor)
     {
         auto* lay = GetLayer(layer);
+        AmplimixLayerMutexLocker lock(lay);
 
         // check id and state flag to make sure the id is valid
         if ((id == lay->id) && (AMPLIMIX_LOAD(&lay->flag) > ePSF_STOP))
@@ -646,7 +709,8 @@ namespace SparkyStudios::Audio::Amplitude
     PlayStateFlag AmplimixImpl::GetPlayState(AmUInt32 id, AmUInt32 layer)
     {
         // get layer based on the lowest bits of id
-        const auto* lay = GetLayer(layer);
+        auto* lay = GetLayer(layer);
+        AmplimixLayerMutexLocker lock(lay);
 
         // check id and state flag to make sure the id is valid
         if (PlayStateFlag flag; (id == lay->id) && ((flag = AMPLIMIX_LOAD(&lay->flag)) > ePSF_STOP))
@@ -662,6 +726,7 @@ namespace SparkyStudios::Audio::Amplitude
     bool AmplimixImpl::SetPlaySpeed(AmUInt32 id, AmUInt32 layer, AmReal32 speed)
     {
         auto* lay = GetLayer(layer);
+        AmplimixLayerMutexLocker lock(lay);
 
         // check id and state flag to make sure the id is valid
         if ((id == lay->id) && (AMPLIMIX_LOAD(&lay->flag) > ePSF_STOP))
@@ -761,6 +826,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     void AmplimixImpl::MixLayer(AmplimixLayerImpl* layer, AudioBuffer* buffer, AmUInt64 frameCount)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         if (layer->snd == nullptr)
         {
             AMPLITUDE_ASSERT(false); // This should technically never appear
@@ -982,6 +1049,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     bool AmplimixImpl::ShouldMix(AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         if (layer->snd == nullptr)
             return false;
 
@@ -994,6 +1063,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     void AmplimixImpl::UpdatePitch(AmplimixLayerImpl* layer)
     {
+        AmplimixLayerMutexLocker lock(layer);
+
         const AmReal32 pitch = AMPLIMIX_LOAD(&layer->pitch);
         const AmReal32 speed = AMPLIMIX_LOAD(&layer->userPlaySpeed);
 
