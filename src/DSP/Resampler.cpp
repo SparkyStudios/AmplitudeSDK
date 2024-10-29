@@ -63,7 +63,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Resampler::Register(Resampler* resampler)
     {
-        if (lockResamplers())
+        if (lockResamplers() || resampler == nullptr)
             return;
 
         if (Find(resampler->GetName()) != nullptr)
@@ -79,7 +79,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Resampler::Unregister(const Resampler* resampler)
     {
-        if (lockResamplers())
+        if (lockResamplers() || resampler == nullptr)
             return;
 
         ResamplerRegistry& resamplers = resamplerRegistry();

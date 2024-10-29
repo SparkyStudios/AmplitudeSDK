@@ -290,7 +290,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Node::Register(Node* node)
     {
-        if (lockNodes())
+        if (lockNodes() || node == nullptr)
             return;
 
         if (Find(node->GetName()) != nullptr)
@@ -306,7 +306,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Node::Unregister(const Node* node)
     {
-        if (lockNodes())
+        if (lockNodes() || node == nullptr)
             return;
 
         NodeRegistry& nodes = nodeRegistry();

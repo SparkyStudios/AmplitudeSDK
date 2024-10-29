@@ -325,7 +325,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup memory
      */
-    class MemoryAllocator
+    class AM_API_PUBLIC MemoryAllocator
     {
     public:
         /**

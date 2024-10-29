@@ -79,22 +79,22 @@ namespace SparkyStudios::Audio::Amplitude
         return m_name;
     }
 
-    void Filter::Register(Filter* codec)
+    void Filter::Register(Filter* filter)
     {
-        if (lockFilters())
+        if (lockFilters() || filter == nullptr)
             return;
 
-        if (Find(codec->GetName()) != nullptr)
+        if (Find(filter->GetName()) != nullptr)
             return;
 
         FilterRegistry& filters = filterRegistry();
-        filters.insert(FilterImpl(codec->GetName(), codec));
+        filters.insert(FilterImpl(filter->GetName(), filter));
         filtersCount()++;
     }
 
     void Filter::Unregister(const Filter* filter)
     {
-        if (lockFilters())
+        if (lockFilters() || filter == nullptr)
             return;
 
         FilterRegistry& filters = filterRegistry();

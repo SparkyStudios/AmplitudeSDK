@@ -57,6 +57,7 @@ struct AmTestListener : Catch::EventListenerBase
 
         // Register all the default plugins shipped with the engine
         Engine::RegisterDefaultPlugins();
+        Driver::Unregister(Driver::Find("miniaudio"));
 
         const auto sdkPath = std::filesystem::path(std::getenv("AM_SDK_PATH"));
 

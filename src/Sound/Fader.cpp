@@ -249,7 +249,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Fader::Register(Fader* fader)
     {
-        if (lockFaders())
+        if (lockFaders() || fader == nullptr)
             return;
 
         if (Find(fader->GetName()) != nullptr)
@@ -265,7 +265,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Fader::Unregister(const Fader* fader)
     {
-        if (lockFaders())
+        if (lockFaders() || fader == nullptr)
             return;
 
         FaderRegistry& faders = faderRegistry();

@@ -64,7 +64,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Driver::Register(Driver* driver)
     {
-        if (lockDrivers())
+        if (lockDrivers() || driver == nullptr)
             return;
 
         if (Find(driver->GetName()) != nullptr)
@@ -80,7 +80,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Driver::Unregister(const Driver* driver)
     {
-        if (lockDrivers())
+        if (lockDrivers() || driver == nullptr)
             return;
 
         DriverRegistry& drivers = driverRegistry();

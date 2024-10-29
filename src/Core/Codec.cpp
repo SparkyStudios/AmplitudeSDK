@@ -78,7 +78,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Codec::Register(Codec* codec)
     {
-        if (lockCodecs())
+        if (lockCodecs() || codec == nullptr)
             return;
 
         if (Find(codec->GetName()) != nullptr)
@@ -94,7 +94,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void Codec::Unregister(const Codec* codec)
     {
-        if (lockCodecs())
+        if (lockCodecs() || codec == nullptr)
             return;
 
         CodecRegistry& codecs = codecRegistry();

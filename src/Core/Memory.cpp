@@ -118,7 +118,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void MemoryManager::Initialize(std::unique_ptr<MemoryAllocator> allocator)
     {
-        if (gMemManager == nullptr)
+        if (!IsInitialized())
             gMemManager = new MemoryManager(std::move(allocator));
 
 #if !defined(AM_NO_MEMORY_STATS)
