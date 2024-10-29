@@ -68,20 +68,20 @@
 
 static AM_INLINE std::wstring am_string_widen(const std::string& str)
 {
-    std::wostringstream wstm;
-    const auto& ctfacet = std::use_facet<std::ctype<wchar_t>>(wstm.getloc());
-    for (char i : str)
-        wstm << ctfacet.widen(i);
-    return wstm.str();
+    std::wostringstream s;
+    const auto& f = std::use_facet<std::ctype<wchar_t>>(s.getloc());
+    for (const char& i : str)
+        s << f.widen(i);
+    return s.str();
 }
 
 static AM_INLINE std::string am_wstring_narrow(const std::wstring& str)
 {
-    std::ostringstream stm;
-    const auto& ctfacet = std::use_facet<std::ctype<wchar_t>>(stm.getloc());
-    for (wchar_t i : str)
-        stm << ctfacet.narrow(i, 0);
-    return stm.str();
+    std::ostringstream s;
+    const auto& f = std::use_facet<std::ctype<wchar_t>>(s.getloc());
+    for (const wchar_t& i : str)
+        s << f.narrow(i, 0);
+    return s.str();
 }
 
 // Conversion between OS strings and default strings

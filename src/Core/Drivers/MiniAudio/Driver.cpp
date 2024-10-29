@@ -134,43 +134,38 @@ namespace SparkyStudios::Audio::Amplitude
         , _log()
         , _context()
         , _devices()
-    {
-        _logCallback = ma_log_callback_init(miniaudio_log, nullptr);
-        if (ma_log_init(nullptr, &_log) != MA_SUCCESS)
-        {
-            amLogCritical("Failed to initialize miniaudio log.");
-            return;
-        }
-
-        ma_log_register_callback(&_log, _logCallback);
-
-        ma_context_config config = ma_context_config_init();
-        config.pLog = &_log;
-        config.pUserData = this;
-        config.threadPriority = ma_thread_priority_realtime;
-
-        if (ma_context_init(nullptr, 0, &config, &_context) != MA_SUCCESS)
-        {
-            amLogCritical("Failed to initialize miniaudio context");
-            return;
-        }
-    }
+    {}
 
     MiniAudioDriver::~MiniAudioDriver()
     {
         if (_initialized)
             Close();
-
-        ma_log_unregister_callback(&_log, _logCallback);
-        ma_log_uninit(&_log);
-
-        ma_context_uninit(&_context);
     }
 
     bool MiniAudioDriver::Open(const DeviceDescription& device)
     {
         if (!_initialized)
         {
+            _logCallback = ma_log_callback_init(miniaudio_log, nullptr);
+            if (ma_log_init(nullptr, &_log) != MA_SUCCESS)
+            {
+                amLogCritical("Failed to initialize miniaudio log.");
+                return false;
+            }
+
+            ma_log_register_callback(&_log, _logCallback);
+
+            ma_context_config config = ma_context_config_init();
+            config.pLog = &_log;
+            config.pUserData = this;
+            config.threadPriority = ma_thread_priority_realtime;
+
+            if (ma_context_init(nullptr, 0, &config, &_context) != MA_SUCCESS)
+            {
+                amLogCritical("Failed to initialize miniaudio context");
+                return false;
+            }
+
             const auto channelsCount = static_cast<AmInt16>(device.mRequestedOutputChannels);
 
             ma_device_config deviceConfig = ma_device_config_init(ma_device_type_playback);
@@ -244,6 +239,12 @@ namespace SparkyStudios::Audio::Amplitude
         m_deviceDescription.mDeviceState = DeviceState::Closed;
 
         ma_device_uninit(&_device);
+
+        ma_log_unregister_callback(&_log, _logCallback);
+        ma_log_uninit(&_log);
+
+        ma_context_uninit(&_context);
+
         _initialized = false;
 
         return true;
