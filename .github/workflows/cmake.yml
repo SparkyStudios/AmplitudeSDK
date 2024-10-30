@@ -216,9 +216,9 @@ jobs:
         shell: bash
         working-directory: ${{ inputs.project-path }}/build
         run: |
-          lcov --capture --directory . --output-file coverage.info --base-directory .  --ignore-errors inconsistent --ignore-errors range --ignore-errors negative
-          lcov --remove coverage.info '/usr/*' '${{ github.workspace }}/build/vcpkg_installed/*' '${{ github.workspace }}/src/Utils/*' '${{ github.workspace }}/samples/*' --output-file coverage.info  --ignore-errors inconsistent --ignore-errors range
-          lcov --list coverage.info  --ignore-errors inconsistent --ignore-errors range
+          lcov --capture --directory . --output-file coverage.info --base-directory . --ignore-errors inconsistent,range,mismatch,source,count,negative
+          lcov --remove coverage.info '/usr/*' '${{ github.workspace }}/build/vcpkg_installed/*' '${{ github.workspace }}/src/Utils/*' '${{ github.workspace }}/samples/*' --output-file coverage.info  --ignore-errors inconsistent,range,mismatch,source,count,negative
+          lcov --list coverage.info  --ignore-errors inconsistent,range,mismatch,source,count,negative
 
       - name: Upload coverage to Codecov
         if: matrix.build_type == 'debug' && !startsWith(matrix.config.os, 'windows')

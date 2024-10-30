@@ -279,12 +279,12 @@ function(setup_target_for_coverage_lcov)
     # Cleanup lcov
     set(LCOV_CLEAN_CMD
         ${LCOV_PATH} ${Coverage_LCOV_ARGS} --gcov-tool ${GCOV_PATH} -directory .
-        -b ${BASEDIR} --zerocounters --ignore-errors inconsistent,range,mismatch,source,count
+        -b ${BASEDIR} --zerocounters --ignore-errors inconsistent,range,mismatch,source,count,negative
     )
     # Create baseline to make sure untouched files show up in the report
     set(LCOV_BASELINE_CMD
         ${LCOV_PATH} ${Coverage_LCOV_ARGS} --gcov-tool ${GCOV_PATH} -c -i -d . -b
-        ${BASEDIR} -o ${Coverage_NAME}.base --ignore-errors inconsistent,range,mismatch,source,count
+        ${BASEDIR} -o ${Coverage_NAME}.base --ignore-errors inconsistent,range,mismatch,source,count,negative
     )
     # Run tests
     set(LCOV_EXEC_TESTS_CMD
@@ -293,17 +293,17 @@ function(setup_target_for_coverage_lcov)
     # Capturing lcov counters and generating report
     set(LCOV_CAPTURE_CMD
         ${LCOV_PATH} ${Coverage_LCOV_ARGS} --gcov-tool ${GCOV_PATH} --directory . -b
-        ${BASEDIR} --capture --output-file ${Coverage_NAME}.capture --ignore-errors inconsistent,range,mismatch,source,count
+        ${BASEDIR} --capture --output-file ${Coverage_NAME}.capture --ignore-errors inconsistent,range,mismatch,source,count,negative
     )
     # add baseline counters
     set(LCOV_BASELINE_COUNT_CMD
         ${LCOV_PATH} ${Coverage_LCOV_ARGS} --gcov-tool ${GCOV_PATH} -a ${Coverage_NAME}.base
-        -a ${Coverage_NAME}.capture --output-file ${Coverage_NAME}.total --ignore-errors inconsistent,range,mismatch,source,count
+        -a ${Coverage_NAME}.capture --output-file ${Coverage_NAME}.total --ignore-errors inconsistent,range,mismatch,source,count,negative
     )
     # filter collected data to final coverage report
     set(LCOV_FILTER_CMD
         ${LCOV_PATH} ${Coverage_LCOV_ARGS} --gcov-tool ${GCOV_PATH} --remove
-        ${Coverage_NAME}.total ${LCOV_EXCLUDES} --output-file ${Coverage_NAME}.info --ignore-errors inconsistent,range,mismatch,source,count
+        ${Coverage_NAME}.total ${LCOV_EXCLUDES} --output-file ${Coverage_NAME}.info --ignore-errors inconsistent,range,mismatch,source,count,negative
     )
     # Generate HTML output
     set(LCOV_GEN_HTML_CMD
