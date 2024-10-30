@@ -80,29 +80,40 @@ namespace SparkyStudios::Audio::Amplitude
 
         [[nodiscard]] bool IsLocked() const
         {
-            return m_layer->mutexLocked[Thread::GetCurrentThreadId()];
+            if (const AmThreadID threadId = Thread::GetCurrentThreadId(); m_layer->mutexLocked.contains(threadId))
+                return m_layer->mutexLocked.at(threadId);
+
+            return false;
         }
 
-        void Lock() const
+        void Lock()
         {
             if (IsLocked())
-                return;
+                return; // Avoid double locking
 
-            Thread::LockMutex(m_layer->mutex);
+            if (m_layer->mutex)
+                Thread::LockMutex(m_layer->mutex);
+
             m_layer->mutexLocked[Thread::GetCurrentThreadId()] = true;
+            _haveLocked = true;
         }
 
         void Unlock() const
         {
-            if (!IsLocked())
+            if (!_haveLocked)
                 return;
 
-            Thread::UnlockMutex(m_layer->mutex);
+            AMPLITUDE_ASSERT(IsLocked());
+
+            if (m_layer->mutex)
+                Thread::UnlockMutex(m_layer->mutex);
+
             m_layer->mutexLocked[Thread::GetCurrentThreadId()] = false;
         }
 
     private:
         AmplimixLayerImpl* m_layer;
+        bool _haveLocked = false;
     };
 
     constexpr AmUInt32 kProcessedFramesCount = GetSimdBlockSize();
@@ -494,6 +505,9 @@ namespace SparkyStudios::Audio::Amplitude
         // check if corresponding layer is free
         if (AMPLIMIX_LOAD(&lay->flag) == ePSF_MIN)
         {
+            // Initialize the layer's mutex
+            lay->mutex = Thread::CreateMutex(100);
+
             // Initialize this layer's pipeline
             lay->pipeline = _pipeline->CreateInstance(lay);
 
@@ -1107,6 +1121,14 @@ namespace SparkyStudios::Audio::Amplitude
             Thread::UnlockMutex(_audioThreadMutex);
 
         _insideAudioThreadMutex[Thread::GetCurrentThreadId()] = false;
+    }
+
+    AmplimixLayerImpl::~AmplimixLayerImpl()
+    {
+        if (mutex)
+            Thread::DestroyMutex(mutex);
+
+        mutexLocked.clear();
     }
 
     void AmplimixLayerImpl::Reset()

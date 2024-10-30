@@ -29,6 +29,12 @@ namespace SparkyStudios::Audio::Amplitude
         , m_orderWeights()
     {}
 
+    AmbisonicEntity::~AmbisonicEntity()
+    {
+        m_coefficients.Release();
+        m_orderWeights.Release();
+    }
+
     bool AmbisonicEntity::Configure(AmUInt32 order, bool is3D)
     {
         if (!AmbisonicComponent::Configure(order, is3D))

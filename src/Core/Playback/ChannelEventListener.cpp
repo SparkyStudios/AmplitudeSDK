@@ -37,14 +37,17 @@ namespace SparkyStudios::Audio::Amplitude
 
     void ChannelEventListener::Call(ChannelInternalState* channel)
     {
+        if (_handlers.empty())
+            return;
+
         ChannelEventInfo info(channel);
 
-        for (auto& [callback, userData] : _handlers)
+        for (auto& handler : _handlers)
         {
-            info.m_userData = userData;
+            info.m_userData = handler.m_userData;
 
-            if (callback)
-                callback(info);
+            if (handler.m_callback)
+                handler.m_callback(info);
         }
     }
 

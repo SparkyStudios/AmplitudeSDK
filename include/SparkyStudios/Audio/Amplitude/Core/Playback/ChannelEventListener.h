@@ -31,7 +31,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup engine
      */
-    struct ChannelEventInfo
+    struct AM_API_PUBLIC ChannelEventInfo
     {
         /**
          * @brief Constructor.

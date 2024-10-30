@@ -56,8 +56,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     DCRemovalFilterInstance::~DCRemovalFilterInstance()
     {
-        _buffer.Clear();
-        _totals.Clear();
+        _buffer.Release();
+        _totals.Release();
     }
 
     void DCRemovalFilterInstance::Process(const AudioBuffer& in, AudioBuffer& out, AmUInt64 frames, AmUInt32 sampleRate)

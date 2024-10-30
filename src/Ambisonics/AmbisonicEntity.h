@@ -34,7 +34,7 @@ namespace SparkyStudios::Audio::Amplitude
     public:
         AmbisonicEntity();
 
-        ~AmbisonicEntity() override = default;
+        ~AmbisonicEntity() override;
 
         /**
          * @copydoc AmbisonicComponent::Reset
