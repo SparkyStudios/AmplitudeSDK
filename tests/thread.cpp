@@ -30,7 +30,7 @@ public:
     {
         _executingThreadId = Thread::GetCurrentThreadId();
         if (_targetThreadId != _executingThreadId)
-            Thread::Sleep(100);
+            Thread::Sleep(500);
 
         _isExecuted = true;
     }
@@ -156,7 +156,7 @@ TEST_CASE("Thread Pool Tests", "[thread][amplitude]")
 
             THEN("the task is executed")
             {
-                Thread::Sleep(150); // Wait for the task to execute
+                Thread::Sleep(550); // Wait for the task to execute
                 REQUIRE(task->IsExecuted());
 
                 AND_THEN("the task is removed from the pool")
@@ -175,7 +175,7 @@ TEST_CASE("Thread Pool Tests", "[thread][amplitude]")
                 auto task = std::make_shared<DummyPoolTask>(threadId);
                 REQUIRE_FALSE(task->IsExecuted());
 
-                bool willExecuteWorkInCallerThread = pool.GetTaskCount() > AM_MAX_THREAD_POOL_TASKS;
+                bool willExecuteWorkInCallerThread = pool.GetTaskCount() >= AM_MAX_THREAD_POOL_TASKS;
 
                 pool.AddTask(task);
 

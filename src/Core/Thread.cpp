@@ -425,17 +425,16 @@ namespace SparkyStudios::Audio::Amplitude::Thread
     {
         std::shared_ptr<PoolTask> t = nullptr;
 
-        if (_workMutex)
-            LockMutex(_workMutex);
-
         if (_taskCount > 0)
         {
-            AmInt32 r;
             AmInt32 c = 0;
 
             do
             {
-                r = _robin % _taskCount;
+                if (_workMutex)
+                    LockMutex(_workMutex);
+
+                AmInt32 r = _robin % _taskCount;
                 _robin++;
                 t = _taskArray[r];
 
@@ -444,19 +443,19 @@ namespace SparkyStudios::Audio::Amplitude::Thread
                     _taskArray[r] = _taskArray[_taskCount - 1];
                     _taskCount--;
 
+                    if (_workMutex)
+                        UnlockMutex(_workMutex);
+
                     break;
                 }
-                else
-                {
-                    t = nullptr;
-                }
 
+                t = nullptr;
                 c++;
+
+                if (_workMutex)
+                    UnlockMutex(_workMutex);
             } while (c < _taskCount);
         }
-
-        if (_workMutex)
-            UnlockMutex(_workMutex);
 
         return t;
     }
