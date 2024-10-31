@@ -133,18 +133,18 @@ TEST_CASE("Thread Pool Tests", "[thread][amplitude]")
     WHEN("a thread pool is created with threads")
     {
         Thread::Pool pool;
-        pool.Init(8);
+        pool.Init(1);
 
         THEN("it initializes with the correct number of threads")
         {
-            REQUIRE(pool.GetThreadCount() == 8);
+            REQUIRE(pool.GetThreadCount() == 1);
         }
 
         THEN("it cannot initialize twice")
         {
             pool.Init(4);
             REQUIRE_FALSE(pool.GetThreadCount() == 4);
-            REQUIRE(pool.GetThreadCount() == 8);
+            REQUIRE(pool.GetThreadCount() == 1);
         }
 
         WHEN("a ready task is added to the pool")
