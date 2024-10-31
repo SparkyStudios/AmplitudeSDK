@@ -830,6 +830,9 @@ namespace SparkyStudios::Audio::Amplitude
         // Process one last frame to update stopped channel states
         AdvanceFrame(0);
 
+        // Pause the engine so no further updates are made
+        _state->paused = true;
+
         // Release channels
         EraseFinishedSounds(_state);
 
