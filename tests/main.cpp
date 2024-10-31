@@ -82,7 +82,8 @@ struct AmTestListener : Catch::EventListenerBase
 
         if (amEngine->IsInitialized())
         {
-            amEngine->UnloadSoundBanks();
+            while (amEngine->HasLoadedSoundBanks())
+                amEngine->UnloadSoundBanks();
 
             amEngine->Deinitialize();
 

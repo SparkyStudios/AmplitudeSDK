@@ -908,6 +908,10 @@ namespace SparkyStudios::Audio::Amplitude
                 _state->sound_bank_map[id] = std::move(soundBank);
                 outID = id;
             }
+            else
+            {
+                _state->sound_bank_id_map.erase(findIt);
+            }
         }
         else
         {
@@ -943,6 +947,10 @@ namespace SparkyStudios::Audio::Amplitude
                 _state->sound_bank_id_map[filename] = id;
                 _state->sound_bank_map[id] = std::move(soundBank);
                 outID = id;
+            }
+            else
+            {
+                _state->sound_bank_id_map.erase(findIt);
             }
         }
         else
@@ -1004,9 +1012,38 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::UnloadSoundBanks()
     {
+        std::vector<AmBankID> idsToDelete;
+        idsToDelete.reserve(_state->sound_bank_map.size());
+
         for (const auto& item : _state->sound_bank_map | std::ranges::views::values)
+        {
             if (RefCounter* ref = item->GetRefCounter(); ref->GetCount() > 0 && ref->Decrement() == 0)
+            {
                 item->Deinitialize(this);
+                idsToDelete.push_back(item->GetId());
+            }
+        }
+
+        for (const auto id : idsToDelete)
+            _state->sound_bank_map.erase(id);
+    }
+
+    bool EngineImpl::HasLoadedSoundBank(const AmOsString& filename) const
+    {
+        if (const auto findIt = _state->sound_bank_id_map.find(filename); findIt != _state->sound_bank_id_map.end())
+            return _state->sound_bank_map.contains(findIt->second);
+
+        return false;
+    }
+
+    bool EngineImpl::HasLoadedSoundBank(AmBankID id) const
+    {
+        return _state->sound_bank_map.contains(id);
+    }
+
+    bool EngineImpl::HasLoadedSoundBanks() const
+    {
+        return !_state->sound_bank_map.empty();
     }
 
     void EngineImpl::StartOpenFileSystem()

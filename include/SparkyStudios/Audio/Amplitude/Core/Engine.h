@@ -369,6 +369,31 @@ namespace SparkyStudios::Audio::Amplitude
         virtual void UnloadSoundBanks() = 0;
 
         /**
+         * @brief Checks if a sound bank with the given filename has been loaded.
+         *
+         * @param[in] filename The file to check.
+         *
+         * @return `true` if the sound bank has been loaded, `false` otherwise.
+         */
+        [[nodiscard]] virtual bool HasLoadedSoundBank(const AmOsString& filename) const = 0;
+
+        /**
+         * @brief Checks if a sound bank with the given ID has been loaded.
+         *
+         * @param[in] id The sound bank id to check.
+         *
+         * @return `true` if the sound bank has been loaded, `false` otherwise.
+         */
+        [[nodiscard]] virtual bool HasLoadedSoundBank(AmBankID id) const = 0;
+
+        /**
+         * @brief Checks if any sound banks have been loaded.
+         *
+         * @return `true` if any sound banks have been loaded, `false` otherwise.
+         */
+        [[nodiscard]] virtual bool HasLoadedSoundBanks() const = 0;
+
+        /**
          * @brief Starts the loading of sound files referenced in loaded sound banks.
          *
          * This process will run in another thread. You must call @ref TryFinalizeLoadSoundFiles `TryFinalizeLoadSoundFiles()` to

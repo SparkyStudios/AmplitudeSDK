@@ -81,6 +81,9 @@ namespace SparkyStudios::Audio::Amplitude
         void UnloadSoundBank(const AmOsString& filename) override;
         void UnloadSoundBank(AmBankID id) override;
         void UnloadSoundBanks() override;
+        [[nodiscard]] bool HasLoadedSoundBank(const AmOsString& filename) const override;
+        [[nodiscard]] bool HasLoadedSoundBank(AmBankID id) const override;
+        [[nodiscard]] bool HasLoadedSoundBanks() const override;
         void StartLoadSoundFiles() override;
         bool TryFinalizeLoadSoundFiles() override;
         [[nodiscard]] SwitchContainerHandle GetSwitchContainerHandle(const AmString& name) const override;

@@ -256,8 +256,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(e3.Valid());
                 REQUIRE_FALSE(e4.Valid());
                 REQUIRE_FALSE(e5.Valid());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("it can register listeners")
@@ -288,8 +286,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(l3.Valid());
                 REQUIRE_FALSE(l4.Valid());
                 REQUIRE_FALSE(l5.Valid());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("it can register environments")
@@ -320,8 +316,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(e3.Valid());
                 REQUIRE_FALSE(e4.Valid());
                 REQUIRE_FALSE(e5.Valid());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("it can register rooms")
@@ -352,8 +346,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(r3.Valid());
                 REQUIRE_FALSE(r4.Valid());
                 REQUIRE_FALSE(r5.Valid());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("it can access sound assets by names")
@@ -361,8 +353,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE(amEngine->GetSoundHandle("symphony") != nullptr);
                 REQUIRE(amEngine->GetSoundHandle("AMB_Forest") != nullptr);
                 REQUIRE(amEngine->GetSoundHandle("throw_01") != nullptr);
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("it can access sound assets by IDs")
@@ -370,8 +360,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE(amEngine->GetSoundHandle(101) != nullptr);
                 REQUIRE(amEngine->GetSoundHandle(100) != nullptr);
                 REQUIRE(amEngine->GetSoundHandle(1) != nullptr);
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("it accesses the same sound assets when fetching by name or ID")
@@ -383,15 +371,11 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                     REQUIRE(amEngine->GetSoundHandle(name) == amEngine->GetSoundHandle(id));
                 }
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("it can load the same sound bank again")
             {
                 REQUIRE(amEngine->LoadSoundBank(AM_OS_STRING("tests.init.ambank")));
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
-
                 amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
@@ -415,8 +399,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(2000); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("engine can play a sound using its ID")
@@ -429,8 +411,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(2000); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("engine can play a sound using its name")
@@ -443,8 +423,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(1000); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("engine can play a collection using its handle")
@@ -459,8 +437,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(kAmSecond * 5); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("engine can play a collection using its ID")
@@ -473,8 +449,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(kAmSecond * 3); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("engine can play a collection using its name")
@@ -487,8 +461,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(kAmSecond * 3); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("engine can play a switch container using its handle")
@@ -507,8 +479,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(1000); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("engine can play a switch container using its ID")
@@ -526,8 +496,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(1000); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             THEN("engine can play a switch container using its name")
@@ -545,8 +513,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 Thread::Sleep(1000); // wait for the sound to finish playing
                 REQUIRE_FALSE(channel.Playing());
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             GIVEN("a playing channel")
@@ -681,8 +647,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
                 if (channel.Valid())
                     channel.Stop(0);
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             GIVEN("a registered bus")
@@ -749,8 +713,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                     bus.Clear();
                     REQUIRE_FALSE(bus.Valid());
                 }
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
 
             GIVEN("an environment")
@@ -796,8 +758,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                         }
                     }
                 }
-
-                amEngine->UnloadSoundBank(AM_OS_STRING("tests.init.ambank"));
             }
         }
     }
