@@ -51,23 +51,21 @@ namespace SparkyStudios::Audio::Amplitude
     void RtpcImpl::Update(AmTime deltaTime)
     {
         if (_faderRelease && _currentValue > _targetValue)
-        {
             _currentValue = _faderRelease->GetFromTime(Engine::GetInstance()->GetTotalTime());
-        }
 
         if (_faderAttack && _currentValue < _targetValue)
-        {
             _currentValue = _faderAttack->GetFromTime(Engine::GetInstance()->GetTotalTime());
-        }
+
+        _currentValue = std::clamp(_currentValue, _minValue, _maxValue);
     }
 
     void RtpcImpl::SetValue(AmReal64 value)
     {
-        _targetValue = AM_CLAMP(value, _minValue, _maxValue);
+        _targetValue = std::clamp(value, _minValue, _maxValue);
 
         if (_faderAttack == nullptr || _faderRelease == nullptr)
         {
-            _currentValue = value;
+            _currentValue = _targetValue;
         }
         else
         {

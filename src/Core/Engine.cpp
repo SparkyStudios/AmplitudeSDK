@@ -1840,7 +1840,10 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetDefaultListener(const Listener* listener)
     {
-        if (listener->Valid())
+        if (listener == nullptr)
+            _defaultListener = nullptr;
+
+        else if (listener->Valid())
             _defaultListener = listener->GetState();
     }
 

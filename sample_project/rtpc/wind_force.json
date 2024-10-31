@@ -1,16 +1,16 @@
 {
-  "id": 1,
-  "name": "rtpc_player_height",
+  "id": 2,
+  "name": "wind_force",
   "min_value": 0,
-  "max_value": 100,
+  "max_value": 343000,
   "fade_settings": {
-    "enabled": false,
+    "enabled": true,
     "fade_attack": {
-      "duration": 1,
+      "duration": 1000,
       "fader": "Linear"
     },
     "fade_release": {
-      "duration": 1,
+      "duration": 500,
       "fader": "Linear"
     }
   }

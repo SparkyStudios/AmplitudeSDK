@@ -216,6 +216,33 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
             amEngine->SetDefaultListener(1);
             REQUIRE(amEngine->GetDefaultListener().GetState() == listener.GetState());
 
+            THEN("it can set its master gain")
+            {
+                amEngine->SetMasterGain(0.1f);
+                REQUIRE(amEngine->GetMasterGain() == 0.1f);
+
+                amEngine->SetMasterGain(1.0f);
+                REQUIRE(amEngine->GetMasterGain() == 1.0f);
+            }
+
+            THEN("it can be muted")
+            {
+                amEngine->SetMute(true);
+                REQUIRE(amEngine->IsMuted());
+
+                amEngine->SetMute(false);
+                REQUIRE_FALSE(amEngine->IsMuted());
+            }
+
+            THEN("it can be paused")
+            {
+                amEngine->Pause(true);
+                REQUIRE(amEngine->IsPaused());
+
+                amEngine->Pause(false);
+                REQUIRE_FALSE(amEngine->IsPaused());
+            }
+
             THEN("it can load sound files")
             {
                 REQUIRE(amEngine->TryFinalizeLoadSoundFiles());
@@ -286,6 +313,15 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(l3.Valid());
                 REQUIRE_FALSE(l4.Valid());
                 REQUIRE_FALSE(l5.Valid());
+
+                AND_THEN("it ca set the default listener")
+                {
+                    amEngine->SetDefaultListener(&l1);
+                    REQUIRE(amEngine->GetDefaultListener().GetState() == l1.GetState());
+
+                    amEngine->SetDefaultListener(nullptr);
+                    REQUIRE_FALSE(amEngine->GetDefaultListener().Valid());
+                }
             }
 
             THEN("it can register environments")
@@ -541,12 +577,67 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 SwitchHandle invalidSwitch2 = amEngine->GetSwitchHandle(99999);
                 REQUIRE(invalidSwitch2 == nullptr);
 
+                AND_THEN("engine cannot set switch states of invalid switch IDs")
+                {
+                    // This is to increase coverage, the methods will effectively do nothing with invalid handles
+                    amEngine->SetSwitchState(99999, 1);
+                    amEngine->SetSwitchState(99999, "unknown");
+                    amEngine->SetSwitchState(99999, SwitchState());
+                }
+
+                AND_THEN("engine cannot set switch states of invalid switch names")
+                {
+                    // This is to increase coverage, the methods will effectively do nothing with invalid handles
+                    amEngine->SetSwitchState("invalid_switch", 1);
+                    amEngine->SetSwitchState("invalid_switch", "unknown");
+                    amEngine->SetSwitchState("invalid_switch", SwitchState());
+                }
+
                 AND_THEN("engine cannot set switch states of invalid switch handles")
                 {
                     // This is to increase coverage, the methods will effectively do nothing with invalid handles
                     amEngine->SetSwitchState(invalidSwitch, 1);
                     amEngine->SetSwitchState(invalidSwitch2, "unknown");
                     amEngine->SetSwitchState(invalidSwitch, SwitchState());
+                }
+            }
+
+            THEN("engine can load rtpc handles by name")
+            {
+                RtpcHandle rtpc1 = amEngine->GetRtpcHandle("rtpc_player_height");
+                REQUIRE(rtpc1 != nullptr);
+            }
+
+            THEN("engine can load rtpc handles by ID")
+            {
+                RtpcHandle rtpc1 = amEngine->GetRtpcHandle(1);
+                REQUIRE(rtpc1 != nullptr);
+            }
+
+            THEN("engine cannot load rtpc handles with invalid names or IDs")
+            {
+                RtpcHandle invalidRtpc1 = amEngine->GetRtpcHandle("invalid_rtpc");
+                REQUIRE(invalidRtpc1 == nullptr);
+
+                RtpcHandle invalidRtpc2 = amEngine->GetRtpcHandle(99999);
+                REQUIRE(invalidRtpc2 == nullptr);
+
+                AND_THEN("engine cannot set rtpc values of invalid rtpc IDs")
+                {
+                    // This is to increase coverage, the methods will effectively do nothing with invalid handles
+                    amEngine->SetRtpcValue(99999, 1);
+                }
+
+                AND_THEN("engine cannot set rtpc values of invalid rtpc names")
+                {
+                    // This is to increase coverage, the methods will effectively do nothing with invalid handles
+                    amEngine->SetRtpcValue("invalid_rtpc", 1);
+                }
+
+                AND_THEN("engine cannot set rtpc values of invalid rtpc handles")
+                {
+                    // This is to increase coverage, the methods will effectively do nothing with invalid handles
+                    amEngine->SetRtpcValue(invalidRtpc1, 1);
                 }
             }
 
@@ -894,6 +985,71 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                         amEngine->SetSwitchState(surfaceSwitch->GetName(), snow);
                         REQUIRE(surfaceSwitch->GetState() == snow);
                     }
+                }
+            }
+
+            GIVEN("a rtpc")
+            {
+                RtpcHandle rtpc1 = amEngine->GetRtpcHandle(1);
+                REQUIRE(rtpc1 != nullptr);
+
+                RtpcHandle rtpc2 = amEngine->GetRtpcHandle("wind_force");
+                REQUIRE(rtpc2 != nullptr);
+
+                THEN("it can change its value")
+                {
+                    rtpc1->SetValue(50);
+                    REQUIRE(rtpc1->GetValue() == 50.0);
+
+                    rtpc2->SetValue(1000);
+                    REQUIRE_FALSE(rtpc2->GetValue() == 1000);
+                    amEngine->WaitUntilFrames(65);
+                    REQUIRE(std::abs(rtpc2->GetValue() - 1000.0) < kEpsilon);
+
+                    AND_THEN("engine can change its value by ID")
+                    {
+                        amEngine->SetRtpcValue(rtpc1->GetId(), 75);
+                        REQUIRE(rtpc1->GetValue() == 75.0);
+
+                        amEngine->SetRtpcValue(rtpc2->GetId(), 75);
+                        REQUIRE_FALSE(rtpc2->GetValue() == 75.0);
+                        amEngine->WaitUntilFrames(35);
+                        REQUIRE(std::abs(rtpc2->GetValue() - 75.0) < kEpsilon);
+                    }
+
+                    AND_THEN("engine can change its value by name")
+                    {
+                        amEngine->SetRtpcValue(rtpc1->GetName(), 80);
+                        REQUIRE(rtpc1->GetValue() == 80.0);
+
+                        amEngine->SetRtpcValue(rtpc2->GetId(), 75000);
+                        REQUIRE_FALSE(rtpc2->GetValue() == 75000.0);
+                        amEngine->WaitUntilFrames(65);
+                        REQUIRE(std::abs(rtpc2->GetValue() - 75000.0) < kEpsilon);
+                    }
+
+                    AND_THEN("engine can change its value by handle")
+                    {
+                        amEngine->SetRtpcValue(rtpc1, 90);
+                        REQUIRE(rtpc1->GetValue() == 90.0);
+
+                        amEngine->SetRtpcValue(rtpc2->GetId(), 90);
+                        REQUIRE_FALSE(rtpc2->GetValue() == 90.0);
+                        amEngine->WaitUntilFrames(35);
+                        REQUIRE(std::abs(rtpc2->GetValue() - 90.0) < kEpsilon);
+                    }
+                }
+
+                THEN("it cannot set values higher than max")
+                {
+                    rtpc1->SetValue(rtpc1->GetMaxValue() * 2);
+                    REQUIRE(rtpc1->GetValue() == rtpc1->GetMaxValue());
+                }
+
+                THEN("it cannot set values lower than min")
+                {
+                    rtpc1->SetValue(rtpc1->GetMinValue() * -2);
+                    REQUIRE(rtpc1->GetValue() == rtpc1->GetMinValue());
                 }
             }
         }

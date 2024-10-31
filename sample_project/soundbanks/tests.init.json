@@ -61,6 +61,7 @@
     "footsteps.amswitchcontainer"
   ],
   "rtpc": [
-    "rtpc_player_height.amrtpc"
+    "rtpc_player_height.amrtpc",
+    "wind_force.amrtpc"
   ]
 }

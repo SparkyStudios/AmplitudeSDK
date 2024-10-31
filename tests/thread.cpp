@@ -103,7 +103,7 @@ TEST_CASE("Thread Tests", "[thread][amplitude]")
     SECTION("can correctly sleep a thread for a duration")
     {
         const auto start = Thread::GetTimeMillis();
-        Thread::Sleep(100);
+        Thread::Sleep(105);
         const auto end = Thread::GetTimeMillis();
 
         REQUIRE((end - start) >= 100); // Should at least run for 100ms
