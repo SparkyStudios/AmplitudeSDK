@@ -515,6 +515,41 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(channel.Playing());
             }
 
+            THEN("engine can load switch handles by name")
+            {
+                SwitchHandle switch1 = amEngine->GetSwitchHandle("env");
+                SwitchHandle switch2 = amEngine->GetSwitchHandle("surface_type");
+
+                REQUIRE(switch1 != nullptr);
+                REQUIRE(switch2 != nullptr);
+            }
+
+            THEN("engine can load switch handles by ID")
+            {
+                SwitchHandle switch1 = amEngine->GetSwitchHandle(1);
+                SwitchHandle switch2 = amEngine->GetSwitchHandle(2);
+
+                REQUIRE(switch1 != nullptr);
+                REQUIRE(switch2 != nullptr);
+            }
+
+            THEN("engine cannot load switch handles with invalid names or IDs")
+            {
+                SwitchHandle invalidSwitch = amEngine->GetSwitchHandle("invalid_switch");
+                REQUIRE(invalidSwitch == nullptr);
+
+                SwitchHandle invalidSwitch2 = amEngine->GetSwitchHandle(99999);
+                REQUIRE(invalidSwitch2 == nullptr);
+
+                AND_THEN("engine cannot set switch states of invalid switch handles")
+                {
+                    // This is to increase coverage, the methods will effectively do nothing with invalid handles
+                    amEngine->SetSwitchState(invalidSwitch, 1);
+                    amEngine->SetSwitchState(invalidSwitch2, "unknown");
+                    amEngine->SetSwitchState(invalidSwitch, SwitchState());
+                }
+            }
+
             GIVEN("a playing channel")
             {
                 AmVec3 location = { 10.0f, 20.0f, 30.0f };
@@ -756,6 +791,108 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                         {
                             REQUIRE(environment.GetEffect() == effect);
                         }
+                    }
+                }
+            }
+
+            GIVEN("a switch")
+            {
+                SwitchHandle envSwitch = amEngine->GetSwitchHandle("env");
+                SwitchHandle surfaceSwitch = amEngine->GetSwitchHandle("surface_type");
+
+                REQUIRE(envSwitch != nullptr);
+                REQUIRE(surfaceSwitch != nullptr);
+
+                THEN("it can change its state by ID")
+                {
+                    envSwitch->SetState(2);
+                    REQUIRE(envSwitch->GetState().m_name == "desert");
+
+                    envSwitch->SetState(5);
+                    REQUIRE(envSwitch->GetState().m_name != "snow");
+                    REQUIRE(envSwitch->GetState().m_name == "desert");
+
+                    AND_THEN("engine can change its state by handle and ID")
+                    {
+                        amEngine->SetSwitchState(envSwitch, 1);
+                        REQUIRE(envSwitch->GetState().m_name == "forest");
+                    }
+
+                    AND_THEN("engine can change its state by ID and ID")
+                    {
+                        amEngine->SetSwitchState(envSwitch->GetId(), 1);
+                        REQUIRE(envSwitch->GetState().m_name == "forest");
+                    }
+
+                    AND_THEN("engine can change its state by name and ID")
+                    {
+                        amEngine->SetSwitchState(envSwitch->GetName(), 1);
+                        REQUIRE(envSwitch->GetState().m_name == "forest");
+                    }
+                }
+
+                THEN("it can change its state by name")
+                {
+                    envSwitch->SetState("desert");
+                    REQUIRE(envSwitch->GetState().m_id == 2);
+
+                    envSwitch->SetState("metal");
+                    REQUIRE(envSwitch->GetState().m_id != 3);
+                    REQUIRE(envSwitch->GetState().m_id == 2);
+
+                    AND_THEN("engine can change its state by handle and name")
+                    {
+                        amEngine->SetSwitchState(envSwitch, "forest");
+                        REQUIRE(envSwitch->GetState().m_id == 1);
+                    }
+
+                    AND_THEN("engine can change its state by ID and name")
+                    {
+                        amEngine->SetSwitchState(envSwitch->GetId(), "forest");
+                        REQUIRE(envSwitch->GetState().m_id == 1);
+                    }
+
+                    AND_THEN("engine can change its state by name and name")
+                    {
+                        amEngine->SetSwitchState(envSwitch->GetName(), "forest");
+                        REQUIRE(envSwitch->GetState().m_id == 1);
+                    }
+                }
+
+                THEN("it can change its state by value")
+                {
+                    const SwitchState metal{ 3, "metal" };
+                    const SwitchState snow{ 5, "snow" };
+                    const SwitchState forest{ 1, "forest" };
+                    const SwitchState invalid{};
+
+                    surfaceSwitch->SetState(metal);
+                    REQUIRE(surfaceSwitch->GetState() == metal);
+
+                    surfaceSwitch->SetState(forest);
+                    REQUIRE(surfaceSwitch->GetState() != forest);
+                    REQUIRE(surfaceSwitch->GetState() == metal);
+
+                    surfaceSwitch->SetState(invalid);
+                    REQUIRE(surfaceSwitch->GetState() != invalid);
+                    REQUIRE(surfaceSwitch->GetState() == metal);
+
+                    AND_THEN("engine can change its state by handle and value")
+                    {
+                        amEngine->SetSwitchState(surfaceSwitch, snow);
+                        REQUIRE(surfaceSwitch->GetState() == snow);
+                    }
+
+                    AND_THEN("engine can change its state by ID and value")
+                    {
+                        amEngine->SetSwitchState(surfaceSwitch->GetId(), snow);
+                        REQUIRE(surfaceSwitch->GetState() == snow);
+                    }
+
+                    AND_THEN("engine can change its state by name and value")
+                    {
+                        amEngine->SetSwitchState(surfaceSwitch->GetName(), snow);
+                        REQUIRE(surfaceSwitch->GetState() == snow);
                     }
                 }
             }
