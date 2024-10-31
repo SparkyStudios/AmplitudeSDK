@@ -1005,13 +1005,19 @@ namespace SparkyStudios::Audio::Amplitude
         }
         else if (findIt->second->GetRefCounter()->Decrement() == 0)
         {
+            Thread::LockMutex(_frameThreadMutex);
+
             findIt->second->Deinitialize(this);
             _state->sound_bank_map.erase(id);
+
+            Thread::UnlockMutex(_frameThreadMutex);
         }
     }
 
     void EngineImpl::UnloadSoundBanks()
     {
+        Thread::LockMutex(_frameThreadMutex);
+
         std::vector<AmBankID> idsToDelete;
         idsToDelete.reserve(_state->sound_bank_map.size());
 
@@ -1026,6 +1032,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         for (const auto id : idsToDelete)
             _state->sound_bank_map.erase(id);
+
+        Thread::UnlockMutex(_frameThreadMutex);
     }
 
     bool EngineImpl::HasLoadedSoundBank(const AmOsString& filename) const
