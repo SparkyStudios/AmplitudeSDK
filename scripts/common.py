@@ -137,7 +137,7 @@ class CommandOptions(object):
         # Check if running on Windows
         if sys.platform.startswith('win'):
             self.flatc_path = self.flatc_path.replace('/', '\\')
-            if not self.flatc_path.endswith(".exe"):
+            if not self.flatc_path.lower().endswith(".exe"):
                 self.flatc_path += ".exe"
 
 
