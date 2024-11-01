@@ -211,7 +211,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         buffer._frameCount = 0;
         buffer._channels.clear();
-        buffer._data.Clear();
+        buffer._data.Release();
     }
 
     AudioBuffer::~AudioBuffer()

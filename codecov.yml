@@ -8,3 +8,4 @@ coverage:
 ignore:
   - src/Utils/
   - samples/
+  - tools/
