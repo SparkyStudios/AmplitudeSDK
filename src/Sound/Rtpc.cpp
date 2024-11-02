@@ -203,7 +203,7 @@ namespace SparkyStudios::Audio::Amplitude
     float RtpcValue::GetValue() const
     {
         if (_valueKind == ValueKind_RTPC && _rtpc != nullptr)
-            return _curve->Get(_rtpc->GetValue());
+            return _curve->Get((_rtpc->GetValue() - _rtpc->GetMinValue()) / (_rtpc->GetMaxValue() - _rtpc->GetMinValue()));
 
         if (_valueKind == ValueKind_Static)
             return _value;
