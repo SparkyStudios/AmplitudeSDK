@@ -2256,18 +2256,21 @@ namespace SparkyStudios::Audio::Amplitude
         if (_state->paused)
             return;
 
-        // Execute pending frame callbacks.
-        Thread::LockMutex(_frameThreadMutex);
+        if (!_state->stopping)
         {
-            while (!_nextFrameCallbacks.empty())
+            // Execute pending frame callbacks.
+            Thread::LockMutex(_frameThreadMutex);
             {
-                const auto& callback = _nextFrameCallbacks.front();
-                callback(delta);
+                while (!_nextFrameCallbacks.empty())
+                {
+                    const auto& callback = _nextFrameCallbacks.front();
+                    callback(delta);
 
-                _nextFrameCallbacks.pop();
+                    _nextFrameCallbacks.pop();
+                }
             }
+            Thread::UnlockMutex(_frameThreadMutex);
         }
-        Thread::UnlockMutex(_frameThreadMutex);
 
         EraseFinishedSounds(_state);
 

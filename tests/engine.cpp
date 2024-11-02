@@ -641,6 +641,48 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 }
             }
 
+            THEN("engine can load event handles by name")
+            {
+                EventHandle event1 = amEngine->GetEventHandle("play_throw");
+                REQUIRE(event1 != nullptr);
+            }
+
+            THEN("engine can load event handles by ID")
+            {
+                EventHandle event1 = amEngine->GetEventHandle(123456787654);
+                REQUIRE(event1 != nullptr);
+            }
+
+            THEN("engine cannot load event handles with invalid names or IDs")
+            {
+                EventHandle invalidEvent1 = amEngine->GetEventHandle("invalid_event");
+                REQUIRE(invalidEvent1 == nullptr);
+
+                EventHandle invalidEvent2 = amEngine->GetEventHandle(99999999);
+                REQUIRE(invalidEvent2 == nullptr);
+
+                AND_THEN("engine cannot trigger events with invalid event IDs")
+                {
+                    const Entity& e = amEngine->AddEntity(99);
+                    EventCanceler canceler = amEngine->Trigger(99999999, e);
+                    REQUIRE_FALSE(canceler.Valid());
+                }
+
+                AND_THEN("engine cannot trigger events with invalid event names")
+                {
+                    const Entity& e = amEngine->AddEntity(99);
+                    EventCanceler canceler = amEngine->Trigger("invalid_event", e);
+                    REQUIRE_FALSE(canceler.Valid());
+                }
+
+                AND_THEN("engine cannot trigger events of invalid event handles")
+                {
+                    const Entity& e = amEngine->AddEntity(99);
+                    EventCanceler canceler = amEngine->Trigger(invalidEvent2, e);
+                    REQUIRE_FALSE(canceler.Valid());
+                }
+            }
+
             GIVEN("a playing channel")
             {
                 AmVec3 location = { 10.0f, 20.0f, 30.0f };
@@ -1050,6 +1092,45 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 {
                     rtpc1->SetValue(rtpc1->GetMinValue() * -2);
                     REQUIRE(rtpc1->GetValue() == rtpc1->GetMinValue());
+                }
+            }
+
+            GIVEN("an event")
+            {
+                EventHandle event1 = amEngine->GetEventHandle("stop_throw");
+                REQUIRE(event1 != nullptr);
+
+                EventHandle event2 = amEngine->GetEventHandle(876);
+                REQUIRE(event2 != nullptr);
+
+                THEN("it can fire and reset")
+                {
+                    EventCanceler c1 = amEngine->Trigger(event1, amEngine->AddEntity(99));
+                    REQUIRE(c1.Valid());
+                    REQUIRE(c1.GetEvent()->IsRunning());
+
+                    c1.Cancel();
+                    REQUIRE_FALSE(c1.GetEvent()->IsRunning());
+                }
+
+                THEN("engine can fire and reset by ID")
+                {
+                    EventCanceler c1 = amEngine->Trigger(5, amEngine->AddEntity(99));
+                    REQUIRE(c1.Valid());
+                    REQUIRE(c1.GetEvent()->IsRunning());
+
+                    c1.Cancel();
+                    REQUIRE_FALSE(c1.GetEvent()->IsRunning());
+                }
+
+                THEN("engine can fire and reset by name")
+                {
+                    EventCanceler c1 = amEngine->Trigger(event2->GetName(), amEngine->AddEntity(99));
+                    REQUIRE(c1.Valid());
+                    REQUIRE(c1.GetEvent()->IsRunning());
+
+                    c1.Cancel();
+                    REQUIRE_FALSE(c1.GetEvent()->IsRunning());
                 }
             }
         }

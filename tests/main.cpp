@@ -118,6 +118,8 @@ int main(int argc, char* argv[])
     ConsoleLogger logger;
     Logger::SetLogger(&logger);
 
+    RegisterDeviceNotificationCallback(deviceCallback);
+
     MemoryManager::Initialize();
 
     const auto res = Catch::Session().run(argc, argv);
