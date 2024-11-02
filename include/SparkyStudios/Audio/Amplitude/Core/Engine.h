@@ -1451,7 +1451,7 @@ namespace SparkyStudios::Audio::Amplitude
         [[nodiscard]] virtual EventCanceler Trigger(EventHandle handle, const Entity& entity) const = 0;
 
         /**
-         * @brief Triggers the event associated to the given handle.
+         * @brief Triggers the event associated to the given name.
          *
          * @tip Triggering an event with its `EventHandle` is faster than using the
          * event name as using the name requires an internal lookup.
@@ -1462,6 +1462,19 @@ namespace SparkyStudios::Audio::Amplitude
          * @return An `EventCanceler` object which may be used to cancel the execution of the event.
          */
         [[nodiscard]] virtual EventCanceler Trigger(const AmString& name, const Entity& entity) const = 0;
+
+        /**
+         * @brief Triggers the event associated to the given ID.
+         *
+         * @tip Triggering an event with its `EventHandle` is faster than using the
+         * event ID as using the ID requires an internal lookup.
+         *
+         * @param[in] id The ID of event to trigger.
+         * @param[in] entity The entity on which trigger the event.
+         *
+         * @return An `EventCanceler` object which may be used to cancel the execution of the event.
+         */
+        [[nodiscard]] virtual EventCanceler Trigger(AmEventID id, const Entity& entity) const = 0;
 
 #pragma endregion
 

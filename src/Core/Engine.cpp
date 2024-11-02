@@ -1470,6 +1470,15 @@ namespace SparkyStudios::Audio::Amplitude
         return EventCanceler(nullptr);
     }
 
+    EventCanceler EngineImpl::Trigger(AmEventID id, const Entity& entity) const
+    {
+        if (EventHandle handle = GetEventHandle(id))
+            return Trigger(handle, entity);
+
+        amLogError("Cannot trigger event: invalid ID (" AM_ID_CHAR_FMT ").", id);
+        return EventCanceler(nullptr);
+    }
+
     void EngineImpl::SetSwitchState(SwitchHandle handle, AmObjectID stateId) const
     {
         if (handle == nullptr)
