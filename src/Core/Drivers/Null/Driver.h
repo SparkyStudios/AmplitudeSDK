@@ -24,6 +24,7 @@ namespace SparkyStudios::Audio::Amplitude
     struct NullDriverDeviceData
     {
         AmUInt32 mOutputBufferSize;
+        DeviceDescription mDeviceDescription;
         bool mRunning;
     };
 
