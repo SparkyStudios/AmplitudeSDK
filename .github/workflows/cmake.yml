@@ -218,7 +218,7 @@ jobs:
         working-directory: ${{ inputs.project-path }}/build
         run: |
           lcov --capture --directory . --output-file coverage.info --base-directory . --ignore-errors inconsistent,range,mismatch,source,count,negative
-          lcov --remove coverage.info '/usr/*' '${{ github.workspace }}/build/vcpkg_installed/*' '${{ github.workspace }}/src/Utils/*' '${{ github.workspace }}/samples/*' --output-file coverage.info  --ignore-errors inconsistent,range,mismatch,source,count,negative
+          lcov --remove coverage.info '/usr/*' '${{ github.workspace }}/build/vcpkg_installed/*' '${{ github.workspace }}/src/Utils/*' '${{ github.workspace }}/samples/*' '${{ github.workspace }}/tools/*' --output-file coverage.info  --ignore-errors inconsistent,range,mismatch,source,count,negative
 
       - name: Upload coverage to Codecov
         continue-on-error: true

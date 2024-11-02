@@ -28,6 +28,13 @@ TEST_CASE("Environment Tests", "[environment][core][amplitude]")
     fplutil::intrusive_list environment_list(&EnvironmentInternalState::node);
     environment_list.push_back(state);
 
+    SphereShape inner(10);
+    SphereShape outer(20);
+    SphereZone zone(&inner, &outer);
+
+    state.SetZone(&zone);
+    REQUIRE(state.GetZone() == &zone);
+
     SECTION("can be used without a wrapper")
     {
         WHEN("the ID changes")
@@ -42,12 +49,6 @@ TEST_CASE("Environment Tests", "[environment][core][amplitude]")
 
         WHEN("the location changes")
         {
-            SphereShape inner(10);
-            SphereShape outer(20);
-            SphereZone zone(&inner, &outer);
-
-            state.SetZone(&zone);
-
             const auto location = AM_V3(10, 20, 30);
             state.SetLocation(location);
 
@@ -73,12 +74,6 @@ TEST_CASE("Environment Tests", "[environment][core][amplitude]")
 
         WHEN("the orientation changes")
         {
-            SphereShape inner(10);
-            SphereShape outer(20);
-            SphereZone zone(&inner, &outer);
-
-            state.SetZone(&zone);
-
             const auto direction = AM_V3(1, 0, 0);
             const auto up = AM_V3(0, 0, 1);
             const auto orientation = Orientation(direction, up);
@@ -99,12 +94,6 @@ TEST_CASE("Environment Tests", "[environment][core][amplitude]")
 
         WHEN("the zone changes")
         {
-            SphereShape inner(10);
-            SphereShape outer(20);
-            SphereZone zone(&inner, &outer);
-
-            state.SetZone(&zone);
-
             THEN("it returns the new zone")
             {
                 REQUIRE(state.GetZone() == &zone);
@@ -117,6 +106,9 @@ TEST_CASE("Environment Tests", "[environment][core][amplitude]")
         Environment wrapper(&state);
         REQUIRE(wrapper.GetState() == &state);
 
+        wrapper.SetZone(&zone);
+        REQUIRE(wrapper.GetZone() == &zone);
+
         SECTION("can return the correct ID")
         {
             REQUIRE(wrapper.GetId() == 1);
@@ -126,12 +118,6 @@ TEST_CASE("Environment Tests", "[environment][core][amplitude]")
 
         WHEN("the location changes")
         {
-            SphereShape inner(10);
-            SphereShape outer(20);
-            SphereZone zone(&inner, &outer);
-
-            wrapper.SetZone(&zone);
-
             const auto location = AM_V3(10, 20, 30);
             wrapper.SetLocation(location);
 
@@ -161,12 +147,6 @@ TEST_CASE("Environment Tests", "[environment][core][amplitude]")
 
         WHEN("the orientation changes")
         {
-            SphereShape inner(10);
-            SphereShape outer(20);
-            SphereZone zone(&inner, &outer);
-
-            wrapper.SetZone(&zone);
-
             const auto direction = AM_V3(1, 0, 0);
             const auto up = AM_V3(0, 0, 1);
             wrapper.SetOrientation(Orientation(direction, up));
@@ -186,12 +166,6 @@ TEST_CASE("Environment Tests", "[environment][core][amplitude]")
 
         WHEN("the zone changes")
         {
-            SphereShape inner(10);
-            SphereShape outer(20);
-            SphereZone zone(&inner, &outer);
-
-            wrapper.SetZone(&zone);
-
             THEN("it returns the new zone")
             {
                 REQUIRE(wrapper.GetZone() == &zone);

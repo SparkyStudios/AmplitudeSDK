@@ -15,6 +15,8 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <SparkyStudios/Audio/Amplitude/Amplitude.h>
+
+#include <Core/AudioBufferCrossFader.h>
 #include <Utils/Utils.h>
 
 using namespace SparkyStudios::Audio::Amplitude;
@@ -114,4 +116,24 @@ TEST_CASE("AudioBuffer Tests", "[audio_buffer][core][amplitude]")
         for (AmSize i = 0; i < 123; ++i)
             REQUIRE(buffer4[0][i] == 1.0f);
     }
+}
+
+TEST_CASE("AudioBufferCrossFader Tests", "[audio_buffer_cross_fader][core][amplitude]")
+{
+    AudioBuffer in(10, 1);
+    AudioBuffer out(10, 1);
+
+    for (size_t i = 0; i < 10; ++i)
+    {
+        in[0][i] = 1.0f;
+        out[0][i] = 1.0f;
+    }
+
+    AudioBuffer fade(10, 1);
+
+    AudioBufferCrossFader crossfader(10);
+    crossfader.CrossFade(in, out, fade);
+
+    for (size_t i = 0; i < 10; ++i)
+        REQUIRE(std::abs(1.0f - fade[0][i]) < kEpsilon);
 }
