@@ -93,6 +93,11 @@ namespace SparkyStudios::Audio::Amplitude
     {
     public:
         /**
+         * @brief Default destructor.
+         */
+        virtual ~ConsumerNodeInstance() = default;
+
+        /**
          * @brief Consumes audio data from the provider node.
          *
          * The provider node should be  specified with the call of @ref Connect `Connect()`.
@@ -115,6 +120,11 @@ namespace SparkyStudios::Audio::Amplitude
     class AM_API_PUBLIC ProviderNodeInstance
     {
     public:
+        /**
+         * @brief Default destructor.
+         */
+        virtual ~ProviderNodeInstance() = default;
+
         /**
          * @brief Produces audio data ready to be taken as input from a consumer node.
          *
@@ -145,7 +155,7 @@ namespace SparkyStudios::Audio::Amplitude
          * @param[in] processOnEmptyBuffer If `true`, the node will execute the @ref Process `Process()` method
          * even if the input buffer is `nullptr`.
          */
-        ProcessorNodeInstance(bool processOnEmptyBuffer = false);
+        explicit ProcessorNodeInstance(bool processOnEmptyBuffer = false);
 
         /**
          * @brief Default destructor.
@@ -186,7 +196,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     private:
         const AudioBuffer* _processingBuffer;
-        const AudioBuffer* _lastOuputBuffer;
+        const AudioBuffer* _lastOutputBuffer;
         bool _processOnEmptyInputBuffer;
     };
 
@@ -267,7 +277,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup mixer
      */
-    class AM_API_PUBLIC InputNodeInstance final
+    class AM_API_PUBLIC InputNodeInstance
         : public NodeInstance
         , public ProviderNodeInstance
     {
@@ -316,7 +326,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup mixer
      */
-    class AM_API_PUBLIC OutputNodeInstance final
+    class AM_API_PUBLIC OutputNodeInstance
         : public NodeInstance
         , public ConsumerNodeInstance
     {
@@ -379,7 +389,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @param[in] name Name of the node. Should be unique within the pipeline.
          */
-        Node(AmString name);
+        explicit Node(AmString name);
 
         /**
          * @brief Node destructor.
@@ -388,10 +398,6 @@ namespace SparkyStudios::Audio::Amplitude
 
         /**
          * @brief Creates a new instance of the node.
-         *
-         * @param[in] id Unique identifier for the new instance.
-         * @param[in] layer The Amplimix layer associated with the new instance.
-         * @param[in] pipeline The pipeline associated with the new instance.
          *
          * @return A new instance of the node.
          */
@@ -424,7 +430,7 @@ namespace SparkyStudios::Audio::Amplitude
         static void Unregister(const Node* node);
 
         /**
-         * @brief Creates a new instance of the the node with the given name
+         * @brief Creates a new instance of the node with the given name
          * and returns its pointer. The returned pointer should be deleted using Node::Destruct().
          *
          * @param[in] name The name of the node.
@@ -442,7 +448,7 @@ namespace SparkyStudios::Audio::Amplitude
         static void Destruct(const AmString& name, NodeInstance* instance);
 
         /**
-         * @brief Locks the nodes registry.
+         * @brief Locks the nodes' registry.
          *
          * @warning This function is mainly used for internal purposes. It's
          * called before the `Engine` initialization, to discard the registration
@@ -451,7 +457,7 @@ namespace SparkyStudios::Audio::Amplitude
         static void LockRegistry();
 
         /**
-         * @brief Unlocks the nodes registry.
+         * @brief Unlocks the nodes' registry.
          *
          * @warning This function is mainly used for internal purposes. It's
          * called after the `Engine` deinitialization, to allow the registration
@@ -459,13 +465,13 @@ namespace SparkyStudios::Audio::Amplitude
          */
         static void UnlockRegistry();
 
-    protected:
         /**
-         * @brief The name of this node.
+         * @brief Gets the list of registered nodes.
+         *
+         * @return The registry of nodes.
          */
-        AmString m_name;
+        static const std::map<AmString, Node*>& GetRegistry();
 
-    private:
         /**
          * @brief Look up a node by name.
          *
@@ -474,6 +480,12 @@ namespace SparkyStudios::Audio::Amplitude
          * @internal
          */
         static Node* Find(const AmString& name);
+
+    protected:
+        /**
+         * @brief The name of this node.
+         */
+        AmString m_name;
     };
 } // namespace SparkyStudios::Audio::Amplitude
 

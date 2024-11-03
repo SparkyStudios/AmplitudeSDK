@@ -65,7 +65,7 @@ namespace SparkyStudios::Audio::Amplitude
     ProcessorNodeInstance::ProcessorNodeInstance(bool processOnEmptyInputBuffer)
         : m_provider(0)
         , _processingBuffer(nullptr)
-        , _lastOuputBuffer(nullptr)
+        , _lastOutputBuffer(nullptr)
         , _processOnEmptyInputBuffer(processOnEmptyInputBuffer)
     {}
 
@@ -79,7 +79,7 @@ namespace SparkyStudios::Audio::Amplitude
         NodeInstance* node = m_pipeline->GetNode(m_provider);
         AMPLITUDE_ASSERT(node != nullptr);
 
-        ProviderNodeInstance* provider = dynamic_cast<ProviderNodeInstance*>(node);
+        const auto provider = dynamic_cast<ProviderNodeInstance*>(node);
         AMPLITUDE_ASSERT(provider != nullptr);
 
         _processingBuffer = provider->Provide();
@@ -95,8 +95,8 @@ namespace SparkyStudios::Audio::Amplitude
         if (m_layer == nullptr)
             return nullptr;
 
-        if (_lastOuputBuffer != nullptr)
-            return _lastOuputBuffer;
+        if (_lastOutputBuffer != nullptr)
+            return _lastOutputBuffer;
 
         if (_processingBuffer == nullptr)
             Consume();
@@ -104,13 +104,13 @@ namespace SparkyStudios::Audio::Amplitude
         if (_processingBuffer == nullptr && !_processOnEmptyInputBuffer)
             return nullptr;
 
-        return _lastOuputBuffer = Process(_processingBuffer);
+        return _lastOutputBuffer = Process(_processingBuffer);
     }
 
     void ProcessorNodeInstance::Reset()
     {
         _processingBuffer = nullptr;
-        _lastOuputBuffer = nullptr;
+        _lastOutputBuffer = nullptr;
     }
 
     MixerNodeInstance::MixerNodeInstance()
@@ -135,7 +135,7 @@ namespace SparkyStudios::Audio::Amplitude
             NodeInstance* node = m_pipeline->GetNode(providerId);
             AMPLITUDE_ASSERT(node != nullptr);
 
-            ProviderNodeInstance* provider = dynamic_cast<ProviderNodeInstance*>(node);
+            auto* provider = dynamic_cast<ProviderNodeInstance*>(node);
             AMPLITUDE_ASSERT(provider != nullptr);
 
             _processingBuffers.push_back(provider->Provide());
@@ -208,8 +208,7 @@ namespace SparkyStudios::Audio::Amplitude
     {
         _buffer = buffer;
 
-        const auto* effect = static_cast<const EffectInstanceImpl*>(GetLayer()->GetEffect());
-        if (effect != nullptr)
+        if (const auto* effect = static_cast<const EffectInstanceImpl*>(GetLayer()->GetEffect()); effect != nullptr)
             _filter = effect->GetFilter();
     }
 
@@ -257,7 +256,7 @@ namespace SparkyStudios::Audio::Amplitude
         NodeInstance* node = m_pipeline->GetNode(_provider);
         AMPLITUDE_ASSERT(node != nullptr);
 
-        ProviderNodeInstance* provider = dynamic_cast<ProviderNodeInstance*>(node);
+        const auto provider = dynamic_cast<ProviderNodeInstance*>(node);
         AMPLITUDE_ASSERT(provider != nullptr);
 
         const auto* output = provider->Provide();
@@ -328,7 +327,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     NodeInstance* Node::Construct(const std::string& name)
     {
-        Node* node = Find(name);
+        const Node* node = Find(name);
         if (node == nullptr)
             return nullptr;
 
@@ -340,7 +339,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (instance == nullptr)
             return;
 
-        Node* node = Find(name);
+        const Node* node = Find(name);
         if (node == nullptr)
             return;
 
@@ -355,5 +354,10 @@ namespace SparkyStudios::Audio::Amplitude
     void Node::UnlockRegistry()
     {
         lockNodes() = false;
+    }
+
+    const std::map<AmString, Node*>& Node::GetRegistry()
+    {
+        return nodeRegistry();
     }
 } // namespace SparkyStudios::Audio::Amplitude
