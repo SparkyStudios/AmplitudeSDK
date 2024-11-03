@@ -95,9 +95,11 @@ namespace SparkyStudios::Audio::Amplitude
     static AmUniquePtr<eMemoryPoolKind_Engine, ClampNode> sClampNodePlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, ClipNode> sClipNodePlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, EnvironmentEffectNode> sEnvironmentEffectNodePlugin = nullptr;
+    static AmUniquePtr<eMemoryPoolKind_Engine, InputNode> sInputNodePlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, NearFieldEffectNode> sNearFieldEffectNodePlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, ObstructionNode> sObstructionNodePlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, OcclusionNode> sOcclusionNodePlugin = nullptr;
+    static AmUniquePtr<eMemoryPoolKind_Engine, OutputNode> sOutputNodePlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, ReflectionsNode> sReflectionsNodePlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, ReverbNode> sReverbNodePlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, StereoMixerNode> sStereoMixerNodePlugin = nullptr;
@@ -385,9 +387,11 @@ namespace SparkyStudios::Audio::Amplitude
         sClampNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, ClampNode));
         sClipNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, ClipNode));
         sEnvironmentEffectNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, EnvironmentEffectNode));
+        sInputNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, InputNode));
         sNearFieldEffectNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, NearFieldEffectNode));
         sObstructionNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, ObstructionNode));
         sOcclusionNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, OcclusionNode));
+        sOutputNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, OutputNode));
         sReflectionsNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, ReflectionsNode));
         sReverbNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, ReverbNode));
         sStereoMixerNodePlugin.reset(ampoolnew(eMemoryPoolKind_Engine, StereoMixerNode));
@@ -441,9 +445,11 @@ namespace SparkyStudios::Audio::Amplitude
         sClampNodePlugin.reset(nullptr);
         sClipNodePlugin.reset(nullptr);
         sEnvironmentEffectNodePlugin.reset(nullptr);
+        sInputNodePlugin.reset(nullptr);
         sNearFieldEffectNodePlugin.reset(nullptr);
         sObstructionNodePlugin.reset(nullptr);
         sOcclusionNodePlugin.reset(nullptr);
+        sOutputNodePlugin.reset(nullptr);
         sReflectionsNodePlugin.reset(nullptr);
         sReverbNodePlugin.reset(nullptr);
         sStereoMixerNodePlugin.reset(nullptr);

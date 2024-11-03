@@ -416,6 +416,34 @@ namespace SparkyStudios::Audio::Amplitude
         [[nodiscard]] const AmString& GetName() const;
 
         /**
+         * @brief Returns `true` if the node can consume audio data.
+         *
+         * @return `true` if the node can consume audio data, `false` otherwise.
+         */
+        [[nodiscard]] virtual bool CanConsume() const = 0;
+
+        /**
+         * @brief Returns `true` if the node can produce audio data.
+         *
+         * @return `true` if the node can produce audio data, `false` otherwise.
+         */
+        [[nodiscard]] virtual bool CanProduce() const = 0;
+
+        /**
+         * @brief Returns the maximum number of input connections the node can have.
+         *
+         * @return The maximum number of input connections the node can have.
+         */
+        [[nodiscard]] virtual AmSize GetMaxInputCount() const = 0;
+
+        /**
+         * @brief Returns the minimum number of input connections the node can have.
+         *
+         * @return The minimum number of input connections the node can have.
+         */
+        [[nodiscard]] virtual AmSize GetMinInputCount() const = 0;
+
+        /**
          * @brief Registers a new node.
          *
          * @param[in] node The node to add in the registry.

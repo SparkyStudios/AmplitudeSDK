@@ -94,12 +94,12 @@ namespace SparkyStudios::Audio::Amplitude
             const auto* inputs = nodeDef->consume();
 
             NodeInstance* node = nullptr;
-            if (nodeName.compare("Input") == 0)
+            if (nodeName == "Input")
             {
                 node = ampoolnew(eMemoryPoolKind_Amplimix, InputNodeInstance);
                 instance->_inputNode = static_cast<InputNodeInstance*>(node);
             }
-            else if (nodeName.compare("Output") == 0)
+            else if (nodeName == "Output")
             {
                 node = ampoolnew(eMemoryPoolKind_Amplimix, OutputNodeInstance);
                 instance->_outputNode = static_cast<OutputNodeInstance*>(node);

@@ -36,6 +36,26 @@ namespace SparkyStudios::Audio::Amplitude
         {
             ampooldelete(eMemoryPoolKind_Amplimix, MixerNodeInstance, (MixerNodeInstance*)instance);
         }
+
+        [[nodiscard]] AM_INLINE bool CanConsume() const override
+        {
+            return true;
+        }
+
+        [[nodiscard]] AM_INLINE bool CanProduce() const override
+        {
+            return true;
+        }
+
+        [[nodiscard]] AM_INLINE AmSize GetMaxInputCount() const override
+        {
+            return -1;
+        }
+
+        [[nodiscard]] AM_INLINE AmSize GetMinInputCount() const override
+        {
+            return 1;
+        }
     };
 } // namespace SparkyStudios::Audio::Amplitude
 

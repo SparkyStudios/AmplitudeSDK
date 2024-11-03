@@ -14,27 +14,27 @@
 
 #pragma once
 
-#ifndef _AM_IMPLEMENTATION_MIXER_NODES_AMBISONIC_MIXER_NODE_H
-#define _AM_IMPLEMENTATION_MIXER_NODES_AMBISONIC_MIXER_NODE_H
+#ifndef _AM_IMPLEMENTATION_MIXER_NODES_OUTPUT_NODE_H
+#define _AM_IMPLEMENTATION_MIXER_NODES_OUTPUT_NODE_H
 
 #include <SparkyStudios/Audio/Amplitude/Core/Memory.h>
 #include <SparkyStudios/Audio/Amplitude/Mixer/Node.h>
 
 namespace SparkyStudios::Audio::Amplitude
 {
-    class AmbisonicMixerNode final : public Node
+    class OutputNode final : public Node
     {
     public:
-        AmbisonicMixerNode();
+        OutputNode();
 
         [[nodiscard]] AM_INLINE NodeInstance* CreateInstance() const override
         {
-            return ampoolnew(eMemoryPoolKind_Amplimix, MixerNodeInstance);
+            return ampoolnew(eMemoryPoolKind_Amplimix, OutputNodeInstance);
         }
 
         AM_INLINE void DestroyInstance(NodeInstance* instance) const override
         {
-            ampooldelete(eMemoryPoolKind_Amplimix, MixerNodeInstance, (MixerNodeInstance*)instance);
+            ampooldelete(eMemoryPoolKind_Amplimix, OutputNodeInstance, (OutputNodeInstance*)instance);
         }
 
         [[nodiscard]] AM_INLINE bool CanConsume() const override
@@ -44,12 +44,12 @@ namespace SparkyStudios::Audio::Amplitude
 
         [[nodiscard]] AM_INLINE bool CanProduce() const override
         {
-            return true;
+            return false;
         }
 
         [[nodiscard]] AM_INLINE AmSize GetMaxInputCount() const override
         {
-            return -1;
+            return 1;
         }
 
         [[nodiscard]] AM_INLINE AmSize GetMinInputCount() const override
@@ -59,4 +59,4 @@ namespace SparkyStudios::Audio::Amplitude
     };
 } // namespace SparkyStudios::Audio::Amplitude
 
-#endif // _AM_IMPLEMENTATION_MIXER_NODES_AMBISONIC_MIXER_NODE_H
+#endif // _AM_IMPLEMENTATION_MIXER_NODES_OUTPUT_NODE_H
