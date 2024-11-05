@@ -44,6 +44,11 @@ namespace SparkyStudios::Audio::Amplitude::Thread
         AmThreadData* data;
     };
 
+    struct AmMutexHandleData
+    {
+        CRITICAL_SECTION cs;
+    };
+
     static DWORD WINAPI ThreadFunc(LPVOID d)
     {
         auto* p = static_cast<AmThreadData*>(d);
@@ -53,8 +58,9 @@ namespace SparkyStudios::Audio::Amplitude::Thread
 
     AmMutexHandle CreateMutex(AmUInt64 spinCount)
     {
-        auto* cs = ampoolnew(eMemoryPoolKind_IO, CRITICAL_SECTION);
-        AMPLITUDE_ASSERT(::InitializeCriticalSectionAndSpinCount(cs, spinCount) == TRUE);
+        auto* cs = ampoolnew(eMemoryPoolKind_IO, AmMutexHandleData);
+        const BOOL res = ::InitializeCriticalSectionAndSpinCount(&cs->cs, spinCount);
+        AMPLITUDE_ASSERT(res == TRUE);
         return static_cast<AmMutexHandle>(cs);
     }
 
@@ -63,9 +69,9 @@ namespace SparkyStudios::Audio::Amplitude::Thread
         if (handle == nullptr)
             return;
 
-        auto* cs = static_cast<CRITICAL_SECTION*>(handle);
-        ::DeleteCriticalSection(cs);
-        ampooldelete(eMemoryPoolKind_IO, CRITICAL_SECTION, cs);
+        auto* cs = static_cast<AmMutexHandleData*>(handle);
+        ::DeleteCriticalSection(&cs->cs);
+        ampooldelete(eMemoryPoolKind_IO, AmMutexHandleData, cs);
     }
 
     void LockMutex(AmMutexHandle handle)

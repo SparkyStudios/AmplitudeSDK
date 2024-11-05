@@ -61,7 +61,7 @@ namespace SparkyStudios::Audio::Amplitude
         }
 
     private:
-        AmplimixImpl* m_mixer;
+        AmplimixImpl* m_mixer = nullptr;
         bool m_locked = false;
     };
 
@@ -1110,7 +1110,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (_audioThreadMutex)
             Thread::LockMutex(_audioThreadMutex);
 
-        _insideAudioThreadMutex[Thread::GetCurrentThreadId()] = true;
+        _insideAudioThreadMutex.insert_or_assign(Thread::GetCurrentThreadId(), true);
     }
 
     void AmplimixImpl::UnlockAudioMutex()
@@ -1120,7 +1120,7 @@ namespace SparkyStudios::Audio::Amplitude
         if (_audioThreadMutex)
             Thread::UnlockMutex(_audioThreadMutex);
 
-        _insideAudioThreadMutex[Thread::GetCurrentThreadId()] = false;
+        _insideAudioThreadMutex.insert_or_assign(Thread::GetCurrentThreadId(), false);
     }
 
     AmplimixLayerImpl::~AmplimixLayerImpl()
