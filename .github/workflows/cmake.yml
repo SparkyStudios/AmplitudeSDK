@@ -129,6 +129,7 @@ jobs:
         if: startsWith(matrix.config.os, 'windows') && startsWith(matrix.config.key, 'mingw')
         run: |
           choco upgrade mingw
+          echo "C:\ProgramData\mingw64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Install dependencies on Ubuntu
         if: startsWith(matrix.config.os, 'ubuntu')
@@ -174,20 +175,10 @@ jobs:
 
       - name: Configure
         id: configure
-        shell: bash
         working-directory: ${{ inputs.project-path }}
         run: |
           mkdir build
-          cmake \
-            -S . \
-            -B build \
-            -G "${{ matrix.config.generator }}" \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DCMAKE_TOOLCHAIN_FILE:STRING="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_TARGET_TRIPLET:STRING="${{ matrix.config.target_triplet }}" \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE \
-            -DBUILD_SAMPLES:BOOL=TRUE \
-            -DUNIT_TESTS:BOOL=${{ matrix.build_type == 'release' && 'FALSE' || 'TRUE' }}
+          cmake -S . -B build -G "${{ matrix.config.generator }}" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE:STRING="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET:STRING="${{ matrix.config.target_triplet }}" -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DBUILD_SAMPLES:BOOL=TRUE -DUNIT_TESTS:BOOL=${{ matrix.build_type == 'release' && 'FALSE' || 'TRUE' }}
         env:
           AM_SDK_PATH: "${{ steps.sdk_path.outputs.path }}/sdk"
           AM_SDK_PLATFORM: ${{ matrix.config.target_triplet }}
@@ -198,13 +189,11 @@ jobs:
           cat ${{ github.workspace }}/build/vcpkg_installed/vcpkg/issue_body.md
 
       - name: Build
-        shell: bash
         working-directory: ${{ inputs.project-path }}/build
         run: cmake --build . --config ${{ matrix.build_type }}
 
       - name: Test
         if: matrix.build_type == 'debug'
-        shell: bash
         working-directory: ${{ inputs.project-path }}/build/tests
         run: ctest -j1 -C debug --output-on-failure
         env:
@@ -214,7 +203,6 @@ jobs:
       - name: Generate coverage
         continue-on-error: true
         if: matrix.build_type == 'debug' && !startsWith(matrix.config.os, 'windows')
-        shell: bash
         working-directory: ${{ inputs.project-path }}/build
         run: |
           lcov --capture --directory . --output-file coverage.info --base-directory . --ignore-errors inconsistent,range,mismatch,source,count,negative
@@ -230,7 +218,6 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Install Strip
-        shell: bash
         working-directory: ${{ inputs.project-path }}/build
         run: cmake --install . --strip --config ${{ matrix.build_type }}
 
