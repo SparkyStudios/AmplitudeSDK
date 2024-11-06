@@ -158,7 +158,7 @@ namespace SparkyStudios::Audio::Amplitude
         /**
          * @brief Create a new Resampler instance.
          *
-         * @param[in] name The resampler name. eg. "MiniAudioLinear".
+         * @param[in] name The resampler name. e.g. "MiniAudioLinear".
          */
         explicit Resampler(AmString name);
 
@@ -213,7 +213,7 @@ namespace SparkyStudios::Audio::Amplitude
         static void Unregister(const Resampler* resampler);
 
         /**
-         * @brief Creates a new instance of the the resampler with the given name and returns its pointer.
+         * @brief Creates a new instance of the resampler with the given name and returns its pointer.
          *
          * @note The returned pointer should be deleted using @ref Destruct `Destruct()`.
          *

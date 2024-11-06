@@ -72,7 +72,7 @@ namespace SparkyStudios::Audio::Amplitude
     AM_API_PRIVATE AM_INLINE AmReal32 AmDitherReal32(const AmReal32 ditherMin, const AmReal32 ditherMax)
     {
         gLCG.state = (AM_LCG_A * gLCG.state + AM_LCG_C) % AM_LCG_M;
-        const AmReal32 x = gLCG.state / (double)0x7FFFFFFF;
+        const AmReal32 x = gLCG.state / static_cast<double>(0x7FFFFFFF);
         return ditherMin + x * (ditherMax - ditherMin);
     }
 
@@ -274,7 +274,7 @@ namespace SparkyStudios::Audio::Amplitude
     /**
      * @brief Computes the value base^exp using the squared exponentiation method.
      *
-     * @tparam T An integer type, a floating-point type, or a any other type where operator *= is defined.
+     * @tparam T An integer type, a floating-point type, or any other type where operator *= is defined.
 
      * @param[in] base Input of the power function.
      * @param[in] exp The exponent of the power function. Must be non-negative.

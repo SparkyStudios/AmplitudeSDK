@@ -254,7 +254,7 @@ TEST_CASE("Spherical Position Tests", "[spherical_position][math][amplitude]")
 {
     GIVEN("a spherical position")
     {
-        const auto position = SphericalPosition(AM_DegToRad * 45.0f, AM_DegToRad * 30.0f, 5.0f);
+        SphericalPosition position(AM_DegToRad * 45.0f, AM_DegToRad * 30.0f, 5.0f);
 
         THEN("it should store the correct spherical coordinates")
         {
@@ -279,6 +279,17 @@ TEST_CASE("Spherical Position Tests", "[spherical_position][math][amplitude]")
             REQUIRE(flippedPosition.GetAzimuth() == -45.0f * AM_DegToRad);
             REQUIRE(flippedPosition.GetElevation() == position.GetElevation());
             REQUIRE(flippedPosition.GetRadius() == position.GetRadius());
+        }
+
+        THEN("it can change azimuth, elevation and radius")
+        {
+            position.SetAzimuth(AM_DegToRad * 60.0f);
+            position.SetElevation(AM_DegToRad * 45.0f);
+            position.SetRadius(10.0f);
+
+            REQUIRE(position.GetAzimuth() == AM_DegToRad * 60.0f);
+            REQUIRE(position.GetElevation() == AM_DegToRad * 45.0f);
+            REQUIRE(position.GetRadius() == 10.0f);
         }
 
         THEN("it can be rotated")
@@ -492,5 +503,104 @@ TEST_CASE("Curve Tests", "[curve][math][amplitude]")
             REQUIRE(curve.Get(-1.0) == 0.0f);
             REQUIRE(curve.Get(2.0) == 0.0f);
         }
+    }
+}
+
+TEST_CASE("Utilities Tests", "[utilities][math][amplitude]")
+{
+    THEN("dithering always works")
+    {
+        // This is only to increase coverage, as the dithering function is a simple function that always returns a value
+        AmDitherReal32(1.0f / INT16_MIN, 1.0f / INT16_MAX);
+    }
+
+    SECTION("floating-point to fixed-point conversion")
+    {
+        THEN("it can convert floating-point audio sample to fixed-point")
+        {
+            constexpr AmReal32 value = 0.5f;
+            const AmInt32 fixedPointValue = AmFloatToFixedPoint(value);
+            REQUIRE(std::abs(fixedPointValue - 16384) < kEpsilon);
+        }
+
+        THEN("it can convert 16-bit integer to 32-bit floating-point")
+        {
+            constexpr AmInt16 fxp = 16384;
+            const AmReal32 value = AmInt16ToReal32(fxp);
+            REQUIRE(std::abs(value - 0.5f) < kEpsilon);
+        }
+
+        THEN("it can convert 32-bit integer to 32-bit floating-point")
+        {
+            constexpr AmInt32 value = 16384;
+            const AmReal32 fxp = AmInt32ToReal32(value);
+            REQUIRE(std::abs(fxp - 0.5f) < kEpsilon);
+        }
+
+        THEN("it can convert 32-bit floating-point to 16-bit integer")
+        {
+            constexpr AmReal32 value = 0.5f;
+
+            const AmInt16 fxp1 = AmReal32ToInt16(value, false);
+            REQUIRE((fxp1 - 16384) < kEpsilon);
+
+            const AmInt16 fxp2 = AmReal32ToInt16(value, true);
+            REQUIRE((fxp2 - 16384) < kEpsilon);
+
+            REQUIRE(std::abs(fxp1 - fxp2) < kEpsilon);
+        }
+    }
+
+    SECTION("catmull_rom")
+    {
+        constexpr AmReal32 p1 = 0.0f;
+        constexpr AmReal32 p2 = 1.0f;
+        constexpr AmReal32 p3 = 2.0f;
+        constexpr AmReal32 p4 = 3.0f;
+
+        REQUIRE(CatmullRom(0.0f, p1, p2, p3, p4) == 1.0f);
+        REQUIRE(CatmullRom(1.0f, p1, p2, p3, p4) == 2.0f);
+        REQUIRE(CatmullRom(0.5f, p1, p2, p3, p4) == 1.5f);
+    }
+
+    SECTION("doppler factor")
+    {
+        constexpr AmReal32 soundSpeed = 343.0f;
+        constexpr AmVec3 source = { 10.0f, 25.0f, 1.0f };
+        constexpr AmVec3 listener = { 0.0f, 0.0f, 0.0f };
+
+        const AmReal32 dopplerFactor = ComputeDopplerFactor(source - listener, source, listener, soundSpeed, 1.0f);
+
+        REQUIRE(std::abs(dopplerFactor - 0.927166343f) < kEpsilon);
+    }
+
+    SECTION("next power of two")
+    {
+        REQUIRE(NextPowerOf2(1) == 1);
+        REQUIRE(NextPowerOf2(2) == 2);
+        REQUIRE(NextPowerOf2(3) == 4);
+        REQUIRE(NextPowerOf2(16) == 16);
+        REQUIRE(NextPowerOf2(250) == 256);
+        REQUIRE(NextPowerOf2(4000) == 4096);
+        REQUIRE(NextPowerOf2(1024) == 1024);
+        REQUIRE(NextPowerOf2(2024) == 2048);
+        REQUIRE(NextPowerOf2(4096) == 4096);
+    }
+
+    SECTION("integer pow")
+    {
+        REQUIRE(IntegerPow(2, 0) == 1);
+        REQUIRE(IntegerPow(2.5, 1) == 2.5);
+        REQUIRE(IntegerPow(3.1f, 2) == 9.61f);
+        REQUIRE(IntegerPow(2, 10) == 1024);
+    }
+
+    SECTION("gcd")
+    {
+        REQUIRE(FindGCD(12, 18) == 6);
+        REQUIRE(FindGCD(20, 30) == 10);
+        REQUIRE(FindGCD(48, 144) == 48);
+        REQUIRE(FindGCD(-100, 200) == 100);
+        REQUIRE(FindGCD(0, 200) == 200);
     }
 }
