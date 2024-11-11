@@ -1,14 +1,1 @@
-{
-  "name": "stop_throw",
-  "id": 7807787654,
-  "actions": [
-    {
-      "type": "Stop",
-      "active": true,
-      "targets": [
-        1001
-      ],
-      "scope": "Entity"
-    }
-  ]
-}
+{"id":7807787654,"name":"stop_throw","run_mode":0,"actions":[{"type":4,"active":true,"targets":[1001],"scope":1}]}

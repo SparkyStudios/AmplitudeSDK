@@ -1,14 +1,1 @@
-{
-  "name": "play_throw",
-  "id": 123456787654,
-  "actions": [
-    {
-      "type": "Play",
-      "active": true,
-      "targets": [
-        1002
-      ],
-      "scope": "World"
-    }
-  ]
-}
+{"id":123456787654,"name":"play_throw","run_mode":0,"actions":[{"type":1,"active":true,"targets":[1002],"scope":0}]}

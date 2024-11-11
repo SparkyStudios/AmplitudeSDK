@@ -1,17 +1,1 @@
-{
-  "id": 1,
-  "name": "rtpc_player_height",
-  "min_value": 0,
-  "max_value": 100,
-  "fade_settings": {
-    "enabled": false,
-    "fade_attack": {
-      "duration": 1,
-      "fader": "Linear"
-    },
-    "fade_release": {
-      "duration": 1,
-      "fader": "Linear"
-    }
-  }
-}
+{"id":1,"name":"rtpc_player_height","min_value":0,"max_value":100,"default_value":0,"fade_settings":{"enabled":false,"fade_attack":{"duration":1,"fader":"Linear"},"fade_release":{"duration":1,"fader":"Linear"}}}
