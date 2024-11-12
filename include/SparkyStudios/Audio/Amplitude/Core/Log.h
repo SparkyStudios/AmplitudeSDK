@@ -93,6 +93,16 @@
  */
 #define amLogCritical(_message_, ...) amLog(Critical, _message_, ##__VA_ARGS__)
 
+/**
+ * @brief Logs a success message.
+ *
+ * @param _message_ The message to log.
+ * @param ... The arguments to format the message with.
+ *
+ * @ingroup core
+ */
+#define amLogSuccess(_message_,...) amLog(Success, _message_, ##__VA_ARGS__)
+
 namespace SparkyStudios::Audio::Amplitude
 {
     /**
@@ -109,6 +119,7 @@ namespace SparkyStudios::Audio::Amplitude
         eLogMessageLevel_Warning = 2, ///< Warning messages.
         eLogMessageLevel_Error = 3, ///< Error messages.
         eLogMessageLevel_Critical = 4, ///< Critical messages.
+        eLogMessageLevel_Success = 5, ///< Success messages.
     };
 
     /**
@@ -185,6 +196,15 @@ namespace SparkyStudios::Audio::Amplitude
          * @param[in] message The message to log.
          */
         void Critical(const char* file, int line, const AmString& message);
+
+        /**
+         * @brief Logs a success message.
+         *
+         * @param[in] file The file where the message was logged.
+         * @param[in] line The line where the message was logged.
+         * @param[in] message The message to log.
+         */
+        void Success(const char* file, int line, const AmString& message);
 
     protected:
         /**

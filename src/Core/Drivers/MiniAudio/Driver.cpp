@@ -66,7 +66,7 @@ namespace SparkyStudios::Audio::Amplitude
     {
         AM_UNUSED(pInput);
 
-        auto* driver = static_cast<MiniAudioDriver*>(pDevice->pUserData);
+        const auto* driver = static_cast<MiniAudioDriver*>(pDevice->pUserData);
 
         AudioBuffer* pOutputBuffer = nullptr;
         frameCount = amEngine->GetMixer()->Mix(&pOutputBuffer, frameCount);

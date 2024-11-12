@@ -57,6 +57,11 @@ namespace SparkyStudios::Audio::Amplitude
         Log(eLogMessageLevel_Critical, file, line, message);
     }
 
+    void Logger::Success(const char* file, int line, const AmString& message)
+    {
+        Log(eLogMessageLevel_Success, file, line, message);
+    }
+
     ConsoleLogger::ConsoleLogger(bool displayFileAndLine)
         : m_displayFileAndLine(displayFileAndLine)
     {}
@@ -79,6 +84,9 @@ namespace SparkyStudios::Audio::Amplitude
             break;
         case eLogMessageLevel_Critical:
             std::cout << "[CRITICAL] ";
+            break;
+        case eLogMessageLevel_Success:
+            std::cout << "[SUCCESS] ";
             break;
         }
 
