@@ -165,6 +165,8 @@ namespace SparkyStudios::Audio::Amplitude
             return _initialized;
         }
 
+        void SetAfterMixCallback(AfterMixCallback callback) override;
+
         AmUInt64 Mix(AudioBuffer** outBuffer, AmUInt64 frameCount) override;
 
         AmUInt32 Play(
@@ -247,6 +249,8 @@ namespace SparkyStudios::Audio::Amplitude
         DeviceDescription _device;
 
         AudioBuffer _scratchBuffer;
+
+        AfterMixCallback _afterMixCallback = nullptr;
     };
 } // namespace SparkyStudios::Audio::Amplitude
 

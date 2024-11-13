@@ -33,17 +33,6 @@ namespace SparkyStudios::Audio::Amplitude
     class Sound;
 
     /**
-     * @brief Called just before the mixer process audio data.
-     *
-     * @param[in] mixer The Amplimix instance.
-     * @param[in] buffer The audio buffer to be mixed.
-     * @param[in] frames The number of audio frames to be mixed.
-     *
-     * @ingroup mixer
-     */
-    AM_CALLBACK(void, BeforeMixCallback)(Amplimix* mixer, AmVoidPtr buffer, AmUInt32 frames);
-
-    /**
      * @brief Called just after the mixer process audio data.
      *
      * @param[in] mixer The Amplimix instance.
@@ -52,7 +41,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * @ingroup mixer
      */
-    AM_CALLBACK(void, AfterMixCallback)(Amplimix* mixer, AmVoidPtr buffer, AmUInt32 frames);
+    AM_CALLBACK(void, AfterMixCallback)(const Amplimix* mixer, const AudioBuffer* buffer, AmUInt32 frames);
 
     /**
      * @brief A single layer in the mixer.
@@ -349,6 +338,13 @@ namespace SparkyStudios::Audio::Amplitude
          * @return `true` if the mixer is initialized, `false` otherwise.
          */
         [[nodiscard]] virtual bool IsInitialized() const = 0;
+
+        /**
+         * @brief Sets the callback function to be called after the audio data is mixed.
+         *
+         * @param[in] callback The callback function.
+         */
+        virtual void SetAfterMixCallback(AfterMixCallback callback) = 0;
 
         /**
          * @brief Processes the audio data by mixing multiple audio sources for the specified number of frames.

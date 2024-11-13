@@ -405,6 +405,11 @@ namespace SparkyStudios::Audio::Amplitude
         _device.mDeviceOutputFormat = deviceOutputFormat;
     }
 
+    void AmplimixImpl::SetAfterMixCallback(AfterMixCallback callback)
+    {
+        _afterMixCallback = callback;
+    }
+
     AmUInt64 AmplimixImpl::Mix(AudioBuffer** outBuffer, AmUInt64 frameCount)
     {
         if (outBuffer != nullptr)
@@ -457,6 +462,10 @@ namespace SparkyStudios::Audio::Amplitude
 
         if (hasMixedAtLeastOneLayer)
         {
+            // Run the after-mix callback if available
+            if (_afterMixCallback != nullptr)
+                _afterMixCallback(this, &_scratchBuffer, frameCount);
+
             if (outBuffer != nullptr)
                 *outBuffer = &_scratchBuffer;
 
