@@ -100,7 +100,9 @@ static AM_INLINE std::string am_wstring_narrow(const std::wstring& str)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif // WIN32_LEAN_AND_MEAN
+#ifndef NOMINMAX
 #define NOMINMAX // No need of min and max macros
+#endif // NOMINMAX
 #include <Windows.h> // only needed for OutputDebugStringA, should be solved somehow.
 #define AMPLITUDE_ASSERT(x)                                                                                                                \
     if (!(x))                                                                                                                              \
