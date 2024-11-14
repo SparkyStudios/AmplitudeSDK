@@ -57,3 +57,4 @@ gen/
 
 # VCPKG
 vcpkg_installed/
+am_build/

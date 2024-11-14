@@ -668,7 +668,7 @@ namespace SparkyStudios::Audio::Amplitude
         {
             if (_audioDriver = Driver::Find(config->driver()->str()); _audioDriver == nullptr)
             {
-                amLogWarning("Could load the audio driver '%s'. Loading the default driver.", config->driver()->c_str());
+                amLogWarning("Could not load the audio driver '%s'. Loading the default driver.", config->driver()->c_str());
                 _audioDriver = Driver::Default();
             }
         }
@@ -679,7 +679,13 @@ namespace SparkyStudios::Audio::Amplitude
 
         if (_audioDriver == nullptr)
         {
-            amLogCritical("Could not load the audio driver.");
+            amLogError("Could not load the audio driver. Loading the null driver as fallback.");
+            _audioDriver = sNullDriverPlugin.get();
+        }
+
+        if (_audioDriver == nullptr)
+        {
+            amLogCritical("Failed to load the specified driver, the default driver, and the null driver. Please check your engine configuration, and ensure that all the needed plugins are loaded.");
             Deinitialize();
             return false;
         }
@@ -815,11 +821,18 @@ namespace SparkyStudios::Audio::Amplitude
         // Open the audio device through the driver
         if (!_audioDriver->Open(_state->mixer.GetDeviceDescription()))
         {
-            amLogCritical("Could not open the audio device.");
-            Deinitialize();
-            return false;
+            amLogError("Could not open the audio device using the '%s' driver. Loading the null driver as fallback.", _audioDriver->GetName().c_str());
+            _audioDriver = sNullDriverPlugin.get();
+
+            if (_audioDriver == nullptr || !_audioDriver->Open(_state->mixer.GetDeviceDescription()))
+            {
+                amLogCritical("Could not open the audio device.");
+                Deinitialize();
+                return false;
+            }
         }
 
+        amLogDebug("Amplitude Engine initialized successfully.");
         return true;
     }
 
