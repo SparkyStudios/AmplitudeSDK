@@ -65,6 +65,10 @@ namespace SparkyStudios::Audio::Amplitude
             _faderInFactory->DestroyInstance(_faderIn);
 
         _faderInFactory = Fader::Find(definition->fade_in()->fader()->str());
+
+        if (_faderInFactory == nullptr)
+            return false;
+
         _faderIn = _faderInFactory->CreateInstance();
         _faderIn->Set(1.0f, _targetGain, _fadeInDuration);
 
@@ -72,6 +76,10 @@ namespace SparkyStudios::Audio::Amplitude
             _faderOutFactory->DestroyInstance(_faderOut);
 
         _faderOutFactory = Fader::Find(definition->fade_out()->fader()->str());
+
+        if (_faderOutFactory == nullptr)
+            return false;
+
         _faderOut = _faderOutFactory->CreateInstance();
         _faderOut->Set(_targetGain, 1.0f, _fadeOutDuration);
 
@@ -150,7 +158,9 @@ namespace SparkyStudios::Audio::Amplitude
             _gainFaderFactory->DestroyInstance(_gainFader);
 
         _gainFaderFactory = Fader::Find(_busDefinition->fader()->str());
-        _gainFader = _gainFaderFactory->CreateInstance();
+
+        if (_gainFaderFactory != nullptr)
+            _gainFader = _gainFaderFactory->CreateInstance();
 
         _childBuses.clear();
         _duckBuses.clear();
@@ -168,34 +178,43 @@ namespace SparkyStudios::Audio::Amplitude
 
     void BusInternalState::FadeTo(AmReal32 gain, AmTime duration)
     {
-        // Setup fader
         _targetUserGain = gain;
-        _gainFader->Set(_userGain, _targetUserGain, duration);
 
-        // Set now as the start time of the transition
-        _gainFader->Start(Engine::GetInstance()->GetTotalTime());
+        if (_gainFader != nullptr)
+        {
+            // Setup fader
+            _gainFader->Set(_userGain, _targetUserGain, duration);
+
+            // Set now as the start time of the transition
+            _gainFader->Start(Engine::GetInstance()->GetTotalTime());
+        }
     }
 
     void BusInternalState::UpdateDuckGain(AmTime delta_time)
     {
         for (auto&& bus : _duckBuses)
-        {
             bus->Update(delta_time);
-        }
     }
 
     void BusInternalState::AdvanceFrame(AmTime delta_time, AmReal32 parent_gain) // NOLINT(misc-no-recursion)
     {
-        if (_gainFader->GetState() == eFaderState_Active)
+        if (_gainFader != nullptr)
         {
-            // Update fading.
-            _userGain = _gainFader->GetFromTime(Engine::GetInstance()->GetTotalTime());
-
-            if (_userGain == _targetUserGain)
+            if (_gainFader->GetState() == eFaderState_Active)
             {
-                // Fading is ended, disable fader.
-                _gainFader->SetState(eFaderState_Stopped);
+                // Update fading.
+                _userGain = _gainFader->GetFromTime(Engine::GetInstance()->GetTotalTime());
+
+                if (_userGain == _targetUserGain)
+                {
+                    // Fading is ended, disable fader.
+                    _gainFader->SetState(eFaderState_Stopped);
+                }
             }
+        }
+        else
+        {
+            _userGain = _targetUserGain;
         }
 
         // Update final gain.
