@@ -56,7 +56,7 @@ class AwaitableDummyPoolTask final : public Thread::AwaitablePoolTask
 public:
     void AwaitableWork() override
     {
-        Thread::Sleep(500);
+        Thread::Sleep(1000);
         _isExecuted = true;
     }
 
@@ -156,7 +156,7 @@ TEST_CASE("Thread Pool Tests", "[thread][amplitude]")
 
             THEN("the task is executed")
             {
-                Thread::Sleep(1050); // Wait for the task to execute
+                Thread::Sleep(1100); // Wait for the task to execute
                 REQUIRE(task->IsExecuted());
 
                 AND_THEN("the task is removed from the pool")

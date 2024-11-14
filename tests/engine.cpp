@@ -81,6 +81,15 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
             REQUIRE(amEngine->Deinitialize());
             Engine::RegisterDefaultPlugins();
         }
+
+        THEN("it fallbacks to the null driver when initialized without a default driver")
+        {
+            REQUIRE(amEngine->Deinitialize());
+            REQUIRE(amEngine->Initialize(AM_OS_STRING("tests.invalid.unknown_driver.config.amconfig")));
+            REQUIRE(amEngine->GetDriver()->GetName() != "unknown");
+            REQUIRE(amEngine->GetDriver()->GetName() == "null");
+            REQUIRE(amEngine->Deinitialize());
+        }
     }
 
     GIVEN("an empty driver config")
@@ -91,7 +100,6 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
 
             REQUIRE(amEngine->Deinitialize());
             REQUIRE(amEngine->Initialize(AM_OS_STRING("tests.invalid.unset_driver.config.amconfig")));
-            REQUIRE(amEngine->GetDriver()->GetName() != "unknown");
             REQUIRE(amEngine->GetDriver()->GetName() == "null");
             REQUIRE(amEngine->Deinitialize());
         }
@@ -104,6 +112,14 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
             REQUIRE(amEngine->Deinitialize());
             Engine::RegisterDefaultPlugins();
         }
+
+        THEN("it fallbacks to the null driver when initialized without a default driver")
+        {
+            REQUIRE(amEngine->Deinitialize());
+            REQUIRE(amEngine->Initialize(AM_OS_STRING("tests.invalid.unset_driver.config.amconfig")));
+            REQUIRE(amEngine->GetDriver()->GetName() == "null");
+            REQUIRE(amEngine->Deinitialize());
+        }
     }
 
     GIVEN("a failing driver")
@@ -113,7 +129,18 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
         THEN("it cannot be initialized with a failing driver")
         {
             REQUIRE(amEngine->Deinitialize());
+            Engine::UnregisterDefaultPlugins();
             REQUIRE_FALSE(amEngine->Initialize(AM_OS_STRING("tests.invalid.failing_driver.config.amconfig")));
+            REQUIRE(amEngine->Deinitialize());
+            Engine::RegisterDefaultPlugins();
+        }
+
+        THEN("it fallbacks to the null driver when initialized with a failing driver")
+        {
+            REQUIRE(amEngine->Deinitialize());
+            REQUIRE(amEngine->Initialize(AM_OS_STRING("tests.invalid.failing_driver.config.amconfig")));
+            REQUIRE(amEngine->GetDriver()->GetName() != "failing");
+            REQUIRE(amEngine->GetDriver()->GetName() == "null");
             REQUIRE(amEngine->Deinitialize());
         }
     }
