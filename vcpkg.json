@@ -26,10 +26,6 @@
       "version>=": "24.3.25"
     },
     {
-      "name": "libsamplerate",
-      "version>=": "0.2.2#1"
-    },
-    {
       "name": "dylib",
       "version>=": "2.2.1"
     },

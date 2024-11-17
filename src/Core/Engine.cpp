@@ -56,7 +56,6 @@ namespace SparkyStudios::Audio::Amplitude
 
     // Default Plugins instances
     static AmUniquePtr<eMemoryPoolKind_Engine, DefaultResampler> sDefaultResamplerPlugin = nullptr;
-    static AmUniquePtr<eMemoryPoolKind_Engine, LibsamplerateResampler> sLibsamplerateResamplerPlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, R8BrainResampler> sR8BrainResamplerPlugin = nullptr;
     // ---
     static AmUniquePtr<eMemoryPoolKind_Engine, ConstantFader> sConstantFaderPlugin = nullptr;
@@ -348,7 +347,6 @@ namespace SparkyStudios::Audio::Amplitude
         UnregisterDefaultPlugins();
 
         sDefaultResamplerPlugin.reset(ampoolnew(eMemoryPoolKind_Engine, DefaultResampler));
-        sLibsamplerateResamplerPlugin.reset(ampoolnew(eMemoryPoolKind_Engine, LibsamplerateResampler));
         sR8BrainResamplerPlugin.reset(ampoolnew(eMemoryPoolKind_Engine, R8BrainResampler));
         // ---
         sConstantFaderPlugin.reset(ampoolnew(eMemoryPoolKind_Engine, ConstantFader));
@@ -406,7 +404,6 @@ namespace SparkyStudios::Audio::Amplitude
             return false; // Cannot unregister the default plugins when the engine is already initialized.
 
         sDefaultResamplerPlugin.reset(nullptr);
-        sLibsamplerateResamplerPlugin.reset(nullptr);
         sR8BrainResamplerPlugin.reset(nullptr);
         // ---
         sConstantFaderPlugin.reset(nullptr);

@@ -84,12 +84,6 @@ find_package(flatbuffers CONFIG REQUIRED)
 
 # ------------------------------------------------------------------------------
 
-# Setup libsamplerate
-# ------------------------------------------------------------------------------
-find_package(SampleRate CONFIG REQUIRED)
-
-# ------------------------------------------------------------------------------
-
 # Setup xsimd
 # ------------------------------------------------------------------------------
 find_package(xsimd CONFIG REQUIRED)
@@ -302,8 +296,6 @@ set(SA_SOURCE
     src/DSP/Filters/WaveShaperFilter.h
     src/DSP/Resamplers/DefaultResampler.cpp
     src/DSP/Resamplers/DefaultResampler.h
-    src/DSP/Resamplers/LibsamplerateResampler.cpp
-    src/DSP/Resamplers/LibsamplerateResampler.h
     src/DSP/Resamplers/R8BrainResampler.h
     src/DSP/AudioConverter.cpp
     src/DSP/Convolver.cpp
@@ -514,7 +506,7 @@ foreach (build_type ${AM_BUILDSYSTEM_TYPE})
 
     target_link_libraries(${build_type}
         PRIVATE
-        flatbuffers::flatbuffers SampleRate::samplerate xsimd
+        flatbuffers::flatbuffers xsimd
     )
 
     add_dependencies(${build_type}
