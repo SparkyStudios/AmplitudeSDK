@@ -178,7 +178,7 @@ jobs:
         working-directory: ${{ inputs.project-path }}
         run: |
           mkdir build
-          cmake -S . -B build -G "${{ matrix.config.generator }}" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE:STRING="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET:STRING="${{ matrix.config.target_triplet }}" -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DBUILD_SAMPLES:BOOL=TRUE -DUNIT_TESTS:BOOL=${{ matrix.build_type == 'release' && 'FALSE' || 'TRUE' }}
+          cmake -S . -B build -G "${{ matrix.config.generator }}" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE:STRING="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET:STRING="${{ matrix.config.target_triplet }}" -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DBUILD_SAMPLES:BOOL=TRUE -DBUILD_TOOLS:BOOL=TRUE -DUNIT_TESTS:BOOL=${{ matrix.build_type == 'release' && 'FALSE' || 'TRUE' }}
         env:
           AM_SDK_PATH: "${{ steps.sdk_path.outputs.path }}/sdk"
           AM_SDK_PLATFORM: ${{ matrix.config.target_triplet }}

@@ -21,6 +21,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(DetectAmplitudeVersion)
 
 option(BUILD_SAMPLES "Build samples" OFF)
+option(BUILD_TOOLS "Build official CLI tools" ON)
 option(UNIT_TESTS "Enable Unit Testing" OFF)
 
 if(UNIT_TESTS)
@@ -30,6 +31,10 @@ endif ()
 
 if (BUILD_SAMPLES)
     list(APPEND VCPKG_MANIFEST_FEATURES "samples")
+endif ()
+
+if (BUILD_TOOLS)
+    list(APPEND VCPKG_MANIFEST_FEATURES "tools")
 endif ()
 
 project(Amplitude
@@ -524,9 +529,11 @@ foreach (build_type ${AM_BUILDSYSTEM_TYPE})
     endif ()
 endforeach ()
 
-add_subdirectory(tools/amac)
-add_subdirectory(tools/ampk)
-add_subdirectory(tools/amir)
+if (BUILD_TOOLS)
+    add_subdirectory(tools/amac)
+    add_subdirectory(tools/ampk)
+    add_subdirectory(tools/amir)
+endif ()
 
 if (BUILD_SAMPLES OR UNIT_TESTS)
     add_custom_target(ss_amplitude_audio_sample_project
