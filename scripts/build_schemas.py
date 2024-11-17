@@ -25,6 +25,7 @@ import platform
 import subprocess
 import sys
 
+
 def find_in_paths(name, paths):
     """Searches for a file with named `name` in the given paths and returns it."""
     for path in paths:
@@ -55,6 +56,7 @@ FLATC_EXECUTABLE_NAME = 'flatc' + EXECUTABLE_EXTENSION
 
 # Location of FlatBuffers compiler.
 FLATC = find_in_paths(FLATC_EXECUTABLE_NAME, FLATBUFFERS_PATHS)
+
 
 class BuildError(Exception):
     """Error indicating there was a problem building assets."""
@@ -102,6 +104,14 @@ def generate_flatbuffer_binaries(flatc, target_directory):
     """
     for schema in glob.glob(os.path.join(PROJECT_ROOT, 'schemas', '*.fbs'), recursive=False):
         compile_flatbuffer_binary_schema(flatc, schema, target_directory)
+
+
+def handle_build_error(error):
+    """Prints an error message to stderr for BuildErrors."""
+    sys.stderr.write(
+        "Error running command `%s`. Returned %s.\n%s\n"
+        % (" ".join(error.argv), str(error.error_code), str(error.message))
+    )
 
 
 def main(argv):

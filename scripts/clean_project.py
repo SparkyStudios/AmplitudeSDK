@@ -30,14 +30,10 @@ def main(argv):
       Returns 0 on success.
     """
 
-    options = common.CommandOptions(argv, "clean_project", "0.2.0")
+    options = common.CommandOptions(argv, "clean_project", "0.3.0")
 
     try:
-        common.clean_flatbuffers_binaries(
-            common.get_conversion_data(options.project_path),
-            options.project_path,
-            options.build_path
-        )
+        common.clean_flatbuffers_binaries(options)
         print("Amplitude binary assets cleaned successfully.")
     except common.BuildError as error:
         common.handle_build_error(error)

@@ -26,11 +26,6 @@ from pathlib import Path
 # The path to the Amplitude Audio SDK
 SDK_PATH = os.getenv("AM_SDK_PATH") or os.getcwd()
 
-# The Amplitude Audio SDK schemas directory.
-SCHEMA_PATHS = [
-    os.path.join(SDK_PATH, "schemas")
-]
-
 # Name of the flatbuffers executable.
 FLATC = (shutil.which("flatc")
          or os.path.join(SDK_PATH, "bin", os.getenv("AM_SDK_PLATFORM") or "", "flatc"))
@@ -99,10 +94,11 @@ class CommandOptions(object):
     project_path: str = None
     build_path: str = None
     flatc_path: str = FLATC
+    schema_path: str = os.path.join(SDK_PATH, "schemas")
 
     def __init__(self, argv, script_name: str, script_version: str):
-        opts, args = getopt.getopt(argv, "hvp:b:f:",
-                                   ["help", "version", "project-path", "build-path", "flatc", "no-logo"])
+        opts, args = getopt.getopt(argv, "hvp:b:f:s:",
+                                   ["help", "version", "project-path", "build-path", "flatc", "schema-path", "no-logo"])
 
         no_logo = False
         show_help = False
@@ -121,6 +117,8 @@ class CommandOptions(object):
                 self.build_path = arg
             elif opt in ("-f", "--flatc"):
                 self.flatc_path = arg
+            elif opt in ("-s", "--schema-path"):
+                self.schema_path = arg
 
         if show_help:
             print_help(no_logo, script_name)
@@ -162,24 +160,30 @@ def run_subprocess(argv):
         raise BuildError(argv, process.returncode)
 
 
-def convert_json_to_flatbuffers_binary(flatc, json, schema, out_dir):
-    """Run the flatbuffers compiler on the given json file and schema.
+def convert_json_to_flatbuffers_binary(flatc: str, json: str, schema: str, out_dir: str, schema_path: str):
+    """
+    Convert a JSON file to a FlatBuffers binary using the specified schema.
+
+    This function runs the FlatBuffers compiler (flatc) to convert a given JSON file
+    into a FlatBuffers binary format using the provided schema.
 
     Args:
-      flatc: Path to the flatc binary.
-      json: The path to the json file to convert to a flatbuffers binary.
-      schema: The path to the schema to use in the conversion process.
-      out_dir: The directory to write the flatbuffers binary.
+        flatc (str): Path to the FlatBuffers compiler (flatc) executable.
+        json (str): Path to the JSON file to be converted.
+        schema (str): Path to the FlatBuffers schema file (.fbs) to use for conversion.
+        out_dir (str): Directory where the output FlatBuffers binary will be written.
+        schema_path (str): Path to the directory containing additional schema files.
 
     Raises:
-      BuildError: Process return code was nonzero.
-    """
-    command = [flatc, "-o", out_dir]
-    for path in SCHEMA_PATHS:
-        command.extend(["-I", path])
-    command.extend(["-b", schema, json])
-    run_subprocess(command)
+        BuildError: If the FlatBuffers compiler process returns a non-zero exit code,
+                    indicating a failure in the conversion process.
 
+    Note:
+        This function does not return any value. The resulting FlatBuffers binary
+        is written to the specified output directory.
+    """
+
+    run_subprocess([flatc, "-o", out_dir, "-I", schema_path, "-b", schema, json])
 
 def needs_rebuild(source, target):
     """Checks if the source file needs to be rebuilt.
@@ -222,21 +226,37 @@ def processed_json_filename(path: str, input_path: str, output_path: str):
     return os.path.basename(processed_json_path(path, input_path, output_path))
 
 
-def generate_flatbuffers_binaries(flatc: str, conversion_data: list[FlatbuffersConversionData], input_path: str,
-                                  output_path: str):
+def generate_flatbuffers_binaries(options: CommandOptions):
     """
-    Runs the flatbuffers compiler on the given json files and schemas.
+    Generate FlatBuffers binary files from JSON files using the specified schemas.
+
+    This function iterates through the conversion data, which includes schema and input file
+    information, and converts each JSON file to a FlatBuffers binary. It checks if the output
+    directory exists, creates it if necessary, and only rebuilds files that have been modified
+    since the last build or if the schema has changed.
 
     Args:
-        flatc (str): Path to the flatc binary.
-        conversion_data (list[FlatbuffersConversionData]): A list of conversion data, containing the schema and input
-        files to convert.
-        input_path (str): Path to the Amplitude project directory.
-        output_path (str): Path to the output directory.
+        options (CommandOptions): An object containing command-line options and paths.
+            It includes the following attributes:
+            - flatc_path: Path to the FlatBuffers compiler executable.
+            - project_path: Path to the directory containing the Amplitude project.
+            - build_path: Path to the directory where the FlatBuffers binaries will be generated.
+            - schema_path: Path to the directory containing the schema files.
 
     Raises:
-        BuildError: If the process returns a non-zero exit code.
+        BuildError: If the FlatBuffers compilation process returns a non-zero exit code,
+                    indicating a failure in the conversion process.
+
+    Note:
+        This function does not return any value. The resulting FlatBuffers binaries
+        are written to the specified output directory.
     """
+
+    flatc = options.flatc_path
+    conversion_data = get_conversion_data(options.project_path, [options.schema_path])
+    input_path = options.project_path
+    output_path = options.build_path
+
     for element in conversion_data:
         schema = element.schema
         for json in element.input_files:
@@ -245,12 +265,26 @@ def generate_flatbuffers_binaries(flatc: str, conversion_data: list[FlatbuffersC
             if not os.path.exists(target_file_dir):
                 os.makedirs(target_file_dir)
             if needs_rebuild(json, target) or needs_rebuild(schema, target):
-                convert_json_to_flatbuffers_binary(
-                    flatc, json, schema, target_file_dir)
+                convert_json_to_flatbuffers_binary(flatc, json, schema, target_file_dir, options.schema_path)
 
 
-def find_in_paths(name, paths):
-    """Searches for a file with named `name` in the given paths and returns it."""
+def find_in_paths(name: str, paths: list[str]) -> str:
+    """
+    Search for a file with the given name in the specified paths and return its full path.
+
+    This function iterates through the provided paths, checking for the existence of a file
+    with the given name. If found, it returns the full path to the file. If the file is not
+    found in any of the specified paths, the function assumes the file might be in the system's
+    PATH and returns just the filename.
+
+    Args:
+        name (str): The name of the file to search for.
+        paths (list[str]): A list of directory paths to search in.
+
+    Returns:
+        str: The full path to the file if found in one of the specified paths,
+             or just the filename if not found (assuming it might be in the system's PATH).
+    """
     for path in paths:
         full_path = os.path.join(path, name)
         if os.path.isfile(full_path):
@@ -259,16 +293,32 @@ def find_in_paths(name, paths):
     return name
 
 
-def clean_flatbuffers_binaries(conversion_data: list[FlatbuffersConversionData], input_path: str, output_path: str):
+def clean_flatbuffers_binaries(options: CommandOptions):
     """
-    Deletes all the processed flatbuffers binary files.
+    Deletes all the processed FlatBuffers binary files generated from JSON files.
+
+    This function iterates through all the FlatBuffers binary files that were generated
+    from JSON files in the Amplitude project and removes them from the build directory.
+    It uses the project path and build path specified in the CommandOptions to locate
+    and delete these files.
 
     Args:
-        conversion_data (list[FlatbuffersConversionData]): A list of conversion data, containing the schema and input
-            files to convert.
-        input_path (str): Path to the Amplitude project directory.
-        output_path (str): Path to the output directory.
+        options (CommandOptions): An object containing command-line options and paths.
+            It includes the following relevant attributes:
+            - project_path: Path to the directory containing the Amplitude project.
+            - build_path: Path to the directory where the FlatBuffers binaries were generated.
+
+    Returns:
+        None
+
+    Note:
+        This function does not return any value but has the side effect of deleting files
+        from the file system.
     """
+    conversion_data = get_conversion_data(options.project_path, [options.schema_path])
+    input_path = options.project_path
+    output_path = options.build_path
+
     for element in conversion_data:
         for json in element.input_files:
             path = processed_json_path(json, input_path, output_path)
@@ -305,65 +355,76 @@ def get_amplitude_project_path():
     return _AM_PROJECT_PATH
 
 
-def get_conversion_data(project_path: str):
+def get_conversion_data(project_path: str, schema_paths: list[str]) -> list[FlatbuffersConversionData]:
     """
-    Returns a list of FlatbuffersConversionData objects that contain the necessary information to convert the
-    json files to flatbuffers binaries.
+    Retrieves conversion data for Flatbuffers compilation of JSON files in an Amplitude project.
+
+    This function gathers information about various JSON files in the Amplitude project
+    directory and their corresponding Flatbuffers schema files. It creates
+    FlatbuffersConversionData objects for different types of audio-related data,
+    including engine configurations, buses, sound banks, collections, sounds, events,
+    pipelines, attenuators, switches, switch containers, RTPCs, and effects.
 
     Args:
-        project_path (str): The path to the Amplitude project directory.
+        project_path (str): The path to the Amplitude project directory containing
+                            the JSON files to be converted.
+        schema_paths (list[str]): A list of paths where the Flatbuffers schema
+                                  files (.bfbs) can be found.
 
     Returns:
-        A list of FlatbuffersConversionData objects.
+        list[FlatbuffersConversionData]: A list of FlatbuffersConversionData objects,
+        each containing the schema file path and a list of input JSON files for a
+        specific type of audio data. This information is used to convert the JSON
+        files to Flatbuffers binary format.
     """
     return [
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'engine_config_definition.bfbs', SCHEMA_PATHS),
+                'engine_config_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, '*.config.json'))),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'buses_definition.bfbs', SCHEMA_PATHS),
+                'buses_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, '*.buses.json'))),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'sound_bank_definition.bfbs', SCHEMA_PATHS),
+                'sound_bank_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, SOUNDBANKS_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'collection_definition.bfbs', SCHEMA_PATHS),
+                'collection_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, COLLECTIONS_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'sound_definition.bfbs', SCHEMA_PATHS),
+                'sound_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, SOUNDS_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'event_definition.bfbs', SCHEMA_PATHS),
+                'event_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, EVENTS_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'pipeline_definition.bfbs', SCHEMA_PATHS),
+                'pipeline_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, PIPELINES_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'attenuation_definition.bfbs', SCHEMA_PATHS),
+                'attenuation_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, ATTENUATORS_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'switch_definition.bfbs', SCHEMA_PATHS),
+                'switch_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, SWITCHES_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'switch_container_definition.bfbs', SCHEMA_PATHS),
+                'switch_container_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, SWITCH_CONTAINERS_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'rtpc_definition.bfbs', SCHEMA_PATHS),
+                'rtpc_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, RTPC_DIR_NAME, '**/*.json'), recursive=True)),
         FlatbuffersConversionData(
             schema=find_in_paths(
-                'effect_definition.bfbs', SCHEMA_PATHS),
+                'effect_definition.bfbs', schema_paths),
             input_files=glob.glob(os.path.join(project_path, EFFECTS_DIR_NAME, '**/*.json'), recursive=True)),
     ]
 

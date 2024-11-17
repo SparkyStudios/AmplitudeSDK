@@ -32,15 +32,10 @@ def main(argv):
       Returns 0 on success.
     """
 
-    options = common.CommandOptions(argv, "build_project", "0.1.0")
+    options = common.CommandOptions(argv, "build_project", "0.2.0")
 
     try:
-        common.generate_flatbuffers_binaries(
-            options.flatc_path,
-            common.get_conversion_data(options.project_path),
-            options.project_path,
-            options.build_path
-        )
+        common.generate_flatbuffers_binaries(options)
         print("Amplitude binary assets compiled successfully.")
     except common.BuildError as error:
         common.handle_build_error(error)
