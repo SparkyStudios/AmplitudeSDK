@@ -24,6 +24,28 @@ namespace SparkyStudios::Audio::Amplitude
 {
     constexpr AmReal32 kQ = 0.707107f; // sqrt(0.5)
 
+    void AirAbsorptionEQFilter::Normalize(std::array<AmReal32, kAmAirAbsorptionBandCount>& gains, AmReal32& overallGain)
+    {
+        if (const auto maxGain = std::max({ gains[0], gains[1], gains[2] }); maxGain < kEpsilon)
+        {
+            overallGain = 0.0f;
+            for (auto i = 0; i < kAmAirAbsorptionBandCount; ++i)
+                gains[i] = 1.0f;
+        }
+        else
+        {
+            for (auto i = 0; i < kAmAirAbsorptionBandCount; ++i)
+            {
+                constexpr AmReal32 kMaxEQGain = 0.0625f;
+
+                gains[i] /= maxGain;
+                gains[i] = std::max(gains[i], kMaxEQGain);
+            }
+
+            overallGain *= maxGain;
+        }
+    }
+
     AirAbsorptionEQFilter::AirAbsorptionEQFilter()
         : _eqFilterFactory()
         , _lowShelfFilter{ nullptr, nullptr }
@@ -140,30 +162,6 @@ namespace SparkyStudios::Audio::Amplitude
         }
     }
 
-    void AirAbsorptionEQFilter::Normalize(std::array<AmReal32, kAmAirAbsorptionBandCount>& gains, AmReal32& overallGain)
-    {
-        constexpr AmReal32 kMaxEQGain = 0.0625f;
-
-        auto maxGain = std::max({ gains[0], gains[1], gains[2] });
-
-        if (maxGain < kEpsilon)
-        {
-            overallGain = 0.0f;
-            for (auto i = 0; i < kAmAirAbsorptionBandCount; ++i)
-                gains[i] = 1.0f;
-        }
-        else
-        {
-            for (auto i = 0; i < kAmAirAbsorptionBandCount; ++i)
-            {
-                gains[i] /= maxGain;
-                gains[i] = std::max(gains[i], kMaxEQGain);
-            }
-
-            overallGain *= maxGain;
-        }
-    }
-
     void AirAbsorptionEQFilter::EnsureFilters()
     {
         for (AmUInt32 i = 0; i < 2; ++i)
@@ -248,6 +246,9 @@ namespace SparkyStudios::Audio::Amplitude
             }
         }
 
+        if (Gain::IsZero(targetGain))
+            return nullptr;
+
         // Set and normalize gains
         if (attenuation->IsAirAbsorptionEnabled() && listener.Valid())
         {
@@ -257,12 +258,9 @@ namespace SparkyStudios::Audio::Amplitude
             for (AmUInt32 i = 0; i < kAmAirAbsorptionBandCount; ++i)
                 _gains[i] = attenuation->EvaluateAirAbsorption(soundLocation, listenerLocation, i);
 
-            _eqFilter.Normalize(_gains, targetGain);
+            AirAbsorptionEQFilter::Normalize(_gains, targetGain);
             _eqFilter.SetGains(_gains[0], _gains[1], _gains[2]);
         }
-
-        if (Gain::IsZero(targetGain))
-            return nullptr;
 
         _output = *input;
 

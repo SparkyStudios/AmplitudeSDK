@@ -230,8 +230,8 @@ namespace SparkyStudios::Audio::Amplitude
 
     void BiquadResonantFilterInstance::ComputeBiquadResonantParams()
     {
-        if (m_parameters[BiquadResonantFilter::ATTRIBUTE_TYPE] == BiquadResonantFilter::TYPE_DUAL_BAND_HIGH_PASS ||
-            m_parameters[BiquadResonantFilter::ATTRIBUTE_TYPE] == BiquadResonantFilter::TYPE_DUAL_BAND_LOW_PASS)
+        if (const auto type = static_cast<BiquadResonantFilter::TYPE>(m_parameters[BiquadResonantFilter::ATTRIBUTE_TYPE]);
+            type == BiquadResonantFilter::TYPE_DUAL_BAND_HIGH_PASS || type == BiquadResonantFilter::TYPE_DUAL_BAND_LOW_PASS)
         {
             const AmReal32 k =
                 std::tan(M_PI * m_parameters[BiquadResonantFilter::ATTRIBUTE_FREQUENCY] / static_cast<AmReal32>(_sampleRate));

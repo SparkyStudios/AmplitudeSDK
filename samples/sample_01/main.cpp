@@ -100,7 +100,7 @@ static void run(AmVoidPtr param)
     Engine::AddPluginSearchPath(AM_OS_STRING("./assets/plugins"));
     Engine::AddPluginSearchPath(sdkPath / AM_OS_STRING("lib/" AM_SDK_PLATFORM "/plugins"));
 
-#if defined(_DEBUG) || defined(DEBUG) || (defined(__GNUC__) && !defined(__OPTIMIZE__))
+#ifdef AM_DEBUG
     Engine::LoadPlugin(AM_OS_STRING("AmplitudeVorbisCodecPlugin_d"));
     Engine::LoadPlugin(AM_OS_STRING("AmplitudeFlacCodecPlugin_d"));
 #else

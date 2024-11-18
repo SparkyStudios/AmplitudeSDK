@@ -79,7 +79,7 @@ namespace SparkyStudios::Audio::Amplitude
      *
      * For example, you can have a switch named `SurfaceType` which have `wood`, `grass`, `metal` and `water` as states. A
      * `SwitchContainer` using this switch can group sounds per switch states, so when a state is active, all the sounds of
-     * that state are played. Changing the state of a `Switch` will updated ALL the `SwitchContainer` objects that use this `Switch`.
+     * that state are played. Changing the state of a `Switch` will update ALL the `SwitchContainer` objects that use this `Switch`.
      *
      * The `Switch` is a shared object between sound sources. They are used only by `SwitchContainer` objects.
      *
@@ -100,7 +100,7 @@ namespace SparkyStudios::Audio::Amplitude
         /**
          * @brief Sets the current state of the switch.
          *
-         * @note Changing the state of a `Switch` will updated ALL the `SwitchContainer` objects that use this `Switch`.
+         * @note Changing the state of a `Switch` will update ALL the `SwitchContainer` objects that use this `Switch`.
          *
          * @param[in] state The state to apply to the switch.
          */
@@ -109,7 +109,7 @@ namespace SparkyStudios::Audio::Amplitude
         /**
          * @brief Sets the current state of the switch using the state ID.
          *
-         * @note Changing the state of a `Switch` will updated ALL the `SwitchContainer` objects that use this `Switch`.
+         * @note Changing the state of a `Switch` will update ALL the `SwitchContainer` objects that use this `Switch`.
          *
          * @param[in] id The ID of the state to apply. This ID should exist in the list
          * of registered switch states.
@@ -119,7 +119,7 @@ namespace SparkyStudios::Audio::Amplitude
         /**
          * @brief Sets the current state of the switch using the state name.
          *
-         * @note Changing the state of a `Switch` will updated ALL the `SwitchContainer` objects that use this `Switch`.
+         * @note Changing the state of a `Switch` will update ALL the `SwitchContainer` objects that use this `Switch`.
          *
          * @param[in] name The name of the state to apply. This name should exist in the
          * list of registered switch states.

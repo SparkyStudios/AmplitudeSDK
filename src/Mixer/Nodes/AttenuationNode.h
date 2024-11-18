@@ -29,14 +29,14 @@ namespace SparkyStudios::Audio::Amplitude
     class AirAbsorptionEQFilter final
     {
     public:
+        static void Normalize(std::array<AmReal32, kAmAirAbsorptionBandCount>& gains, AmReal32& overallGain);
+
         AirAbsorptionEQFilter();
         ~AirAbsorptionEQFilter();
 
         void SetGains(AmReal32 gainLow, AmReal32 gainMid, AmReal32 gainHigh);
 
         void Process(const AudioBuffer& input, AudioBuffer& output, AmReal32 sampleRate);
-
-        void Normalize(std::array<AmReal32, kAmAirAbsorptionBandCount>& gains, AmReal32& overallGain);
 
     private:
         void EnsureFilters();
