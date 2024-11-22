@@ -682,7 +682,8 @@ namespace SparkyStudios::Audio::Amplitude
 
         if (_audioDriver == nullptr)
         {
-            amLogCritical("Failed to load the specified driver, the default driver, and the null driver. Please check your engine configuration, and ensure that all the needed plugins are loaded.");
+            amLogCritical("Failed to load the specified driver, the default driver, and the null driver. Please check your engine "
+                          "configuration, and ensure that all the needed plugins are loaded.");
             Deinitialize();
             return false;
         }
@@ -818,7 +819,9 @@ namespace SparkyStudios::Audio::Amplitude
         // Open the audio device through the driver
         if (!_audioDriver->Open(_state->mixer.GetDeviceDescription()))
         {
-            amLogError("Could not open the audio device using the '%s' driver. Loading the null driver as fallback.", _audioDriver->GetName().c_str());
+            amLogError(
+                "Could not open the audio device using the '%s' driver. Loading the null driver as fallback.",
+                _audioDriver->GetName().c_str());
             _audioDriver = sNullDriverPlugin.get();
 
             if (_audioDriver == nullptr || !_audioDriver->Open(_state->mixer.GetDeviceDescription()))
@@ -860,7 +863,8 @@ namespace SparkyStudios::Audio::Amplitude
             _state->mixer.Deinit();
 
         // Unload sound banks
-        UnloadSoundBanks();
+        while (HasLoadedSoundBanks())
+            UnloadSoundBanks();
 
         // Release HRIR sphere
         if (_state->hrir_sphere != nullptr)

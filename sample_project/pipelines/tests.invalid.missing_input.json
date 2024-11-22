@@ -1,0 +1,30 @@
+{
+    "id": 90,
+    "name": "tests.missing_input",
+    "nodes": [
+        {
+            "id": 8,
+            "name": "StereoPanning",
+            "consume": []
+        },
+        {
+            "id": 11,
+            "name": "Reflections",
+            "consume": []
+        },
+        {
+            "id": 12,
+            "name": "AmbisonicBinauralDecoder",
+            "consume": [
+                11
+            ]
+        },
+        {
+            "id": 9,
+            "name": "Output",
+            "consume": [
+                12
+            ]
+        }
+    ]
+}

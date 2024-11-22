@@ -1,0 +1,32 @@
+{
+    "id": 96,
+    "name": "tests.unknown_node",
+    "nodes": [
+        {
+            "id": 1,
+            "name": "Input",
+            "consume": []
+        },
+        {
+            "id": 8,
+            "name": "StereoPanning",
+            "consume": [
+                3
+            ]
+        },
+        {
+            "id": 9,
+            "name": "Output",
+            "consume": [
+                8
+            ]
+        },
+        {
+            "id": 3,
+            "name": "DoSomethingWeird",
+            "consume": [
+                1
+            ]
+        }
+    ]
+}

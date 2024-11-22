@@ -21,6 +21,58 @@
 
 using namespace SparkyStudios::Audio::Amplitude;
 
+class InvalidConsumerNodeInstance
+    : public NodeInstance
+    , public ProviderNodeInstance
+{
+public:
+    const AudioBuffer* Provide() override
+    {
+        return nullptr;
+    }
+
+    void Reset() override
+    {}
+};
+
+class InvalidConsumerNode : public Node
+{
+public:
+    InvalidConsumerNode()
+        : Node("InvalidConsumerNode")
+    {}
+
+    [[nodiscard]] AM_INLINE NodeInstance* CreateInstance() const override
+    {
+        return ampoolnew(eMemoryPoolKind_Amplimix, InvalidConsumerNodeInstance);
+    }
+
+    AM_INLINE void DestroyInstance(NodeInstance* instance) const override
+    {
+        ampooldelete(eMemoryPoolKind_Amplimix, InvalidConsumerNodeInstance, (InvalidConsumerNodeInstance*)instance);
+    }
+
+    [[nodiscard]] AM_INLINE bool CanConsume() const override
+    {
+        return true;
+    }
+
+    [[nodiscard]] AM_INLINE bool CanProduce() const override
+    {
+        return false;
+    }
+
+    [[nodiscard]] AM_INLINE AmSize GetMaxInputCount() const override
+    {
+        return 1;
+    }
+
+    [[nodiscard]] AM_INLINE AmSize GetMinInputCount() const override
+    {
+        return 1;
+    }
+};
+
 struct AmTestListener : Catch::EventListenerBase
 {
     using EventListenerBase::EventListenerBase; // inherit constructor
@@ -82,9 +134,6 @@ struct AmTestListener : Catch::EventListenerBase
 
         if (amEngine->IsInitialized())
         {
-            while (amEngine->HasLoadedSoundBanks())
-                amEngine->UnloadSoundBanks();
-
             amEngine->Deinitialize();
 
             // Wait for the file system to complete loading.
@@ -121,6 +170,8 @@ int main(int argc, char* argv[])
     RegisterDeviceNotificationCallback(deviceCallback);
 
     MemoryManager::Initialize();
+
+    InvalidConsumerNode invalidConsumerNode;
 
     const auto res = Catch::Session().run(argc, argv);
 

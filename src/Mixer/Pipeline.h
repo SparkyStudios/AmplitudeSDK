@@ -41,10 +41,10 @@ namespace SparkyStudios::Audio::Amplitude
 
         void Reset() override;
 
-        void AddNode(AmObjectID id, NodeInstance* nodeInstance);
+        void AddNode(AmObjectID id, AmString nodeName, NodeInstance* nodeInstance);
 
     private:
-        std::unordered_map<AmObjectID, NodeInstance*> _nodeInstances;
+        std::unordered_map<AmObjectID, std::pair<AmString, NodeInstance*>> _nodeInstances;
 
         InputNodeInstance* _inputNode;
         OutputNodeInstance* _outputNode;

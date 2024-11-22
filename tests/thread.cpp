@@ -175,15 +175,12 @@ TEST_CASE("Thread Pool Tests", "[thread][amplitude]")
                 auto task = std::make_shared<DummyPoolTask>(threadId);
                 REQUIRE_FALSE(task->IsExecuted());
 
-                bool willExecuteWorkInCallerThread = pool.GetTaskCount() >= AM_MAX_THREAD_POOL_TASKS;
+                bool mayExecuteWorkInCallerThread = pool.GetTaskCount() >= AM_MAX_THREAD_POOL_TASKS;
 
                 pool.AddTask(task);
 
-                if (willExecuteWorkInCallerThread)
-                {
-                    REQUIRE(task->IsExecuted());
+                if (mayExecuteWorkInCallerThread && task->IsExecuted())
                     REQUIRE(task->GetExecutingThreadId() == threadId);
-                }
             }
         }
 

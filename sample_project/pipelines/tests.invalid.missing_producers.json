@@ -1,0 +1,23 @@
+{
+    "id": 92,
+    "name": "tests.missing_producers",
+    "nodes": [
+        {
+            "id": 1,
+            "name": "Input",
+            "consume": []
+        },
+        {
+            "id": 8,
+            "name": "StereoPanning",
+            "consume": []
+        },
+        {
+            "id": 9,
+            "name": "Output",
+            "consume": [
+                8
+            ]
+        }
+    ]
+}

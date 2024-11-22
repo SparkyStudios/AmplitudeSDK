@@ -1,0 +1,30 @@
+{
+    "id": 94,
+    "name": "tests.multiple_input",
+    "nodes": [
+        {
+            "id": 1,
+            "name": "Input",
+            "consume": []
+        },
+        {
+            "id": 2,
+            "name": "Input",
+            "consume": []
+        },
+        {
+            "id": 8,
+            "name": "StereoPanning",
+            "consume": [
+                1
+            ]
+        },
+        {
+            "id": 9,
+            "name": "Output",
+            "consume": [
+                2
+            ]
+        }
+    ]
+}

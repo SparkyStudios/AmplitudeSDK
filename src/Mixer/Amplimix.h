@@ -61,14 +61,14 @@ namespace SparkyStudios::Audio::Amplitude
     class AmplimixLayerImpl final : public AmplimixLayer
     {
     public:
-        AmUInt32 id; // playing id
+        AmUInt32 id = kAmInvalidObjectId; // playing id
         _Atomic(PlayStateFlag) flag; // state
         _Atomic(AmUInt64) cursor; // cursor
         _Atomic(AmReal32) gain; // gain
         _Atomic(AmReal32) pan; // pan
         _Atomic(AmReal32) pitch; // pitch
-        SoundData* snd; // sound data
-        AmUInt64 start, end; // start and end frames
+        SoundData* snd = nullptr; // sound data
+        AmUInt64 start = 0, end = 0; // start and end frames
 
         _Atomic(AmReal32) obstruction; // obstruction factor
         _Atomic(AmReal32) occlusion; // occlusion factor
@@ -79,10 +79,10 @@ namespace SparkyStudios::Audio::Amplitude
         _Atomic(AmReal32) sampleRateRatio; // sample rate ratio
         _Atomic(AmReal32) baseSampleRateRatio; // base sample rate ratio
 
-        AudioConverter* dataConverter; // miniaudio resampler & channel converter
-        PipelineInstance* pipeline; // pipeline for this layer
+        AudioConverter* dataConverter = nullptr; // miniaudio resampler & channel converter
+        PipelineInstance* pipeline = nullptr; // pipeline for this layer
 
-        AmMutexHandle mutex; // mutex for thread-safe access
+        AmMutexHandle mutex = nullptr; // mutex for thread-safe access
         std::unordered_map<AmThreadID, bool> mutexLocked; // true if mutex is locked
 
         ~AmplimixLayerImpl();

@@ -538,6 +538,16 @@ namespace SparkyStudios::Audio::Amplitude
         auto* engineImpl = static_cast<EngineImpl*>(engine);
         const SoundBankDefinition* definition = GetSoundBankDefinition();
 
+        for (flatbuffers::uoffset_t i = 0; i < definition->events()->size(); ++i)
+        {
+            AmString filename = definition->events()->Get(i)->str();
+            if (!DeinitializeEvent(AM_STRING_TO_OS_STRING(filename), engineImpl->GetState()))
+            {
+                amLogError("Error while deinitializing event %s in sound bank.", filename.c_str());
+                AMPLITUDE_ASSERT(false);
+            }
+        }
+
         for (flatbuffers::uoffset_t i = 0; i < definition->switch_containers()->size(); ++i)
         {
             AmString filename = definition->switch_containers()->Get(i)->str();
@@ -564,16 +574,6 @@ namespace SparkyStudios::Audio::Amplitude
             if (!DeinitializeSound(AM_STRING_TO_OS_STRING(filename), engineImpl->GetState()))
             {
                 amLogError("Error while deinitializing sound %s in sound bank.", filename.c_str());
-                AMPLITUDE_ASSERT(false);
-            }
-        }
-
-        for (flatbuffers::uoffset_t i = 0; i < definition->events()->size(); ++i)
-        {
-            AmString filename = definition->events()->Get(i)->str();
-            if (!DeinitializeEvent(AM_STRING_TO_OS_STRING(filename), engineImpl->GetState()))
-            {
-                amLogError("Error while deinitializing event %s in sound bank.", filename.c_str());
                 AMPLITUDE_ASSERT(false);
             }
         }
@@ -693,13 +693,6 @@ namespace SparkyStudios::Audio::Amplitude
             success &= InitializeAttenuation(AM_STRING_TO_OS_STRING(attenuation_filename), engineImpl);
         }
 
-        // Load each Event named in the sound bank.
-        for (flatbuffers::uoffset_t i = 0; success && i < definition->events()->size(); ++i)
-        {
-            AmString event_filename = definition->events()->Get(i)->str();
-            success &= InitializeEvent(AM_STRING_TO_OS_STRING(event_filename), engineImpl);
-        }
-
         // Load each Sound named in the sound bank.
         for (flatbuffers::uoffset_t i = 0; success && i < definition->sounds()->size(); ++i)
         {
@@ -721,6 +714,13 @@ namespace SparkyStudios::Audio::Amplitude
         {
             AmString filename = definition->switch_containers()->Get(i)->str();
             success &= InitializeSwitchContainer(AM_STRING_TO_OS_STRING(filename), engineImpl);
+        }
+
+        // Load each Event named in the sound bank.
+        for (flatbuffers::uoffset_t i = 0; success && i < definition->events()->size(); ++i)
+        {
+            AmString event_filename = definition->events()->Get(i)->str();
+            success &= InitializeEvent(AM_STRING_TO_OS_STRING(event_filename), engineImpl);
         }
 
         return success;

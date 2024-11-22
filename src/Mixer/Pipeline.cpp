@@ -29,10 +29,21 @@ namespace SparkyStudios::Audio::Amplitude
     PipelineInstanceImpl::~PipelineInstanceImpl()
     {
         for (const auto& node : _nodeInstances)
-            ampooldelete(eMemoryPoolKind_Amplimix, NodeInstance, node.second);
+            Node::Destruct(node.second.first, node.second.second);
 
-        _inputNode = nullptr;
-        _outputNode = nullptr;
+        _nodeInstances.clear();
+
+        if (_outputNode != nullptr)
+        {
+            Node::Destruct("Output", _outputNode);
+            _outputNode = nullptr;
+        }
+
+        if (_inputNode != nullptr)
+        {
+            Node::Destruct("Input", _inputNode);
+            _inputNode = nullptr;
+        }
     }
 
     void PipelineInstanceImpl::Execute(const AudioBuffer& in, AudioBuffer& out)
@@ -53,26 +64,33 @@ namespace SparkyStudios::Audio::Amplitude
     NodeInstance* PipelineInstanceImpl::GetNode(AmObjectID id) const
     {
         if (_nodeInstances.find(id) != _nodeInstances.end())
-            return _nodeInstances.at(id);
+            return _nodeInstances.at(id).second;
+
+        if (_inputNode != nullptr && _inputNode->GetId() == id)
+            return _inputNode;
+
+        if (_outputNode != nullptr && _outputNode->GetId() == id)
+            return _outputNode;
 
         return nullptr;
     }
 
     void PipelineInstanceImpl::Reset()
     {
-        for (const auto& node : _nodeInstances)
-            node.second->Reset();
-
         _inputNode->Reset();
+
+        for (const auto& node : _nodeInstances)
+            node.second.second->Reset();
+
         _outputNode->Reset();
     }
 
-    void PipelineInstanceImpl::AddNode(AmObjectID id, NodeInstance* nodeInstance)
+    void PipelineInstanceImpl::AddNode(AmObjectID id, AmString nodeName, NodeInstance* nodeInstance)
     {
         if (_nodeInstances.find(id) != _nodeInstances.end())
             return;
 
-        _nodeInstances[id] = nodeInstance;
+        _nodeInstances[id] = std::make_pair(nodeName, nodeInstance);
     }
 
     PipelineImpl::~PipelineImpl()
@@ -93,51 +111,100 @@ namespace SparkyStudios::Audio::Amplitude
             const auto& nodeId = nodeDef->id();
             const auto* inputs = nodeDef->consume();
 
-            NodeInstance* node = nullptr;
+            Node* node = Node::Find(nodeName);
+            NodeInstance* nodeInstance = nullptr;
+
             if (nodeName == "Input")
             {
-                node = ampoolnew(eMemoryPoolKind_Amplimix, InputNodeInstance);
-                instance->_inputNode = static_cast<InputNodeInstance*>(node);
+                if (instance->_inputNode != nullptr)
+                {
+                    amLogError("More than one input node was found in the pipeline.");
+                    DestroyInstance(instance);
+                    return nullptr;
+                }
+
+                nodeInstance = node->CreateInstance();
+                instance->_inputNode = static_cast<InputNodeInstance*>(nodeInstance);
             }
             else if (nodeName == "Output")
             {
-                node = ampoolnew(eMemoryPoolKind_Amplimix, OutputNodeInstance);
-                instance->_outputNode = static_cast<OutputNodeInstance*>(node);
+                if (instance->_outputNode != nullptr)
+                {
+                    amLogError("More than one output node was found in the pipeline.");
+                    DestroyInstance(instance);
+                    return nullptr;
+                }
+
+                nodeInstance = node->CreateInstance();
+                instance->_outputNode = static_cast<OutputNodeInstance*>(nodeInstance);
             }
             else
             {
-                node = Node::Construct(nodeName);
-            }
+                if (node != nullptr)
+                    nodeInstance = node->CreateInstance();
 
-            if (node == nullptr)
-            {
-                amLogError(
-                    "Pipeline node not found: %s. Make sure it is registered. If the node is provided by a plugin, make sure to load the "
-                    "plugin before Amplitude.",
-                    nodeName.c_str());
-                DestroyInstance(instance);
-                return nullptr;
+                if (nodeInstance == nullptr)
+                {
+                    amLogError(
+                        "Pipeline node not found: %s. Make sure it is registered. If the node is provided by a plugin, make sure to load "
+                        "the "
+                        "plugin before Amplitude.",
+                        nodeName.c_str());
+                    DestroyInstance(instance);
+                    return nullptr;
+                }
+
+                instance->AddNode(nodeId, nodeName, nodeInstance);
             }
 
             // Initialize the node with the provided parameters
-            node->Initialize(nodeId, layer, instance);
-
-            instance->AddNode(nodeId, node);
+            nodeInstance->Initialize(nodeId, layer, instance);
 
             // Connect the node inputs
-            auto* consumerNode = dynamic_cast<ConsumerNodeInstance*>(node);
-            if (consumerNode == nullptr)
-                continue;
-
-            for (flatbuffers::uoffset_t j = 0, m = inputs->size(); j < m; ++j)
+            if (node->CanConsume())
             {
-                if (inputs->Get(j) == nodeId)
+                auto* consumerNode = dynamic_cast<ConsumerNodeInstance*>(nodeInstance);
+                if (consumerNode == nullptr)
                 {
-                    amLogError("A node cannot consume itself: %s", nodeName.c_str());
-                    continue;
+                    amLogError(
+                        "The node '%s' can consume, but it doesn't inherits ConsumerNodeInstance. This is a programming error.",
+                        nodeName.c_str());
+                    DestroyInstance(instance);
+                    return nullptr;
                 }
 
-                consumerNode->Connect(inputs->Get(j));
+                if (!AM_BETWEEN(inputs->size(), node->GetMinInputCount(), node->GetMaxInputCount()))
+                {
+                    amLogError(
+                        "The node '%s' requires %zu to %zu input(s), but %d were provided.", nodeName.c_str(), node->GetMinInputCount(),
+                        node->GetMaxInputCount(), inputs->size());
+                    DestroyInstance(instance);
+                    return nullptr;
+                }
+
+                std::vector<AmObjectID> connectedNodes;
+                for (flatbuffers::uoffset_t j = 0, m = inputs->size(); j < m; ++j)
+                {
+                    const AmObjectID producerNodeId = inputs->Get(j);
+
+                    if (producerNodeId == nodeId)
+                    {
+                        amLogError("A node cannot consume itself: %s", nodeName.c_str());
+                        DestroyInstance(instance);
+                        return nullptr;
+                    }
+
+                    if (std::ranges::find(connectedNodes, producerNodeId) != connectedNodes.end())
+                    {
+                        amLogWarning(
+                            "The node with ID '" AM_ID_CHAR_FMT "' is already connected to %s, skipping.", producerNodeId,
+                            nodeName.c_str());
+                        continue;
+                    }
+
+                    consumerNode->Connect(producerNodeId);
+                    connectedNodes.push_back(producerNodeId);
+                }
             }
         }
 

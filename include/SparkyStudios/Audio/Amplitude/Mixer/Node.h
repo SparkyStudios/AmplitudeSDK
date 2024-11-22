@@ -100,7 +100,7 @@ namespace SparkyStudios::Audio::Amplitude
         /**
          * @brief Consumes audio data from the provider node.
          *
-         * The provider node should be  specified with the call of @ref Connect `Connect()`.
+         * The provider node should be specified with the call of @ref Connect `Connect()`.
          */
         virtual void Consume() = 0;
 
