@@ -64,7 +64,7 @@ namespace SparkyStudios::Audio::Amplitude
     template class AssetImpl<AmCollectionID, CollectionDefinition>;
     template class AssetImpl<AmEffectID, EffectDefinition>;
     template class AssetImpl<AmEventID, EventDefinition>;
-    template class AssetImpl<AmEventID, PipelineDefinition>;
+    template class AssetImpl<AmPipelineID, PipelineDefinition>;
     template class AssetImpl<AmRtpcID, RtpcDefinition>;
     template class AssetImpl<AmSoundID, SoundDefinition>;
     template class AssetImpl<AmSwitchContainerID, SwitchContainerDefinition>;
