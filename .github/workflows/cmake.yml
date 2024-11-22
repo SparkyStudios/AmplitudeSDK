@@ -195,7 +195,7 @@ jobs:
       - name: Test
         if: matrix.build_type == 'debug'
         working-directory: ${{ inputs.project-path }}/build/tests
-        run: ctest -j1 -C debug --output-on-failure
+        run: ctest --extra-verbose -C debug
         env:
           AM_SDK_PATH: "${{ steps.sdk_path.outputs.path }}/sdk"
           AM_SDK_PLATFORM: ${{ matrix.config.target_triplet }}
