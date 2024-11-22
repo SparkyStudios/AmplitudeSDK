@@ -8,22 +8,10 @@
             "consume": []
         },
         {
-            "id": 11,
-            "name": "Reflections",
-            "consume": []
-        },
-        {
-            "id": 12,
-            "name": "AmbisonicBinauralDecoder",
-            "consume": [
-                11
-            ]
-        },
-        {
             "id": 9,
             "name": "Output",
             "consume": [
-                12
+                8
             ]
         }
     ]

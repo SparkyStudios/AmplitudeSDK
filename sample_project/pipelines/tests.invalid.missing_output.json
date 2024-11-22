@@ -13,20 +13,6 @@
             "consume": [
                 1
             ]
-        },
-        {
-            "id": 11,
-            "name": "Reflections",
-            "consume": [
-                1
-            ]
-        },
-        {
-            "id": 12,
-            "name": "AmbisonicBinauralDecoder",
-            "consume": [
-                11
-            ]
         }
     ]
 }
