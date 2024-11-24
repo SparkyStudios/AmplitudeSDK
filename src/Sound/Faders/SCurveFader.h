@@ -22,13 +22,13 @@
 
 namespace SparkyStudios::Audio::Amplitude
 {
-    constexpr BeizerCurveControlPoints gSCurveSmoothFaderCurveControlPoints = { 0.64f, 0.0f, 0.36f, 1.0f };
-    constexpr BeizerCurveControlPoints gSCurveSharpFaderCurveControlPoints = { 0.9f, 0.0f, 0.1f, 1.0f };
+    constexpr BezierCurveControlPoints gSCurveSmoothFaderCurveControlPoints = { 0.64f, 0.0f, 0.36f, 1.0f };
+    constexpr BezierCurveControlPoints gSCurveSharpFaderCurveControlPoints = { 0.9f, 0.0f, 0.1f, 1.0f };
 
     class SCurveFaderInstance final : public FaderInstance
     {
     public:
-        explicit SCurveFaderInstance(const BeizerCurveControlPoints& curveControlPoints)
+        explicit SCurveFaderInstance(const BezierCurveControlPoints& curveControlPoints)
         {
             m_curve = curveControlPoints;
         }
@@ -51,7 +51,7 @@ namespace SparkyStudios::Audio::Amplitude
             amdelete(SCurveFaderInstance, (SCurveFaderInstance*)instance);
         }
 
-        [[nodiscard]] BeizerCurveControlPoints GetControlPoints() const override
+        [[nodiscard]] BezierCurveControlPoints GetControlPoints() const override
         {
             return gSCurveSmoothFaderCurveControlPoints;
         }
@@ -74,7 +74,7 @@ namespace SparkyStudios::Audio::Amplitude
             amdelete(SCurveFaderInstance, (SCurveFaderInstance*)instance);
         }
 
-        [[nodiscard]] BeizerCurveControlPoints GetControlPoints() const override
+        [[nodiscard]] BezierCurveControlPoints GetControlPoints() const override
         {
             return gSCurveSharpFaderCurveControlPoints;
         }

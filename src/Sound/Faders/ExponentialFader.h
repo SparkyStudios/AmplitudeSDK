@@ -22,7 +22,7 @@
 
 namespace SparkyStudios::Audio::Amplitude
 {
-    constexpr BeizerCurveControlPoints gExponentialFaderCurveControlPoints = { 1.0f, 0.0f, 1.0f, 1.0f };
+    constexpr BezierCurveControlPoints gExponentialFaderCurveControlPoints = { 1.0f, 0.0f, 1.0f, 1.0f };
 
     class ExponentialFaderInstance final : public FaderInstance
     {
@@ -50,7 +50,7 @@ namespace SparkyStudios::Audio::Amplitude
             amdelete(ExponentialFaderInstance, (ExponentialFaderInstance*)instance);
         }
 
-        [[nodiscard]] BeizerCurveControlPoints GetControlPoints() const override
+        [[nodiscard]] BezierCurveControlPoints GetControlPoints() const override
         {
             return gExponentialFaderCurveControlPoints;
         }

@@ -1,18 +1,1 @@
-{
-    "id": 97,
-    "name": "tests.self_consume",
-    "nodes": [
-        {
-            "id": 1,
-            "name": "Input",
-            "consume": []
-        },
-        {
-            "id": 9,
-            "name": "Output",
-            "consume": [
-                9
-            ]
-        }
-    ]
-}
+{"id":97,"name":"tests.self_consume","nodes":[{"id":1,"name":"Input","consume":[]},{"id":9,"name":"Output","consume":[9]}]}

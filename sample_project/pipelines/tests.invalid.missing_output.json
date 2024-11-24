@@ -1,18 +1,1 @@
-{
-    "id": 91,
-    "name": "tests.missing_output",
-    "nodes": [
-        {
-            "id": 1,
-            "name": "Input",
-            "consume": []
-        },
-        {
-            "id": 8,
-            "name": "StereoPanning",
-            "consume": [
-                1
-            ]
-        }
-    ]
-}
+{"id":91,"name":"tests.missing_output","nodes":[{"id":1,"name":"Input","consume":[]},{"id":8,"name":"StereoPanning","consume":[1]}]}

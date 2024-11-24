@@ -102,7 +102,7 @@ namespace SparkyStudios::Audio::Amplitude
         }
     }
 
-    FaderInstance::Transition::Transition(const BeizerCurveControlPoints& controlPoints)
+    FaderInstance::Transition::Transition(const BezierCurveControlPoints& controlPoints)
         : Transition(controlPoints.x1, controlPoints.y1, controlPoints.x2, controlPoints.y2)
     {}
 

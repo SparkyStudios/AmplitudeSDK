@@ -45,10 +45,10 @@ namespace SparkyStudios::Audio::Amplitude
     public:
         /**
          * @brief Create an animation transition function using
-         * a one-dimensional cubic bezier curve.
+         * a one-dimensional cubic Bézier curve.
          *
          * This use the exact same algorithm as in CSS. The first and last
-         * control points of the cubic bezier curve are fixed to (0,0)
+         * control points of the cubic Bézier curve are fixed to (0,0)
          * and (1,1) respectively.
          */
         struct Transition
@@ -69,7 +69,7 @@ namespace SparkyStudios::Audio::Amplitude
              *
              * @param[in] controlPoints The control points of the curve.
              */
-            Transition(const BeizerCurveControlPoints& controlPoints);
+            Transition(const BezierCurveControlPoints& controlPoints);
 
             /**
              * @brief Given an animation duration percentage (in the range [0, 1]),
@@ -84,7 +84,7 @@ namespace SparkyStudios::Audio::Amplitude
             /**
              * @brief The control points.
              */
-            BeizerCurveControlPoints m_controlPoints;
+            BezierCurveControlPoints m_controlPoints;
 
         private:
             [[nodiscard]] AmTime GetTFromX(AmReal64 x) const;
@@ -253,7 +253,7 @@ namespace SparkyStudios::Audio::Amplitude
          *
          * @return The control points of the transition curve used by this Fader.
          */
-        [[nodiscard]] virtual BeizerCurveControlPoints GetControlPoints() const = 0;
+        [[nodiscard]] virtual BezierCurveControlPoints GetControlPoints() const = 0;
 
         /**
          * @brief Registers a new fader.
@@ -270,7 +270,7 @@ namespace SparkyStudios::Audio::Amplitude
         static void Unregister(const Fader* fader);
 
         /**
-         * @brief Creates a new instance of the the fader with the given name and returns its pointer.
+         * @brief Creates a new instance of the fader with the given name and returns its pointer.
          *
          * @note The returned pointer should be deleted using @ref Destruct `Destruct()`.
          *
@@ -298,7 +298,7 @@ namespace SparkyStudios::Audio::Amplitude
         static void LockRegistry();
 
         /**
-         * @brief Unlocks the faders registry.
+         * @brief Unlocks the fader's registry.
          *
          * @warning This function is mainly used for internal purposes. It's
          * called after the `Engine` deinitialization, to allow the registration

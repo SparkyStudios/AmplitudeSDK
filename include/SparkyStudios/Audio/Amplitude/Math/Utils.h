@@ -27,11 +27,11 @@
 namespace SparkyStudios::Audio::Amplitude
 {
     /**
-     * @brief A structure containing control points for a Bezier curve.
+     * @brief A structure containing control points for a Bézier curve.
      *
      * @ingroup math
      */
-    struct BeizerCurveControlPoints
+    struct BezierCurveControlPoints
     {
         /**
          * @brief The x coordinate of the second control point.
