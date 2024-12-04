@@ -66,11 +66,6 @@ jobs:
             archiver: "7z a"
             target_triplet: x64-windows
 
-          - name: "Windows Latest MinGW"
-            os: windows-latest
-            archiver: "7z a"
-            target_triplet: x64-mingw-static
-
           - name: "Ubuntu Latest GCC"
             os: ubuntu-latest
             archiver: "7z a"
