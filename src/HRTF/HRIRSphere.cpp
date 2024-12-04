@@ -257,14 +257,14 @@ namespace SparkyStudios::Audio::Amplitude
             const AmSize length = vertexA.m_LeftIR.size();
             const AmReal32 min = std::min({ barycenter.m_U, barycenter.m_V, barycenter.m_W });
 
-            if (min == barycenter.m_U)
+            if (min == barycenter.m_V)
             {
                 std::memcpy(leftHRIR, vertexA.m_LeftIR.data(), length * sizeof(AmReal32));
                 std::memcpy(rightHRIR, vertexA.m_RightIR.data(), length * sizeof(AmReal32));
                 return;
             }
 
-            if (min == barycenter.m_V)
+            if (min == barycenter.m_U)
             {
                 std::memcpy(leftHRIR, vertexB.m_LeftIR.data(), length * sizeof(AmReal32));
                 std::memcpy(rightHRIR, vertexB.m_RightIR.data(), length * sizeof(AmReal32));

@@ -35,7 +35,8 @@ add_executable(${PROJECT_NAME}
     zone.cpp
     audio_buffer.cpp
     pipeline.cpp
-    fader.cpp)
+    fader.cpp
+    hrtf.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2 Static)
 
 add_custom_target(ss_amplitude_audio_test_package
