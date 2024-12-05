@@ -301,7 +301,6 @@ set(SA_SOURCE
     src/DSP/Filters/WaveShaperFilter.h
     src/DSP/Resamplers/DefaultResampler.cpp
     src/DSP/Resamplers/DefaultResampler.h
-    src/DSP/Resamplers/R8BrainResampler.h
     src/DSP/AudioConverter.cpp
     src/DSP/Convolver.cpp
     src/DSP/Delay.cpp
@@ -420,19 +419,6 @@ set(SA_SOURCE
     src/Utils/Audio/Compression/ADPCM/ADPCM.h
     src/Utils/Audio/FFT/AudioFFT.cpp
     src/Utils/Audio/FFT/AudioFFT.h
-    src/Utils/Audio/Resampling/CDSPBlockConvolver.h
-    src/Utils/Audio/Resampling/CDSPFIRFilter.h
-    src/Utils/Audio/Resampling/CDSPFracInterpolator.h
-    src/Utils/Audio/Resampling/CDSPHBDownsampler.h
-    src/Utils/Audio/Resampling/CDSPHBUpsampler.h
-    src/Utils/Audio/Resampling/CDSPProcessor.h
-    src/Utils/Audio/Resampling/CDSPRealFFT.h
-    src/Utils/Audio/Resampling/CDSPResampler.h
-    src/Utils/Audio/Resampling/CDSPSincFilterGen.h
-    src/Utils/Audio/Resampling/r8bbase.cpp
-    src/Utils/Audio/Resampling/r8bbase.h
-    src/Utils/Audio/Resampling/r8bconf.h
-    src/Utils/Audio/Resampling/r8butil.h
     src/Utils/Freeverb/AllPass.cpp
     src/Utils/Freeverb/AllPass.h
     src/Utils/Freeverb/Comb.cpp

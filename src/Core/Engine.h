@@ -23,7 +23,7 @@
 
 #include "engine_config_definition_generated.h"
 
-#define amEngine static_cast<EngineImpl*>(SparkyStudios::Audio::Amplitude::Engine::GetInstance())
+#define amEngine dynamic_cast<EngineImpl*>(SparkyStudios::Audio::Amplitude::Engine::GetInstance())
 
 namespace SparkyStudios::Audio::Amplitude
 {

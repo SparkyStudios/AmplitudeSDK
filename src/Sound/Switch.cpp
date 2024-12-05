@@ -19,8 +19,6 @@
 
 namespace SparkyStudios::Audio::Amplitude
 {
-    template class AssetImpl<AmSwitchID, SwitchDefinition>;
-
     bool SwitchState::Valid() const
     {
         return m_id != kAmInvalidObjectId && !m_name.empty();

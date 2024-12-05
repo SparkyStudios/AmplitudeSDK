@@ -20,7 +20,6 @@
 #pragma region Default Resamplers
 
 #include <DSP/Resamplers/DefaultResampler.h>
-#include <DSP/Resamplers/R8BrainResampler.h>
 
 #pragma endregion
 

@@ -56,7 +56,6 @@ namespace SparkyStudios::Audio::Amplitude
 
     // Default Plugins instances
     static AmUniquePtr<eMemoryPoolKind_Engine, DefaultResampler> sDefaultResamplerPlugin = nullptr;
-    static AmUniquePtr<eMemoryPoolKind_Engine, R8BrainResampler> sR8BrainResamplerPlugin = nullptr;
     // ---
     static AmUniquePtr<eMemoryPoolKind_Engine, ConstantFader> sConstantFaderPlugin = nullptr;
     static AmUniquePtr<eMemoryPoolKind_Engine, EaseFader> sEaseFaderPlugin = nullptr;
@@ -179,7 +178,8 @@ namespace SparkyStudios::Audio::Amplitude
                 bestRoom = &room;
                 break;
             }
-            else if (const AmReal32 distance = shape.GetShortestDistanceToEdge(location); distance < minDistanceSquared)
+
+            if (const AmReal32 distance = shape.GetShortestDistanceToEdge(location); distance < minDistanceSquared)
             {
                 minDistanceSquared = distance;
                 bestRoom = &room;
@@ -347,7 +347,6 @@ namespace SparkyStudios::Audio::Amplitude
         UnregisterDefaultPlugins();
 
         sDefaultResamplerPlugin.reset(ampoolnew(eMemoryPoolKind_Engine, DefaultResampler));
-        sR8BrainResamplerPlugin.reset(ampoolnew(eMemoryPoolKind_Engine, R8BrainResampler));
         // ---
         sConstantFaderPlugin.reset(ampoolnew(eMemoryPoolKind_Engine, ConstantFader));
         sEaseFaderPlugin.reset(ampoolnew(eMemoryPoolKind_Engine, EaseFader));
@@ -404,7 +403,6 @@ namespace SparkyStudios::Audio::Amplitude
             return false; // Cannot unregister the default plugins when the engine is already initialized.
 
         sDefaultResamplerPlugin.reset(nullptr);
-        sR8BrainResamplerPlugin.reset(nullptr);
         // ---
         sConstantFaderPlugin.reset(nullptr);
         sEaseFaderPlugin.reset(nullptr);
@@ -682,8 +680,9 @@ namespace SparkyStudios::Audio::Amplitude
 
         if (_audioDriver == nullptr)
         {
-            amLogCritical("Failed to load the specified driver, the default driver, and the null driver. Please check your engine "
-                          "configuration, and ensure that all the needed plugins are loaded.");
+            amLogCritical(
+                "Failed to load the specified driver, the default driver, and the null driver. Please check your engine "
+                "configuration, and ensure that all the needed plugins are loaded.");
             Deinitialize();
             return false;
         }
@@ -701,9 +700,7 @@ namespace SparkyStudios::Audio::Amplitude
         // Store the panning mode
         _state->panning_mode = static_cast<ePanningMode>(config->mixer()->panning_mode());
 
-        const auto* hrtfConfig = config->hrtf();
-
-        if (hrtfConfig != nullptr)
+        if (const auto* hrtfConfig = config->hrtf(); hrtfConfig != nullptr)
         {
             // Store the HRIR sampling mode
             _state->hrir_sampling_mode = static_cast<eHRIRSphereSamplingMode>(config->hrtf()->hrir_sampling());
@@ -716,8 +713,9 @@ namespace SparkyStudios::Audio::Amplitude
         }
         else if (_state->panning_mode != ePanningMode_Stereo)
         {
-            amLogCritical("The HRTF configuration is missing, but the panning mode is not stereo. Please provide an HRTF configuration, or "
-                          "set the panning mode to Stereo.");
+            amLogCritical(
+                "The HRTF configuration is missing, but the panning mode is not stereo. Please provide an HRTF configuration, or "
+                "set the panning mode to Stereo.");
             Deinitialize();
             return false;
         }
@@ -1010,7 +1008,7 @@ namespace SparkyStudios::Audio::Amplitude
     {
         if (const auto findIt = _state->sound_bank_id_map.find(filename); findIt == _state->sound_bank_id_map.end())
         {
-            amLogWarning("Cannot unload Soundbank '" AM_OS_CHAR_FMT "'. Soundbank not loaded.", filename.c_str());
+            amLogWarning("Cannot unload Sound Bank '" AM_OS_CHAR_FMT "'. Sound Bank not loaded.", filename.c_str());
             AMPLITUDE_ASSERT(false);
         }
         else
@@ -1023,7 +1021,7 @@ namespace SparkyStudios::Audio::Amplitude
     {
         if (const auto findIt = _state->sound_bank_map.find(id); findIt == _state->sound_bank_map.end())
         {
-            amLogWarning("Cannot unload Soundbank with ID '" AM_ID_CHAR_FMT "'. Soundbank not loaded.", id);
+            amLogWarning("Cannot unload Sound Bank with ID '" AM_ID_CHAR_FMT "'. Sound Bank not loaded.", id);
             AMPLITUDE_ASSERT(false);
         }
         else if (findIt->second->GetRefCounter()->Decrement() == 0)
@@ -1104,11 +1102,10 @@ namespace SparkyStudios::Audio::Amplitude
 
         _soundLoaderThreadPool->Init(8);
 
-        for (const auto& item : _state->sound_bank_map)
+        for (const auto& bank : _state->sound_bank_map | std::views::values)
         {
             auto task = std::shared_ptr<LoadSoundBankTask>(
-                ampoolnew(eMemoryPoolKind_Engine, LoadSoundBankTask, item.second.get()),
-                am_delete<eMemoryPoolKind_Engine, LoadSoundBankTask>{});
+                ampoolnew(eMemoryPoolKind_Engine, LoadSoundBankTask, bank.get()), am_delete<eMemoryPoolKind_Engine, LoadSoundBankTask>{});
 
             _soundLoaderThreadPool->AddTask(task);
         }
@@ -1179,9 +1176,9 @@ namespace SparkyStudios::Audio::Amplitude
                 if (state == nullptr)
                     return nullptr;
 
-                for (auto listener = listeners.begin(); listener != listeners.end(); ++listener)
-                    if (listener->GetId() == state->GetId())
-                        return &*listener;
+                for (auto& listener : listeners)
+                    if (listener.GetId() == state->GetId())
+                        return &listener;
 
                 return nullptr;
             }
@@ -1402,13 +1399,13 @@ namespace SparkyStudios::Audio::Amplitude
 
     Channel EngineImpl::Play(const AmString& name, const Entity& entity, const AmReal32 userGain) const
     {
-        if (SoundHandle handle = GetSoundHandle(name))
+        if (Sound* handle = GetSoundHandle(name))
             return Play(handle, entity, userGain);
 
-        if (CollectionHandle handle = GetCollectionHandle(name))
+        if (Collection* handle = GetCollectionHandle(name))
             return Play(handle, entity, userGain);
 
-        if (SwitchContainerHandle handle = GetSwitchContainerHandle(name))
+        if (SwitchContainer* handle = GetSwitchContainerHandle(name))
             return Play(handle, entity, userGain);
 
         amLogError("Cannot play sound: invalid name (%s).", name.c_str());
@@ -1427,13 +1424,13 @@ namespace SparkyStudios::Audio::Amplitude
 
     Channel EngineImpl::Play(AmObjectID id, const AmVec3& location, const AmReal32 userGain) const
     {
-        if (SoundHandle handle = GetSoundHandle(id))
+        if (Sound* handle = GetSoundHandle(id))
             return Play(handle, location, userGain);
 
-        if (CollectionHandle handle = GetCollectionHandle(id))
+        if (Collection* handle = GetCollectionHandle(id))
             return Play(handle, location, userGain);
 
-        if (SwitchContainerHandle handle = GetSwitchContainerHandle(id))
+        if (SwitchContainer* handle = GetSwitchContainerHandle(id))
             return Play(handle, location, userGain);
 
         amLogError("Cannot play sound: invalid ID (" AM_ID_CHAR_FMT ").", id);
@@ -1447,13 +1444,13 @@ namespace SparkyStudios::Audio::Amplitude
 
     Channel EngineImpl::Play(AmObjectID id, const Entity& entity, const AmReal32 userGain) const
     {
-        if (SoundHandle handle = GetSoundHandle(id))
+        if (Sound* handle = GetSoundHandle(id))
             return Play(handle, entity, userGain);
 
-        if (CollectionHandle handle = GetCollectionHandle(id))
+        if (Collection* handle = GetCollectionHandle(id))
             return Play(handle, entity, userGain);
 
-        if (SwitchContainerHandle handle = GetSwitchContainerHandle(id))
+        if (SwitchContainer* handle = GetSwitchContainerHandle(id))
             return Play(handle, entity, userGain);
 
         amLogError("Cannot play sound: invalid ID (" AM_ID_CHAR_FMT ").", id);
@@ -1475,7 +1472,7 @@ namespace SparkyStudios::Audio::Amplitude
             return EventCanceler(nullptr);
         }
 
-        EventInstanceImpl instance = static_cast<EventImpl*>(handle)->Trigger(entity);
+        EventInstanceImpl instance = dynamic_cast<EventImpl*>(handle)->Trigger(entity);
         _state->running_events.push_back(std::move(instance));
 
         return EventCanceler(&_state->running_events.back());
@@ -1483,7 +1480,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     EventCanceler EngineImpl::Trigger(const AmString& name, const Entity& entity) const
     {
-        if (EventHandle handle = GetEventHandle(name))
+        if (Event* handle = GetEventHandle(name))
             return Trigger(handle, entity);
 
         amLogError("Cannot trigger event: invalid name (%s).", name.c_str());
@@ -1492,7 +1489,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     EventCanceler EngineImpl::Trigger(AmEventID id, const Entity& entity) const
     {
-        if (EventHandle handle = GetEventHandle(id))
+        if (Event* handle = GetEventHandle(id))
             return Trigger(handle, entity);
 
         amLogError("Cannot trigger event: invalid ID (" AM_ID_CHAR_FMT ").", id);
@@ -1534,7 +1531,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetSwitchState(AmSwitchID id, AmObjectID stateId) const
     {
-        if (SwitchHandle handle = GetSwitchHandle(id))
+        if (Switch* handle = GetSwitchHandle(id))
             return SetSwitchState(handle, stateId);
 
         amLogError("Cannot update switch: Invalid ID (" AM_ID_CHAR_FMT ").", id);
@@ -1542,7 +1539,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetSwitchState(AmSwitchID id, const AmString& stateName) const
     {
-        if (SwitchHandle handle = GetSwitchHandle(id))
+        if (Switch* handle = GetSwitchHandle(id))
             return SetSwitchState(handle, stateName);
 
         amLogError("Cannot update switch: Invalid ID (" AM_ID_CHAR_FMT ").", id);
@@ -1550,7 +1547,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetSwitchState(AmSwitchID id, const SwitchState& state) const
     {
-        if (SwitchHandle handle = GetSwitchHandle(id))
+        if (Switch* handle = GetSwitchHandle(id))
             return SetSwitchState(handle, state);
 
         amLogError("Cannot update switch: Invalid ID (" AM_ID_CHAR_FMT ").", id);
@@ -1558,7 +1555,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetSwitchState(const AmString& name, AmObjectID stateId) const
     {
-        if (SwitchHandle handle = GetSwitchHandle(name))
+        if (Switch* handle = GetSwitchHandle(name))
             return SetSwitchState(handle, stateId);
 
         amLogError("Cannot update switch: Invalid name (%s).", name.c_str());
@@ -1566,7 +1563,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetSwitchState(const AmString& name, const AmString& stateName) const
     {
-        if (SwitchHandle handle = GetSwitchHandle(name))
+        if (Switch* handle = GetSwitchHandle(name))
             return SetSwitchState(handle, stateName);
 
         amLogError("Cannot update switch: Invalid name (%s).", name.c_str());
@@ -1574,7 +1571,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetSwitchState(const AmString& name, const SwitchState& state) const
     {
-        if (SwitchHandle handle = GetSwitchHandle(name))
+        if (Switch* handle = GetSwitchHandle(name))
             return SetSwitchState(handle, state);
 
         amLogError("Cannot update switch: Invalid name (%s).", name.c_str());
@@ -1593,7 +1590,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetRtpcValue(AmRtpcID id, double value) const
     {
-        if (RtpcHandle handle = GetRtpcHandle(id))
+        if (Rtpc* handle = GetRtpcHandle(id))
             return SetRtpcValue(handle, value);
 
         amLogError("Cannot update RTPC value: Invalid RTPC ID (" AM_ID_CHAR_FMT ").", id);
@@ -1601,7 +1598,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::SetRtpcValue(const AmString& name, double value) const
     {
-        if (RtpcHandle handle = GetRtpcHandle(name))
+        if (Rtpc* handle = GetRtpcHandle(name))
             return SetRtpcValue(handle, value);
 
         amLogError("Cannot update RTPC value: Invalid RTPC name (%s).", name.c_str());
@@ -1681,13 +1678,13 @@ namespace SparkyStudios::Audio::Amplitude
 
     SoundObjectHandle EngineImpl::GetSoundObjectHandle(const AmString& name) const
     {
-        if (const SoundHandle handle = GetSoundHandle(name))
+        if (Sound* handle = GetSoundHandle(name))
             return handle;
 
-        if (const CollectionHandle handle = GetCollectionHandle(name))
+        if (Collection* handle = GetCollectionHandle(name))
             return handle;
 
-        if (const SwitchContainerHandle handle = GetSwitchContainerHandle(name))
+        if (SwitchContainer* handle = GetSwitchContainerHandle(name))
             return handle;
 
         return nullptr;
@@ -1695,13 +1692,13 @@ namespace SparkyStudios::Audio::Amplitude
 
     SoundObjectHandle EngineImpl::GetSoundObjectHandle(AmSoundID id) const
     {
-        if (const SoundHandle handle = GetSoundHandle(id))
+        if (Sound* handle = GetSoundHandle(id))
             return handle;
 
-        if (const CollectionHandle handle = GetCollectionHandle(id))
+        if (Collection* handle = GetCollectionHandle(id))
             return handle;
 
-        if (const SwitchContainerHandle handle = GetSwitchContainerHandle(id))
+        if (SwitchContainer* handle = GetSwitchContainerHandle(id))
             return handle;
 
         return nullptr;
@@ -1709,13 +1706,13 @@ namespace SparkyStudios::Audio::Amplitude
 
     SoundObjectHandle EngineImpl::GetSoundObjectHandleFromFile(const AmOsString& filename) const
     {
-        if (const SoundHandle handle = GetSoundHandleFromFile(filename))
+        if (Sound* handle = GetSoundHandleFromFile(filename))
             return handle;
 
-        if (const CollectionHandle handle = GetCollectionHandleFromFile(filename))
+        if (Collection* handle = GetCollectionHandleFromFile(filename))
             return handle;
 
-        if (const SwitchContainerHandle handle = GetSwitchContainerHandleFromFile(filename))
+        if (SwitchContainer* handle = GetSwitchContainerHandleFromFile(filename))
             return handle;
 
         return nullptr;
@@ -2185,7 +2182,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         if (const SwitchContainer* switchContainer = channel->GetSwitchContainer(); switchContainer != nullptr)
         {
-            const SwitchContainerDefinition* definition = static_cast<const SwitchContainerImpl*>(switchContainer)->GetDefinition();
+            const SwitchContainerDefinition* definition = dynamic_cast<const SwitchContainerImpl*>(switchContainer)->GetDefinition();
 
             CalculateGainPanPitch(
                 &gain, &pan, &pitch, listener, nullptr, switchContainer->GetGain().GetValue(), switchContainer->GetPitch().GetValue(),
@@ -2193,7 +2190,7 @@ namespace SparkyStudios::Audio::Amplitude
         }
         else if (const Collection* collection = channel->GetCollection(); collection != nullptr)
         {
-            const CollectionDefinition* definition = static_cast<const CollectionImpl*>(collection)->GetDefinition();
+            const CollectionDefinition* definition = dynamic_cast<const CollectionImpl*>(collection)->GetDefinition();
 
             CalculateGainPanPitch(
                 &gain, &pan, &pitch, listener, nullptr, collection->GetGain().GetValue(), collection->GetPitch().GetValue(),
@@ -2201,7 +2198,7 @@ namespace SparkyStudios::Audio::Amplitude
         }
         else if (const Sound* sound = channel->GetSound(); sound != nullptr)
         {
-            const SoundDefinition* definition = static_cast<const SoundImpl*>(sound)->GetDefinition();
+            const SoundDefinition* definition = dynamic_cast<const SoundImpl*>(sound)->GetDefinition();
 
             CalculateGainPanPitch(
                 &gain, &pan, &pitch, listener, nullptr, sound->GetGain().GetValue(), sound->GetPitch().GetValue(),
@@ -2393,7 +2390,7 @@ namespace SparkyStudios::Audio::Amplitude
         return _state->total_time;
     }
 
-    const struct AmVersion* EngineImpl::Version() const
+    const AmVersion* EngineImpl::Version() const
     {
         return _state->version;
     }
@@ -2500,7 +2497,7 @@ namespace SparkyStudios::Audio::Amplitude
             return Channel(nullptr);
         }
 
-        const SwitchContainerDefinition* definition = static_cast<SwitchContainerImpl*>(handle)->GetDefinition();
+        const SwitchContainerDefinition* definition = dynamic_cast<SwitchContainerImpl*>(handle)->GetDefinition();
 
         if (definition->scope() == Scope_Entity && !entity.Valid())
         {
@@ -2541,7 +2538,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         // Now that we have our new channel, set the data on it and update the next pointers.
         newChannel->SetEntity(entity);
-        newChannel->SetSwitchContainer(static_cast<SwitchContainerImpl*>(handle));
+        newChannel->SetSwitchContainer(dynamic_cast<SwitchContainerImpl*>(handle));
         newChannel->SetUserGain(userGain);
 
         // Attempt to play the channel, if the engine is paused, the channel will be played later.
@@ -2577,7 +2574,7 @@ namespace SparkyStudios::Audio::Amplitude
             return Channel(nullptr);
         }
 
-        const CollectionDefinition* definition = static_cast<CollectionImpl*>(handle)->GetDefinition();
+        const CollectionDefinition* definition = dynamic_cast<CollectionImpl*>(handle)->GetDefinition();
 
         if (definition->scope() == Scope_Entity && !entity.Valid())
         {
@@ -2618,7 +2615,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         // Now that we have our new channel, set the data on it and update the next pointers.
         newChannel->SetEntity(entity);
-        newChannel->SetCollection(static_cast<CollectionImpl*>(handle));
+        newChannel->SetCollection(dynamic_cast<CollectionImpl*>(handle));
         newChannel->SetUserGain(userGain);
 
         // Attempt to play the channel, if the engine is paused, the channel will be played later.
@@ -2653,7 +2650,7 @@ namespace SparkyStudios::Audio::Amplitude
             return Channel(nullptr);
         }
 
-        const SoundDefinition* definition = static_cast<SoundImpl*>(handle)->GetDefinition();
+        const SoundDefinition* definition = dynamic_cast<SoundImpl*>(handle)->GetDefinition();
 
         if (definition->scope() == Scope_Entity && !entity.Valid())
         {
@@ -2694,7 +2691,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         // Now that we have our new channel, set the data on it and update the next pointers.
         newChannel->SetEntity(entity);
-        newChannel->SetSound(static_cast<SoundImpl*>(handle));
+        newChannel->SetSound(dynamic_cast<SoundImpl*>(handle));
         newChannel->SetUserGain(userGain);
 
         // Attempt to play the channel, if the engine is paused, the channel will be played later.

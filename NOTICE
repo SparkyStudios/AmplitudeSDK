@@ -28,9 +28,6 @@ which was licensed under the BSD-3-Clause License.
 This software contains code derived from AudioFFT and FFTConvolution (https://github.com/HiFi-LoFi/AudioFFT),
 Copyright (c) 2017 HiFi-LoFi, which was licensed under the MIT License.
 
-This software includes code of the r8brain-free-src library (https://github.com/avaneev/r8brain-free-src),
-Copyright (c) 2013-2022 Aleksey Vaneev, and distributed under the MIT License.
-
 This software includes implementations derived from the ambisonic-lib library (https://github.com/delikas/ambisonic-lib),
 Copyright (c) 2014 greekgoddj, and distributed under the MIT License.
 
@@ -41,7 +38,3 @@ Copyright 2018 Google Inc, and distributed under the Apache-2.0 License.
 
 The Amplimix code is heavily inspired by the atomix library (https://github.com/BareRose/atomix) licensed under
 the CC0-1.0 License.
-
-The FLAC Codec plugin contains software developed by Xiph.org and licensed under the BSD-3-Clause License.
-
-The Vorbis Codec plugin contains software developed by Xiph.org and licensed under the BSD-3-Clause License.
