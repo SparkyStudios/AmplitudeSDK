@@ -48,9 +48,10 @@ namespace SparkyStudios::Audio::Amplitude
 
     RoomMaterial::RoomMaterial(RoomMaterialType type)
         : m_type(type)
+        , m_absorptionCoefficients{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
     {
         const auto& coefficients = kDefaultAbsorptionCoefficients[static_cast<AmUInt32>(type)];
-        std::copy(std::begin(coefficients), std::begin(coefficients) + 9, m_absorptionCoefficients);
+        std::copy_n(std::begin(coefficients), 9, m_absorptionCoefficients);
     }
 
     void RoomInternalState::Update()
@@ -66,7 +67,7 @@ namespace SparkyStudios::Audio::Amplitude
             const auto& coefficients = _materials[i].m_absorptionCoefficients;
 
             // Compute average absorption coefficients
-            AmReal32 averageAbsorptionCoefficients =
+            const AmReal32 averageAbsorptionCoefficients =
                 std::accumulate(
                     std::begin(coefficients) + kReflectionStartingBand,
                     std::begin(coefficients) + kReflectionStartingBand + kReflectionAveragingBandsCount, 0.0f) /

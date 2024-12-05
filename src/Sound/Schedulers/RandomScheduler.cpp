@@ -57,7 +57,7 @@ namespace SparkyStudios::Audio::Amplitude
     Sound* RandomScheduler::Select(const std::vector<AmSoundID>& toSkip)
     {
     Pick:
-        float selection = std::rand() / static_cast<float>(RAND_MAX) * _probabilitiesSum;
+        AmReal32 selection = static_cast<AmReal32>(std::rand()) / static_cast<AmReal32>(RAND_MAX) * _probabilitiesSum;
         for (flatbuffers::uoffset_t i = 0; i < _sounds.size(); ++i)
         {
             const auto* entry = _definition->sounds()->GetAs<RandomSchedulerCollectionEntry>(i);

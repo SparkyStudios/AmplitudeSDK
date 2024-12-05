@@ -45,6 +45,8 @@ namespace SparkyStudios::Audio::Amplitude
         priority_node.remove();
         bus_node.remove();
         entity_node.remove();
+        room_node.remove();
+        listener_node.remove();
     }
 
     void ChannelInternalState::Reset()
