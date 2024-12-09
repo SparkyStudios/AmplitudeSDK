@@ -254,6 +254,13 @@ namespace SparkyStudios::Audio::Amplitude
     AM_API_PUBLIC void RegisterDeviceNotificationCallback(DeviceNotificationCallback callback);
 
     /**
+     * @brief Unregisters the registered device notification callback.
+     *
+     * @ingroup engine
+     */
+    AM_API_PUBLIC void UnregisterDeviceNotificationCallback();
+
+    /**
      * @brief Calls the registered device notification callback.
      *
      * @param[in] notification The notification type.
