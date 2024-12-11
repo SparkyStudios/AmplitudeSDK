@@ -85,7 +85,7 @@ namespace SparkyStudios::Audio::Amplitude
         AmMutexHandle mutex = nullptr; // mutex for thread-safe access
         std::unordered_map<AmThreadID, bool> mutexLocked; // true if mutex is locked
 
-        ~AmplimixLayerImpl();
+        ~AmplimixLayerImpl() override;
 
         /**
          * @brief Resets the layer.

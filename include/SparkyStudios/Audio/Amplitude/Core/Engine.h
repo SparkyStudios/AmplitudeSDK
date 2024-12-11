@@ -22,7 +22,6 @@
 #include <SparkyStudios/Audio/Amplitude/Core/Common.h>
 
 #include <SparkyStudios/Audio/Amplitude/Core/Device.h>
-#include <SparkyStudios/Audio/Amplitude/Core/Driver.h>
 #include <SparkyStudios/Audio/Amplitude/Core/Entity.h>
 #include <SparkyStudios/Audio/Amplitude/Core/Environment.h>
 #include <SparkyStudios/Audio/Amplitude/Core/Event.h>
@@ -77,7 +76,7 @@ namespace SparkyStudios::Audio::Amplitude
      * and provides methods to create, destroy, and manipulate them. You can also
      * access to the internal state of the engine through the public API.
      *
-     * The `Engine` is a singleton class and you can access it using the `amEngine` macro. Before
+     * The `Engine` is a singleton class, and you can access it using the `amEngine` macro. Before
      * using most of the methods of the engine, you need to [initialize the
      * engine](../../../integration/initializing-the-engine.md) first, for example:
      * ```cpp
@@ -397,7 +396,7 @@ namespace SparkyStudios::Audio::Amplitude
          * @brief Starts the loading of sound files referenced in loaded sound banks.
          *
          * This process will run in another thread. You must call @ref TryFinalizeLoadSoundFiles `TryFinalizeLoadSoundFiles()` to
-         * know when the loading has completed, and to automaticaly release used resources.
+         * know when the loading has completed, and to automatically release used resources.
          */
         virtual void StartLoadSoundFiles() = 0;
 
@@ -578,7 +577,7 @@ namespace SparkyStudios::Audio::Amplitude
          * @example
          * ```cpp
          * // Assuming the asset file is located in "sounds/env/forest/calm_lake_bg.amsound"
-         * // Note that the return value in this case is a indeed a `SoundHandle`
+         * // Note that the return value in this case is indeed a `SoundHandle`
          * SoundObjectHandle handle = amEngine->GetSoundObjectHandleFromFile("env/forest/calm_lake_bg.amsound");
          * ```
          *
@@ -1746,7 +1745,7 @@ namespace SparkyStudios::Audio::Amplitude
 #pragma region Singleton Implementation
 
         /**
-         * @brief Returns an unique instance of the Amplitude Engine.
+         * @brief Returns a unique instance of the Amplitude Engine.
          */
         [[nodiscard]] static Engine* GetInstance();
 

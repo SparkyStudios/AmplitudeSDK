@@ -455,6 +455,10 @@ namespace SparkyStudios::Audio::Amplitude
 
     Engine* Engine::GetInstance()
     {
+        // Cannot implement the singleton pattern with an uninitialized memory manager.
+        if (!MemoryManager::IsInitialized())
+            return nullptr;
+
         // Amplitude Engine unique instance.
         if (gAmplitude == nullptr)
             gAmplitude.reset(ampoolnew(eMemoryPoolKind_Engine, EngineImpl));
