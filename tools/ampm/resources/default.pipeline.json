@@ -1,0 +1,25 @@
+{
+  "id": 1,
+  "name": "default",
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Input",
+      "consume": []
+    },
+    {
+      "id": 2,
+      "name": "StereoPanning",
+      "consume": [
+        1
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Output",
+      "consume": [
+        2
+      ]
+    }
+  ]
+}

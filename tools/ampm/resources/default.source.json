@@ -1,0 +1,28 @@
+{
+  "id": %id%,
+  "name": "%name%",
+  "gain": {
+    "kind": "Static",
+    "value": %gain%
+  },
+  "pitch": {
+    "kind": "Static",
+    "value": %pitch%
+  },
+  "bus": %bus%,
+  "priority": {
+    "kind": "Static",
+    "value": %priority%
+  },
+  "stream": %stream%,
+  "loop": {
+    "enabled": true,
+    "loop_count": 0
+  },
+  "scope": "%scope%",
+  "spatialization": "%spatialization%",
+  "effect": %effect%,
+  "attenuation": %attenuation%,
+  "fader": "%fader%",
+  "path": "%path%"
+}

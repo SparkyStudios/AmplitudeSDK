@@ -519,6 +519,7 @@ if (BUILD_TOOLS)
     add_subdirectory(tools/amac)
     add_subdirectory(tools/ampk)
     add_subdirectory(tools/amir)
+    add_subdirectory(tools/ampm)
 endif ()
 
 if (BUILD_SAMPLES OR UNIT_TESTS)

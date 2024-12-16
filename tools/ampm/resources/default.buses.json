@@ -1,0 +1,40 @@
+{
+  "buses": [
+    {
+      "id": 1,
+      "name": "master",
+      "gain": 1.0,
+      "child_buses": [
+        2,
+        3
+      ],
+      "fader": "Linear"
+    },
+    {
+      "id": 2,
+      "name": "voices",
+      "gain": 1,
+      "duck_buses": [
+        {
+          "id": 3,
+          "target_gain": 0.25,
+          "fade_in": {
+            "duration": 3,
+            "fader": "SCurveSmooth"
+          },
+          "fade_out": {
+            "duration": 3,
+            "fader": "Linear"
+          }
+        }
+      ],
+      "fader": "Linear"
+    },
+    {
+      "id": 3,
+      "name": "environment",
+      "gain": 0.75,
+      "fader": "Linear"
+    }
+  ]
+}
