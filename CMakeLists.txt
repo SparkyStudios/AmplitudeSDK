@@ -20,17 +20,19 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(DetectAmplitudeVersion)
 
+option(BUILD_ASSETS "Build example assets" OFF)
 option(BUILD_SAMPLES "Build samples" OFF)
 option(BUILD_TOOLS "Build official CLI tools" ON)
 option(UNIT_TESTS "Enable Unit Testing" OFF)
 
 if(UNIT_TESTS)
     list(APPEND VCPKG_MANIFEST_FEATURES "tests")
-    set(BUILD_SAMPLES ON)
+    set(BUILD_ASSETS ON)
 endif ()
 
 if (BUILD_SAMPLES)
     list(APPEND VCPKG_MANIFEST_FEATURES "samples")
+    set(BUILD_ASSETS ON)
 endif ()
 
 if (BUILD_TOOLS)
@@ -522,7 +524,7 @@ if (BUILD_TOOLS)
     add_subdirectory(tools/ampm)
 endif ()
 
-if (BUILD_SAMPLES OR UNIT_TESTS)
+if (BUILD_ASSETS)
     add_custom_target(ss_amplitude_audio_sample_project
         COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/build_project.py -p ${CMAKE_SOURCE_DIR}/sample_project -b ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/samples/assets -f ${CMAKE_SOURCE_DIR}/bin/flatc -s ${CMAKE_SOURCE_DIR}/schemas
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -536,13 +538,13 @@ if (BUILD_SAMPLES OR UNIT_TESTS)
     add_dependencies(ss_amplitude_audio_sample_project
         amplitude_build_binary_schemas
     )
-endif()
+endif ()
 
-if(BUILD_SAMPLES)
+if (BUILD_SAMPLES)
     add_subdirectory(samples)
 endif ()
 
-if(UNIT_TESTS)
+if (UNIT_TESTS)
     if (NOT MSVC)
         setup_target_for_coverage_lcov(
             NAME ss_amplitude_audio_tests_coverage
@@ -554,7 +556,6 @@ if(UNIT_TESTS)
 
     enable_testing()
     add_subdirectory(tests)
-    message(STATUS ${PROJECT_BINARY_DIR})
 endif ()
 
 # #####################################################
@@ -562,14 +563,12 @@ endif ()
 
 install(
     TARGETS Static
-    EXPORT AmplitudeAudioSDKConfig
     ARCHIVE DESTINATION ${AM_LIB_DESTINATION}/static
     INCLUDES DESTINATION ${AM_INC_DESTINATION}
 )
 
 install(
     TARGETS Shared
-    EXPORT AmplitudeAudioSDKConfig
     ARCHIVE DESTINATION ${AM_LIB_DESTINATION}/shared
     LIBRARY DESTINATION ${AM_LIB_DESTINATION}/shared
     RUNTIME DESTINATION ${AM_LIB_DESTINATION}/shared
@@ -597,27 +596,18 @@ install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scripts/
     DESTINATION ${AM_PYS_DESTINATION}
     FILES_MATCHING
-    PATTERN "*.py"
-    PATTERN "build_schemas.py" EXCLUDE
-    PATTERN "__pycache__" EXCLUDE
+        PATTERN "*.py"
+        PATTERN "build_schemas.py" EXCLUDE
+        PATTERN "__pycache__" EXCLUDE
 )
 
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cmake/
     DESTINATION "${CMAKE_INSTALL_PREFIX}/cmake"
-    FILES_MATCHING PATTERN "*.cmake"
-)
-
-install(
-    EXPORT AmplitudeAudioSDKConfig
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/cmake"
-    NAMESPACE SparkyStudios::Audio::Amplitude::SDK::
-)
-
-export(
-    TARGETS Static Shared
-    NAMESPACE SparkyStudios::Audio::Amplitude::SDK::
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/AmplitudeAudioSDKConfig.cmake"
+    FILES_MATCHING
+        PATTERN "*.cmake"
+        PATTERN "CodeCoverage.cmake" EXCLUDE
+        PATTERN "DetectCPUArchitecture.cmake" EXCLUDE
 )
 
 export(PACKAGE ${PROJECT_NAME})
