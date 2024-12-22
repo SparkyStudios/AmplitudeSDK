@@ -234,7 +234,7 @@ namespace SparkyStudios::Audio::Amplitude
             type == BiquadResonantFilter::TYPE_DUAL_BAND_HIGH_PASS || type == BiquadResonantFilter::TYPE_DUAL_BAND_LOW_PASS)
         {
             const AmReal32 k =
-                std::tan(M_PI * m_parameters[BiquadResonantFilter::ATTRIBUTE_FREQUENCY] / static_cast<AmReal32>(_sampleRate));
+                std::tan(AM_PI32 * m_parameters[BiquadResonantFilter::ATTRIBUTE_FREQUENCY] / static_cast<AmReal32>(_sampleRate));
             const AmReal32 k2 = k * k;
             const AmReal32 d = k2 + 2.0f * k + 1.0f;
 
@@ -243,14 +243,14 @@ namespace SparkyStudios::Audio::Amplitude
             _b1 = 2.0f * (k2 - 1.0f) / d;
             _b2 = (k2 - 2.0f * k + 1.0f) / d;
 
-            if (m_parameters[BiquadResonantFilter::ATTRIBUTE_TYPE] == BiquadResonantFilter::TYPE_DUAL_BAND_HIGH_PASS)
+            if (type == BiquadResonantFilter::TYPE_DUAL_BAND_HIGH_PASS)
             {
                 _a0 = 1.0f / d;
                 _a1 = -2.0f * _a0;
                 _a2 = _a0;
             }
 
-            if (m_parameters[BiquadResonantFilter::ATTRIBUTE_TYPE] == BiquadResonantFilter::TYPE_DUAL_BAND_LOW_PASS)
+            if (type == BiquadResonantFilter::TYPE_DUAL_BAND_LOW_PASS)
             {
                 _a0 = k2 / d;
                 _a1 = 2.0f * _a0;
@@ -261,7 +261,7 @@ namespace SparkyStudios::Audio::Amplitude
         }
 
         const AmReal32 q = m_parameters[BiquadResonantFilter::ATTRIBUTE_RESONANCE];
-        const AmReal32 omega = 2.0f * M_PI * m_parameters[BiquadResonantFilter::ATTRIBUTE_FREQUENCY] / static_cast<AmReal32>(_sampleRate);
+        const AmReal32 omega = 2.0f * AM_PI32 * m_parameters[BiquadResonantFilter::ATTRIBUTE_FREQUENCY] / static_cast<AmReal32>(_sampleRate);
         const AmReal32 sinOmega = std::sin(omega);
         const AmReal32 cosOmega = std::cos(omega);
         const AmReal32 A = std::pow(10.0f, (m_parameters[BiquadResonantFilter::ATTRIBUTE_GAIN] / 40.0f));
