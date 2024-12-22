@@ -20,13 +20,13 @@ project(${PROJECT_NAME})
 
 find_package(Catch2 CONFIG REQUIRED)
 add_executable(${PROJECT_NAME}
+    main.cpp
     version.cpp
     filesystem.cpp
-    main.cpp
+    assets.cpp
     thread.cpp
     listener.cpp
     entity.cpp
-    engine.cpp
     environment.cpp
     common.cpp
     math.cpp
@@ -36,7 +36,9 @@ add_executable(${PROJECT_NAME}
     audio_buffer.cpp
     pipeline.cpp
     fader.cpp
-    hrtf.cpp)
+    hrtf.cpp
+    engine.cpp
+)
 target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2 Static)
 
 add_custom_target(ss_amplitude_audio_test_package
