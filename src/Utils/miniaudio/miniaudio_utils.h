@@ -30,6 +30,20 @@
 #define NOMINMAX
 #endif
 
+#if defined(AM_SIMD_ARCH_AVX2)
+#define MA_SUPPORT_AVX2
+#define MA_PREFER_AVX2
+#elif defined(AM_SIMD_ARCH_AVX)
+#define MA_SUPPORT_AVX
+#define MA_PREFER_AVX
+#elif defined(AM_SIMD_ARCH_SSE2)
+#define MA_SUPPORT_SSE2
+#define MA_PREFER_SSE2
+#elif defined(AM_SIMD_ARCH_NEON)
+#define MA_SUPPORT_NEON
+#define MA_PREFER_NEON
+#endif
+
 #include <miniaudio.h>
 
 ma_format ma_format_from_amplitude(SparkyStudios::Audio::Amplitude::PlaybackOutputFormat format);

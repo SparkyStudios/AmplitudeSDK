@@ -43,6 +43,9 @@
 #define AM_FFT_PFFFT
 #endif
 #define AM_FFT_PFFFT_USED
+#if defined(AM_SIMD_ARCH_NEON)
+#define PFFFT_ENABLE_NEON
+#endif
 #include <Utils/pffft/pffft.h>
 #include <vector>
 #endif
