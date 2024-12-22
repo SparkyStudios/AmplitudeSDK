@@ -111,7 +111,7 @@ namespace SparkyStudios::Audio::Amplitude
             const auto& nodeId = nodeDef->id();
             const auto* inputs = nodeDef->consume();
 
-            Node* node = Node::Find(nodeName);
+            const Node* node = Node::Find(nodeName);
             NodeInstance* nodeInstance = nullptr;
 
             if (nodeName == "Input")

@@ -39,16 +39,16 @@ namespace SparkyStudios::Audio::Amplitude
         [[nodiscard]] AmSize size() const;
 
         /**
-         * @brief Returns a float pointer to the begin of the channel data.
+         * @brief Returns a float pointer to the beginning of the channel data.
          *
-         * @return A float pointer to the begin of the channel data.
+         * @return A float pointer to the beginning of the channel data.
          */
         AmReal32* begin();
 
         /**
-         * @brief Returns a const float pointer to the begin of the channel data.
+         * @brief Returns a const float pointer to the beginning of the channel data.
          *
-         * @return A const float pointer to the begin of the channel data.
+         * @return A const float pointer to the beginning of the channel data.
          */
         [[nodiscard]] const AmReal32* begin() const;
 

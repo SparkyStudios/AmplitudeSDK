@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <ranges>
+
 #include <DSP/Delay.h>
 
 namespace SparkyStudios::Audio::Amplitude
@@ -56,7 +58,7 @@ namespace SparkyStudios::Audio::Amplitude
 
             if (_writePos > 0)
             {
-                std::copy(channel->begin(), channel->begin() + _writePos, newBuffer->GetChannel(0).begin() + oldFramesCount - _writePos);
+                std::copy_n(channel->begin(), _writePos, newBuffer->GetChannel(0).begin() + oldFramesCount - _writePos);
                 _writePos = oldFramesCount;
             }
 
@@ -94,13 +96,13 @@ namespace SparkyStudios::Audio::Amplitude
         if (remainingSizeWrite >= _framesCount)
         {
             AMPLITUDE_ASSERT(delayChannel->begin() + _writePos + _framesCount <= delayChannel->end());
-            std::copy(channel.begin(), channel.end(), delayChannel->begin() + _writePos);
+            std::ranges::copy(channel, delayChannel->begin() + _writePos);
         }
         else
         {
             AMPLITUDE_ASSERT(delayChannel->begin() + _writePos + remainingSizeWrite <= delayChannel->end());
             AMPLITUDE_ASSERT(channel.begin() + remainingSizeWrite <= channel.end());
-            std::copy(channel.begin(), channel.begin() + remainingSizeWrite, delayChannel->begin() + _writePos);
+            std::copy_n(channel.begin(), remainingSizeWrite, delayChannel->begin() + _writePos);
             AMPLITUDE_ASSERT(delayChannel->begin() + remainingSizeWrite <= delayChannel->end());
             std::copy(channel.begin() + remainingSizeWrite, channel.end(), delayChannel->begin());
         }
@@ -127,7 +129,7 @@ namespace SparkyStudios::Audio::Amplitude
         {
             AMPLITUDE_ASSERT(channel.begin() + _framesCount <= channel.end());
             AMPLITUDE_ASSERT(delayChannel->begin() + readCursor + _framesCount <= delayChannel->end());
-            std::copy(delayChannel->begin() + readCursor, delayChannel->begin() + readCursor + _framesCount, channel.begin());
+            std::copy_n(delayChannel->begin() + readCursor, _framesCount, channel.begin());
         }
         else
         {
@@ -136,7 +138,7 @@ namespace SparkyStudios::Audio::Amplitude
 
             AMPLITUDE_ASSERT(channel.begin() + _framesCount <= channel.end());
             AMPLITUDE_ASSERT(delayChannel->begin() + _framesCount - remainingSizeRead <= delayChannel->end());
-            std::copy(delayChannel->begin(), delayChannel->begin() + _framesCount - remainingSizeRead, channel.begin() + remainingSizeRead);
+            std::copy_n(delayChannel->begin(), _framesCount - remainingSizeRead, channel.begin() + remainingSizeRead);
         }
     }
 } // namespace SparkyStudios::Audio::Amplitude

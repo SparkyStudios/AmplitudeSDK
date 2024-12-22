@@ -31,7 +31,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void BFormat::Reset()
     {
-        if (_buffer)
+        if (_buffer == nullptr)
             return;
 
         _buffer->Clear();

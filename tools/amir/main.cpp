@@ -104,7 +104,7 @@ void estimateITD(HRIRSphereVertex& vertex, AmSize irLength, AmUInt32 sampleRate)
 
     const AmReal32 maxITD = AM_SqrtF(2.0f) / 2e3f;
 
-    AmReal32 correlationLength = 2 * irLength - 1;
+    const AmReal32 correlationLength = 2.0f * irLength - 1;
 
     AmAlignedReal32Buffer correlation;
     AudioBuffer hrirLPF(irLength, kAmStereoChannelCount);
