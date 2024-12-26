@@ -933,7 +933,7 @@ namespace SparkyStudios::Audio::Amplitude
                 _state->sound_bank_map[id] = std::move(soundBank);
                 outID = id;
             }
-            else
+            else if (findIt != _state->sound_bank_id_map.end())
             {
                 _state->sound_bank_id_map.erase(findIt);
             }
@@ -1901,7 +1901,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     Listener EngineImpl::AddListener(AmListenerID id) const
     {
-        if (_state->listener_state_free_list.empty())
+        if (id == kAmInvalidObjectId || _state->listener_state_free_list.empty())
             return Listener(nullptr);
 
         if (const Listener item = GetListener(id); item.Valid())
@@ -1917,6 +1917,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     Listener EngineImpl::GetListener(AmListenerID id) const
     {
+        if (id == kAmInvalidObjectId || _state->listener_state_free_list.empty())
+            return Listener(nullptr);
+
         const auto findIt = std::ranges::find_if(
             _state->listener_state_memory,
             [&id](const ListenerInternalState& state)
@@ -1929,6 +1932,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::RemoveListener(AmListenerID id) const
     {
+        if (id == kAmInvalidObjectId || _state->listener_state_free_list.empty())
+            return;
+
         if (const auto findIt = std::ranges::find_if(
                 _state->listener_state_memory,
                 [&id](const ListenerInternalState& state)
@@ -1955,7 +1961,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     Entity EngineImpl::AddEntity(AmEntityID id) const
     {
-        if (_state->entity_state_free_list.empty())
+        if (id == kAmInvalidObjectId || _state->entity_state_free_list.empty())
             return Entity(nullptr);
 
         if (const Entity item = GetEntity(id); item.Valid())
@@ -1971,6 +1977,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     Entity EngineImpl::GetEntity(AmEntityID id) const
     {
+        if (id == kAmInvalidObjectId || _state->entity_state_memory.empty())
+            return Entity(nullptr);
+
         const auto findIt = std::ranges::find_if(
             _state->entity_state_memory,
             [&id](const EntityInternalState& state)
@@ -1993,6 +2002,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::RemoveEntity(AmEntityID id) const
     {
+        if (id == kAmInvalidObjectId || _state->entity_state_memory.empty())
+            return;
+
         if (const auto findIt = std::ranges::find_if(
                 _state->entity_state_memory,
                 [&id](const EntityInternalState& state)
@@ -2009,7 +2021,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     Environment EngineImpl::AddEnvironment(AmEnvironmentID id) const
     {
-        if (_state->environment_state_free_list.empty())
+        if (id == kAmInvalidObjectId || _state->environment_state_free_list.empty())
             return Environment(nullptr);
 
         if (const Environment item = GetEnvironment(id); item.Valid())
@@ -2025,6 +2037,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     Environment EngineImpl::GetEnvironment(AmEnvironmentID id) const
     {
+        if (id == kAmInvalidObjectId || _state->environment_state_free_list.empty())
+            return Environment(nullptr);
+
         const auto findIt = std::ranges::find_if(
             _state->environment_state_memory,
             [&id](const EnvironmentInternalState& state)
@@ -2047,6 +2062,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::RemoveEnvironment(AmEnvironmentID id) const
     {
+        if (id == kAmInvalidObjectId || _state->environment_state_free_list.empty())
+            return;
+
         if (const auto findIt = std::ranges::find_if(
                 _state->environment_state_memory,
                 [&id](const EnvironmentInternalState& state)
@@ -2063,7 +2081,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     Room EngineImpl::AddRoom(AmRoomID id) const
     {
-        if (_state->room_state_free_list.empty())
+        if (id == kAmInvalidObjectId || _state->room_state_free_list.empty())
             return Room(nullptr);
 
         if (const Room item = GetRoom(id); item.Valid())
@@ -2079,6 +2097,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     Room EngineImpl::GetRoom(AmRoomID id) const
     {
+        if (id == kAmInvalidObjectId || _state->room_state_free_list.empty())
+            return Room(nullptr);
+
         const auto findIt = std::ranges::find_if(
             _state->room_state_memory,
             [&id](const RoomInternalState& state)
@@ -2101,6 +2122,9 @@ namespace SparkyStudios::Audio::Amplitude
 
     void EngineImpl::RemoveRoom(AmRoomID id) const
     {
+        if (id == kAmInvalidObjectId || _state->room_state_free_list.empty())
+            return;
+
         if (const auto findIt = std::ranges::find_if(
                 _state->room_state_memory,
                 [&id](const RoomInternalState& state)

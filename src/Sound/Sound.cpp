@@ -359,6 +359,8 @@ namespace SparkyStudios::Audio::Amplitude
                 return;
             }
         }
+
+        _parent->GetRefCounter()->Increment();
     }
 
     SoundInstance::~SoundInstance()
@@ -476,6 +478,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         _decoder = nullptr;
 
+        _parent->GetRefCounter()->Decrement();
         _parent = nullptr;
     }
 
