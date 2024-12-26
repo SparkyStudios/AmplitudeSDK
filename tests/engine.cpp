@@ -310,6 +310,9 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(e3.Valid());
                 REQUIRE_FALSE(e4.Valid());
                 REQUIRE_FALSE(e5.Valid());
+
+                Entity e6 = amEngine->GetEntity(kAmInvalidObjectId);
+                REQUIRE_FALSE(e6.Valid());
             }
 
             THEN("it can register listeners")
@@ -340,6 +343,9 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(l3.Valid());
                 REQUIRE_FALSE(l4.Valid());
                 REQUIRE_FALSE(l5.Valid());
+
+                Listener l6 = amEngine->GetListener(kAmInvalidObjectId);
+                REQUIRE_FALSE(l6.Valid());
 
                 AND_THEN("it ca set the default listener")
                 {
@@ -379,6 +385,9 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(e3.Valid());
                 REQUIRE_FALSE(e4.Valid());
                 REQUIRE_FALSE(e5.Valid());
+
+                Environment e6 = amEngine->GetEnvironment(kAmInvalidObjectId);
+                REQUIRE_FALSE(e6.Valid());
             }
 
             THEN("it can register rooms")
@@ -409,6 +418,9 @@ TEST_CASE("Engine Tests", "[engine][core][amplitude]")
                 REQUIRE_FALSE(r3.Valid());
                 REQUIRE_FALSE(r4.Valid());
                 REQUIRE_FALSE(r5.Valid());
+
+                Room r6 = amEngine->GetRoom(kAmInvalidObjectId);
+                REQUIRE_FALSE(r6.Valid());
             }
 
             THEN("it can access sound assets by names")
