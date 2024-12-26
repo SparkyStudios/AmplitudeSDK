@@ -13,7 +13,6 @@
 # limitations under the License.
 
 # Amplitude installation path
-set(AM_SDK_PATH "" CACHE PATH "The path to Amplitude Audio SDK libraries.")
 set(AM_SDK_PLATFORM ${VCPKG_TARGET_TRIPLET} CACHE STRING "The platform to use for the Amplitude Audio SDK libraries.")
 
 # Check for a known file in the SDK path to verify the path
@@ -39,8 +38,9 @@ set(found_sdk FALSE)
 foreach(candidate_path ${AMPLITUDE_SDK_PATHS})
     is_valid_sdk(${candidate_path} found_sdk)
     if(found_sdk)
+        string(REPLACE "\\" "/" sdk_path ${candidate_path})
         # Update the Amplitude installation path variable internally
-        set(AM_SDK_PATH "${candidate_path}")
+        set(AM_SDK_PATH "${sdk_path}" CACHE PATH "The path to Amplitude Audio SDK libraries.")
         break()
     endif()
 endforeach()
@@ -88,18 +88,10 @@ else()
 endif()
 
 add_library(SparkyStudios::Audio::Amplitude::SDK::Static STATIC IMPORTED GLOBAL)
-add_library(SparkyStudios::Audio::Amplitude::SDK::Shared SHARED IMPORTED GLOBAL)
 
-set_target_properties(SparkyStudios::Audio::Amplitude::SDK::Static PROPERTIES
-    IMPORTED_LOCATION "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/static/${AMPLITUDE_STATIC_LIB_NAME}"
-    IMPORTED_LOCATION_DEBUG "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/static/${AMPLITUDE_STATIC_LIB_NAME_DEBUG}"
-    INTERFACE_INCLUDE_DIRECTORIES "${AM_SDK_PATH}/include"
-)
-
-set_target_properties(SparkyStudios::Audio::Amplitude::SDK::Shared PROPERTIES
-    IMPORTED_LOCATION "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/shared/${AMPLITUDE_SHARED_LIB_NAME}"
-    IMPORTED_LOCATION_DEBUG "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/shared/${AMPLITUDE_SHARED_LIB_NAME_DEBUG}"
-    INTERFACE_INCLUDE_DIRECTORIES "${AM_SDK_PATH}/include"
+set_property(
+    TARGET SparkyStudios::Audio::Amplitude::SDK::Static
+    APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG RELEASE
 )
 
 set_property(
@@ -107,9 +99,40 @@ set_property(
     APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS ${AMPLITUDE_COMPILE_DEFINITIONS} AM_BUILDSYSTEM_STATIC
 )
 
+set_target_properties(SparkyStudios::Audio::Amplitude::SDK::Static PROPERTIES
+    IMPORTED_LOCATION_DEBUG "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/static/${AMPLITUDE_STATIC_LIB_NAME_DEBUG}"
+    IMPORTED_LOCATION_RELEASE "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/static/${AMPLITUDE_STATIC_LIB_NAME}"
+    INTERFACE_INCLUDE_DIRECTORIES "${AM_SDK_PATH}/include"
+)
+
+set_target_properties(SparkyStudios::Audio::Amplitude::SDK::Static PROPERTIES
+    MAP_IMPORTED_CONFIG_PROFILE DEBUG
+    MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE
+    MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE
+)
+
+add_library(SparkyStudios::Audio::Amplitude::SDK::Shared SHARED IMPORTED GLOBAL)
+
+set_property(
+    TARGET SparkyStudios::Audio::Amplitude::SDK::Shared
+    APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG RELEASE
+)
+
 set_property(
     TARGET SparkyStudios::Audio::Amplitude::SDK::Shared
     APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS ${AMPLITUDE_COMPILE_DEFINITIONS} AM_BUILDSYSTEM_SHARED
+)
+
+set_target_properties(SparkyStudios::Audio::Amplitude::SDK::Shared PROPERTIES
+    IMPORTED_LOCATION_DEBUG "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/shared/${AMPLITUDE_SHARED_LIB_NAME_DEBUG}"
+    IMPORTED_LOCATION_RELEASE "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/shared/${AMPLITUDE_SHARED_LIB_NAME}"
+    INTERFACE_INCLUDE_DIRECTORIES "${AM_SDK_PATH}/include"
+)
+
+set_target_properties(SparkyStudios::Audio::Amplitude::SDK::Shared PROPERTIES
+    MAP_IMPORTED_CONFIG_PROFILE DEBUG
+    MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE
+    MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE
 )
 
 if(WIN32)
@@ -119,7 +142,7 @@ if(WIN32)
     endif()
 
     set_target_properties(SparkyStudios::Audio::Amplitude::SDK::Shared PROPERTIES
-        IMPORTED_IMPLIB "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/shared/${AMPLITUDE_STATIC_LIB_NAME}"
         IMPORTED_IMPLIB_DEBUG "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/shared/${AMPLITUDE_STATIC_LIB_NAME_DEBUG}"
+        IMPORTED_IMPLIB_RELEASE "${AM_SDK_PATH}/lib/${AM_SDK_PLATFORM}/shared/${AMPLITUDE_STATIC_LIB_NAME}"
     )
 endif()
