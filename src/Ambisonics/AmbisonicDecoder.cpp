@@ -294,12 +294,11 @@ namespace SparkyStudios::Audio::Amplitude
                 _speakerCount = 26;
                 _speakers.resize(_speakerCount);
 
-                auto quad_order = lebedev::QuadratureOrder::order_26;
-                auto quad_points = lebedev::generate_quadrature_points(quad_order);
+                const auto quad_points = lebedev::generate_quadrature_points(lebedev::QuadratureOrder::order_26);
 
-                auto& xAxis = std::get<0>(quad_points);
-                auto& yAxis = std::get<1>(quad_points);
-                auto& zAxis = std::get<2>(quad_points);
+                const auto& xAxis = std::get<0>(quad_points);
+                const auto& yAxis = std::get<1>(quad_points);
+                const auto& zAxis = std::get<2>(quad_points);
 
                 for (AmUInt32 i = 0; i < 26; ++i)
                 {
@@ -377,7 +376,7 @@ namespace SparkyStudios::Audio::Amplitude
 
     void AmbisonicDecoder::LoadDecoderPreset()
     {
-        AmInt32 ambisonicComponents = OrderToComponents(m_order, m_is3D);
+        const AmUInt32 ambisonicComponents = OrderToComponents(m_order, m_is3D);
 
         switch (_speakersPreset)
         {
@@ -403,7 +402,7 @@ namespace SparkyStudios::Audio::Amplitude
 
         case eSpeakersPreset_Surround_5_1:
             {
-                for (AmUInt32 i = 0; i < 8; ++i)
+                for (AmUInt32 i = 0; i < 6; ++i)
                 {
                     for (AmUInt32 j = 0; j < ambisonicComponents; ++j)
                     {
