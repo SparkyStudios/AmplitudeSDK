@@ -30,18 +30,25 @@ namespace SparkyStudios::Audio::Amplitude
     {
         _switch = nullptr;
 
-        for (const auto& pair : _fadersIn)
-            std::get<0>(pair.second)->DestroyInstance(std::get<1>(pair.second));
+        for (const auto& instance : _fadersIn | std::views::values)
+            std::get<0>(instance)->DestroyInstance(std::get<1>(instance));
 
-        for (const auto& pair : _fadersOut)
-            std::get<0>(pair.second)->DestroyInstance(std::get<1>(pair.second));
+        for (const auto& instance : _fadersOut | std::views::values)
+            std::get<0>(instance)->DestroyInstance(std::get<1>(instance));
 
         _sounds.clear();
         _fadersIn.clear();
         _fadersOut.clear();
 
+        m_bus = nullptr;
         m_effect = nullptr;
         m_attenuation = nullptr;
+
+        m_id = kAmInvalidObjectId;
+        m_name.clear();
+
+        m_spatialization = eSpatialization_None;
+        m_scope = eScope_World;
     }
 
     const Switch* SwitchContainerImpl::GetSwitch() const
@@ -72,19 +79,27 @@ namespace SparkyStudios::Audio::Amplitude
 
     bool SwitchContainerImpl::LoadDefinition(const SwitchContainerDefinition* definition, EngineInternalState* state)
     {
-        if (!definition->bus())
+        if (definition->id() == kAmInvalidObjectId)
+        {
+            amLogError("Invalid ID for switch container.");
+            return false;
+        }
+
+        const uint64_t busID = definition->bus();
+        if (busID == kAmInvalidObjectId)
         {
             amLogError("SwitchContainer %s does not specify a bus.", definition->name()->c_str());
             return false;
         }
 
-        if (!definition->switch_group())
+        const uint64_t switchGroupID = definition->switch_group();
+        if (switchGroupID == kAmInvalidObjectId)
         {
             amLogError("SwitchContainer %s does not specify a switch.", definition->name()->c_str());
             return false;
         }
 
-        m_bus = FindBusInternalState(state, definition->bus());
+        m_bus = FindBusInternalState(state, busID);
         if (!m_bus)
         {
             amLogError(
@@ -92,14 +107,15 @@ namespace SparkyStudios::Audio::Amplitude
             return false;
         }
 
-        if (const auto findIt = state->switch_map.find(definition->switch_group()); findIt != state->switch_map.end())
+        if (const auto findIt = state->switch_map.find(switchGroupID); findIt != state->switch_map.end())
         {
             _switch = findIt->second.get();
         }
 
-        if (definition->effect() != kAmInvalidObjectId)
+        const uint64_t effectID = definition->effect();
+        if (effectID != kAmInvalidObjectId)
         {
-            if (const auto findIt = state->effect_map.find(definition->effect()); findIt != state->effect_map.end())
+            if (const auto findIt = state->effect_map.find(effectID); findIt != state->effect_map.end())
             {
                 m_effect = findIt->second.get();
             }
@@ -110,9 +126,10 @@ namespace SparkyStudios::Audio::Amplitude
             }
         }
 
-        if (definition->attenuation() != kAmInvalidObjectId)
+        const uint64_t attenuationID = definition->attenuation();
+        if (attenuationID != kAmInvalidObjectId)
         {
-            if (const auto findIt = state->attenuation_map.find(definition->attenuation()); findIt != state->attenuation_map.end())
+            if (const auto findIt = state->attenuation_map.find(attenuationID); findIt != state->attenuation_map.end())
             {
                 m_attenuation = findIt->second.get();
             }
@@ -132,6 +149,9 @@ namespace SparkyStudios::Audio::Amplitude
         RtpcValue::Init(m_gain, definition->gain(), 1);
         RtpcValue::Init(m_pitch, definition->pitch(), 1);
         RtpcValue::Init(m_priority, definition->priority(), 1);
+
+        m_spatialization = static_cast<eSpatialization>(definition->spatialization());
+        m_scope = static_cast<eScope>(definition->scope());
 
         for (const auto& states = _switch->GetSwitchStates(); const auto& switchState : states)
         {

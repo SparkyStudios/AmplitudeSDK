@@ -111,6 +111,22 @@ namespace SparkyStudios::Audio::Amplitude
         }
 
         /**
+         * @copydoc SoundObject::GetSpatialization
+         */
+        [[nodiscard]] AM_INLINE eSpatialization GetSpatialization() const override
+        {
+            return SoundObjectImpl::GetSpatialization();
+        }
+
+        /**
+         * @copydoc SoundObject::GetScope
+         */
+        [[nodiscard]] AM_INLINE eScope GetScope() const override
+        {
+            return SoundObjectImpl::GetScope();
+        }
+
+        /**
          * @copydoc Collection::SelectFromWorld
          */
         [[nodiscard]] Sound* SelectFromWorld(const std::vector<AmSoundID>& toSkip) const override;

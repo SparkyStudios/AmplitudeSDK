@@ -1209,14 +1209,14 @@ namespace SparkyStudios::Audio::Amplitude
         const AmReal32 soundGain,
         const AmReal32 soundPitch,
         const BusInternalState* bus,
-        const Spatialization spatialization,
+        const eSpatialization spatialization,
         const AmReal32 userGain)
     {
         *gain = soundGain * bus->GetGain() * userGain;
         *pitch = soundPitch;
         *pan = AM_V2(0, 0); // TODO: This may be removed in the future, since panning is handled automatically in pipeline nodes..
 
-        if (spatialization != Spatialization_None && listener != nullptr && channel != nullptr)
+        if (spatialization != eSpatialization_None && listener != nullptr && channel != nullptr)
             *pitch *= channel->GetDopplerFactor(listener->GetId());
     }
 
@@ -2210,27 +2210,21 @@ namespace SparkyStudios::Audio::Amplitude
 
         if (const SwitchContainer* switchContainer = channel->GetSwitchContainer(); switchContainer != nullptr)
         {
-            const SwitchContainerDefinition* definition = dynamic_cast<const SwitchContainerImpl*>(switchContainer)->GetDefinition();
-
             CalculateGainPanPitch(
                 &gain, &pan, &pitch, listener, nullptr, switchContainer->GetGain().GetValue(), switchContainer->GetPitch().GetValue(),
-                switchContainer->GetBus().GetState(), definition->spatialization(), channel->GetUserGain());
+                switchContainer->GetBus().GetState(), switchContainer->GetSpatialization(), channel->GetUserGain());
         }
         else if (const Collection* collection = channel->GetCollection(); collection != nullptr)
         {
-            const CollectionDefinition* definition = dynamic_cast<const CollectionImpl*>(collection)->GetDefinition();
-
             CalculateGainPanPitch(
                 &gain, &pan, &pitch, listener, nullptr, collection->GetGain().GetValue(), collection->GetPitch().GetValue(),
-                collection->GetBus().GetState(), definition->spatialization(), channel->GetUserGain());
+                collection->GetBus().GetState(), collection->GetSpatialization(), channel->GetUserGain());
         }
         else if (const Sound* sound = channel->GetSound(); sound != nullptr)
         {
-            const SoundDefinition* definition = dynamic_cast<const SoundImpl*>(sound)->GetDefinition();
-
             CalculateGainPanPitch(
                 &gain, &pan, &pitch, listener, nullptr, sound->GetGain().GetValue(), sound->GetPitch().GetValue(),
-                sound->GetBus().GetState(), definition->spatialization(), channel->GetUserGain());
+                sound->GetBus().GetState(), sound->GetSpatialization(), channel->GetUserGain());
         }
         else
         {
@@ -2525,9 +2519,7 @@ namespace SparkyStudios::Audio::Amplitude
             return Channel(nullptr);
         }
 
-        const SwitchContainerDefinition* definition = dynamic_cast<SwitchContainerImpl*>(handle)->GetDefinition();
-
-        if (definition->scope() == Scope_Entity && !entity.Valid())
+        if (handle->GetScope() == eScope_Entity && !entity.Valid())
         {
             amLogError("Cannot play a switch container in Entity scope. No entity defined.");
             return Channel(nullptr);
@@ -2548,7 +2540,7 @@ namespace SparkyStudios::Audio::Amplitude
         AmReal32 pitch;
         CalculateGainPanPitch(
             &gain, &pan, &pitch, listener, nullptr, handle->GetGain().GetValue(), handle->GetPitch().GetValue(),
-            handle->GetBus().GetState(), definition->spatialization(), userGain);
+            handle->GetBus().GetState(), handle->GetSpatialization(), userGain);
         const AmReal32 priority = gain * handle->GetPriority().GetValue();
         const auto insertionPoint = FindInsertionPoint(&_state->playing_channel_list, priority);
 
@@ -2602,9 +2594,7 @@ namespace SparkyStudios::Audio::Amplitude
             return Channel(nullptr);
         }
 
-        const CollectionDefinition* definition = dynamic_cast<CollectionImpl*>(handle)->GetDefinition();
-
-        if (definition->scope() == Scope_Entity && !entity.Valid())
+        if (handle->GetScope() == eScope_Entity && !entity.Valid())
         {
             amLogError("Cannot play a collection in Entity scope. No entity defined.");
             return Channel(nullptr);
@@ -2625,7 +2615,7 @@ namespace SparkyStudios::Audio::Amplitude
         AmReal32 pitch;
         CalculateGainPanPitch(
             &gain, &pan, &pitch, listener, nullptr, handle->GetGain().GetValue(), handle->GetPitch().GetValue(),
-            handle->GetBus().GetState(), definition->spatialization(), userGain);
+            handle->GetBus().GetState(), handle->GetSpatialization(), userGain);
         const AmReal32 priority = gain * handle->GetPriority().GetValue();
         const auto insertionPoint = FindInsertionPoint(&_state->playing_channel_list, priority);
 
@@ -2678,9 +2668,7 @@ namespace SparkyStudios::Audio::Amplitude
             return Channel(nullptr);
         }
 
-        const SoundDefinition* definition = dynamic_cast<SoundImpl*>(handle)->GetDefinition();
-
-        if (definition->scope() == Scope_Entity && !entity.Valid())
+        if (handle->GetScope() == Scope_Entity && !entity.Valid())
         {
             amLogError("Cannot play a sound in Entity scope. No entity defined.");
             return Channel(nullptr);
@@ -2701,7 +2689,7 @@ namespace SparkyStudios::Audio::Amplitude
         AmReal32 pitch;
         CalculateGainPanPitch(
             &gain, &pan, &pitch, listener, nullptr, handle->GetGain().GetValue(), handle->GetPitch().GetValue(),
-            handle->GetBus().GetState(), definition->spatialization(), userGain);
+            handle->GetBus().GetState(), handle->GetSpatialization(), userGain);
         const AmReal32 priority = gain * handle->GetPriority().GetValue();
         const auto insertionPoint = FindInsertionPoint(&_state->playing_channel_list, priority);
 

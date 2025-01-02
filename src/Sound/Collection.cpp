@@ -40,8 +40,15 @@ namespace SparkyStudios::Audio::Amplitude
 
         _entityScopeSchedulers.clear();
 
+        m_bus = nullptr;
         m_effect = nullptr;
         m_attenuation = nullptr;
+
+        m_id = kAmInvalidObjectId;
+        m_name.clear();
+
+        m_spatialization = eSpatialization_None;
+        m_scope = eScope_World;
     }
 
     Sound* CollectionImpl::SelectFromWorld(const std::vector<AmSoundID>& toSkip) const
@@ -114,22 +121,30 @@ namespace SparkyStudios::Audio::Amplitude
 
     bool CollectionImpl::LoadDefinition(const CollectionDefinition* definition, EngineInternalState* state)
     {
-        if (!definition->bus())
+        if (definition->id() == kAmInvalidObjectId)
+        {
+            amLogError("Invalid ID for collection.");
+            return false;
+        }
+
+        const uint64_t busID = definition->bus();
+        if (busID == kAmInvalidObjectId)
         {
             amLogError("Collection %s does not specify a bus.", definition->name()->c_str());
             return false;
         }
 
-        m_bus = FindBusInternalState(state, definition->bus());
+        m_bus = FindBusInternalState(state, busID);
         if (!m_bus)
         {
             amLogError("Collection %s specifies an unknown bus ID: " AM_ID_CHAR_FMT ".", definition->name()->c_str(), definition->bus());
             return false;
         }
 
-        if (definition->effect() != kAmInvalidObjectId)
+        const uint64_t effectID = definition->effect();
+        if (effectID != kAmInvalidObjectId)
         {
-            if (const auto findIt = state->effect_map.find(definition->effect()); findIt != state->effect_map.end())
+            if (const auto findIt = state->effect_map.find(effectID); findIt != state->effect_map.end())
             {
                 m_effect = findIt->second.get();
             }
@@ -140,9 +155,10 @@ namespace SparkyStudios::Audio::Amplitude
             }
         }
 
-        if (definition->attenuation() != kAmInvalidObjectId)
+        const uint64_t attenuationID = definition->attenuation();
+        if (attenuationID != kAmInvalidObjectId)
         {
-            if (const auto findIt = state->attenuation_map.find(definition->attenuation()); findIt != state->attenuation_map.end())
+            if (const auto findIt = state->attenuation_map.find(attenuationID); findIt != state->attenuation_map.end())
             {
                 m_attenuation = findIt->second.get();
             }
@@ -163,14 +179,18 @@ namespace SparkyStudios::Audio::Amplitude
         RtpcValue::Init(m_pitch, definition->pitch(), 1);
         RtpcValue::Init(m_priority, definition->priority(), 1);
 
-        const flatbuffers::uoffset_t sampleCount = definition->sounds() ? definition->sounds()->size() : 0;
+        m_spatialization = static_cast<eSpatialization>(definition->spatialization());
+        m_scope = static_cast<eScope>(definition->scope());
+
+        const auto* sounds = definition->sounds();
+        const flatbuffers::uoffset_t sampleCount = sounds != nullptr ? sounds->size() : 0;
 
         _sounds.resize(sampleCount);
         _soundSettings.clear();
 
         for (flatbuffers::uoffset_t i = 0; i < sampleCount; ++i)
         {
-            const auto* entry = definition->sounds()->GetAs<DefaultCollectionEntry>(i);
+            const auto* entry = sounds->GetAs<DefaultCollectionEntry>(i);
             AmSoundID id = entry->sound();
 
             if (id == kAmInvalidObjectId)
@@ -187,12 +207,12 @@ namespace SparkyStudios::Audio::Amplitude
             else
             {
                 SoundInstanceSettings settings;
-                settings.m_id = definition->id();
+                settings.m_id = m_id;
                 settings.m_kind = SoundKind::Contained;
-                settings.m_busID = definition->bus();
-                settings.m_effectID = definition->effect();
-                settings.m_attenuationID = definition->attenuation();
-                settings.m_spatialization = definition->spatialization();
+                settings.m_busID = busID;
+                settings.m_effectID = effectID;
+                settings.m_attenuationID = attenuationID;
+                settings.m_spatialization = m_spatialization;
                 settings.m_priority = RtpcValue(m_priority);
                 RtpcValue::Init(settings.m_gain, entry->gain(), 1);
                 settings.m_nearFieldGain = findIt->second->GetNearFieldGain();

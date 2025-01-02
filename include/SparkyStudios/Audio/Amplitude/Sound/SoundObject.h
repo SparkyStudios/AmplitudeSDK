@@ -79,6 +79,20 @@ namespace SparkyStudios::Audio::Amplitude
          * @return The bus this sound object will play on.
          */
         [[nodiscard]] virtual Bus GetBus() const = 0;
+
+        /**
+         * @brief Returns the spatialization mode of the sound object.
+         *
+         * @return The spatialization mode of the sound object.
+         */
+        [[nodiscard]] virtual eSpatialization GetSpatialization() const = 0;
+
+        /**
+         * @brief Returns the scope of the sound object.
+         *
+         * @return The scope of the sound object.
+         */
+        [[nodiscard]] virtual eScope GetScope() const = 0;
     };
 } // namespace SparkyStudios::Audio::Amplitude
 

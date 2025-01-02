@@ -33,6 +33,8 @@ namespace SparkyStudios::Audio::Amplitude
             , m_priority()
             , m_effect(nullptr)
             , m_attenuation(nullptr)
+            , m_spatialization(eSpatialization_None)
+            , m_scope(eScope_World)
         {}
 
         ~SoundObjectImpl() override = default;
@@ -79,6 +81,22 @@ namespace SparkyStudios::Audio::Amplitude
             return Bus(m_bus);
         }
 
+        /**
+         * @copydoc SoundObject::GetSpatialization
+         */
+        [[nodiscard]] AM_INLINE eSpatialization GetSpatialization() const override
+        {
+            return m_spatialization;
+        }
+
+        /**
+         * @copydoc SoundObject::GetScope
+         */
+        [[nodiscard]] AM_INLINE eScope GetScope() const override
+        {
+            return m_scope;
+        }
+
     protected:
         // The bus this sound object will play on.
         BusInternalState* m_bus;
@@ -89,6 +107,9 @@ namespace SparkyStudios::Audio::Amplitude
 
         EffectImpl* m_effect;
         AttenuationImpl* m_attenuation;
+
+        eSpatialization m_spatialization;
+        eScope m_scope;
     };
 } // namespace SparkyStudios::Audio::Amplitude
 

@@ -366,6 +366,28 @@ namespace SparkyStudios::Audio::Amplitude
     };
 
     /**
+     * @brief Enumerates the list of available scopes for sound objects.
+     *
+     * @ingroup core
+     */
+    enum eScope : AmUInt8
+    {
+        /**
+         * @brief The sound object is within the game world. Instances of collections played in this scope
+         * will be treated as one object across all entities.
+         */
+        eScope_World,
+
+        /**
+         * @brief The sound object is within a specific entity. Instances of collections played in this scope
+         * will be treated as separate objects, and no data will be shared across entities.
+         *
+         * @note Sound objects using this scope are required to be attached to an [`Entity`](./Entity.md).
+         */
+        eScope_Entity
+    };
+
+    /**
      * @brief Enumerates the list of available panning modes.
      *
      * @ingroup core

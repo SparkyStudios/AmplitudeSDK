@@ -67,6 +67,12 @@ namespace SparkyStudios::Audio::Amplitude
         m_bus = nullptr;
         m_effect = nullptr;
         m_attenuation = nullptr;
+
+        m_id = kAmInvalidObjectId;
+        m_name.clear();
+
+        m_spatialization = eSpatialization_None;
+        m_scope = eScope_World;
     }
 
     SoundInstance* SoundImpl::CreateInstance()
@@ -227,26 +233,28 @@ namespace SparkyStudios::Audio::Amplitude
     {
         if (definition->id() == kAmInvalidObjectId)
         {
-            amLogError("Sound definition is invalid: no ID defined.");
+            amLogError("Invalid ID for sound.");
             return false;
         }
 
-        if (definition->bus() == kAmInvalidObjectId)
+        const uint64_t busID = definition->bus();
+        if (busID == kAmInvalidObjectId)
         {
             amLogError("Sound definition is invalid: no bus ID defined.");
             return false;
         }
 
-        m_bus = FindBusInternalState(state, definition->bus());
+        m_bus = FindBusInternalState(state, busID);
         if (!m_bus)
         {
             amLogError("Sound %s specifies an unknown bus ID: " AM_ID_CHAR_FMT ".", definition->name()->c_str(), definition->bus());
             return false;
         }
 
-        if (definition->effect() != kAmInvalidObjectId)
+        const uint64_t effectID = definition->effect();
+        if (effectID != kAmInvalidObjectId)
         {
-            if (const auto findIt = state->effect_map.find(definition->effect()); findIt != state->effect_map.end())
+            if (const auto findIt = state->effect_map.find(effectID); findIt != state->effect_map.end())
             {
                 m_effect = findIt->second.get();
             }
@@ -257,9 +265,10 @@ namespace SparkyStudios::Audio::Amplitude
             }
         }
 
-        if (definition->attenuation() != kAmInvalidObjectId)
+        const uint64_t attenuationID = definition->attenuation();
+        if (attenuationID != kAmInvalidObjectId)
         {
-            if (const auto findIt = state->attenuation_map.find(definition->attenuation()); findIt != state->attenuation_map.end())
+            if (const auto findIt = state->attenuation_map.find(attenuationID); findIt != state->attenuation_map.end())
             {
                 m_attenuation = findIt->second.get();
             }
@@ -272,12 +281,16 @@ namespace SparkyStudios::Audio::Amplitude
 
         m_id = definition->id();
         m_name = definition->name()->str();
+        m_spatialization = static_cast<eSpatialization>(definition->spatialization());
+        m_scope = static_cast<eScope>(definition->scope());
 
         auto* fs = amEngine->GetFileSystem();
 
+        const SoundLoopConfig* loopConfig = definition->loop();
+
         _stream = definition->stream();
-        _loop = definition->loop() != nullptr && definition->loop()->enabled();
-        _loopCount = definition->loop() ? definition->loop()->loop_count() : 0;
+        _loop = loopConfig != nullptr && loopConfig->enabled();
+        _loopCount = loopConfig ? loopConfig->loop_count() : 0;
         m_filename = fs->ResolvePath(fs->Join({ AM_OS_STRING("data"), AM_STRING_TO_OS_STRING(definition->path()->str()) }));
 
         RtpcValue::Init(m_gain, definition->gain(), 1);
@@ -287,10 +300,10 @@ namespace SparkyStudios::Audio::Amplitude
 
         _settings.m_id = m_id;
         _settings.m_kind = SoundKind::Standalone;
-        _settings.m_busID = definition->bus();
-        _settings.m_effectID = definition->effect();
-        _settings.m_attenuationID = definition->attenuation();
-        _settings.m_spatialization = definition->spatialization();
+        _settings.m_busID = busID;
+        _settings.m_effectID = effectID;
+        _settings.m_attenuationID = attenuationID;
+        _settings.m_spatialization = m_spatialization;
         _settings.m_priority = RtpcValue(m_priority);
         _settings.m_gain = RtpcValue(m_gain);
         _settings.m_nearFieldGain = RtpcValue(_nearFieldGain);

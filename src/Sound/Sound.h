@@ -33,7 +33,7 @@ namespace SparkyStudios::Audio::Amplitude
     class CollectionImpl;
     class EffectInstance;
     class RealChannel;
-    class SoundChunk;
+    struct SoundChunk;
 
     /**
      * @brief Describes the place where a Sound belongs to.
@@ -216,6 +216,22 @@ namespace SparkyStudios::Audio::Amplitude
          * @copydoc SoundObject::GetBus
          */
         [[nodiscard]] Bus GetBus() const override;
+
+        /**
+         * @copydoc SoundObject::GetSpatialization
+         */
+        [[nodiscard]] AM_INLINE eSpatialization GetSpatialization() const override
+        {
+            return SoundObjectImpl::GetSpatialization();
+        }
+
+        /**
+         * @copydoc SoundObject::GetScope
+         */
+        [[nodiscard]] AM_INLINE eScope GetScope() const override
+        {
+            return SoundObjectImpl::GetScope();
+        }
 
         /**
          * @copydoc Sound::IsStream
