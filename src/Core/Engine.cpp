@@ -2668,7 +2668,7 @@ namespace SparkyStudios::Audio::Amplitude
             return Channel(nullptr);
         }
 
-        if (handle->GetScope() == Scope_Entity && !entity.Valid())
+        if (handle->GetScope() == eScope_Entity && !entity.Valid())
         {
             amLogError("Cannot play a sound in Entity scope. No entity defined.");
             return Channel(nullptr);

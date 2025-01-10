@@ -61,6 +61,10 @@ typedef double vsfscalar;
 
 #include <SparkyStudios/Audio/Amplitude/Core/Common/Config.h>
 
+#if defined(AM_SIMD_ARCH_NEON)
+#define PFFFT_ENABLE_NEON
+#endif
+
 #include "pf_avx_double.h"
 #include "pf_sse2_double.h"
 #include "pf_neon_double.h"

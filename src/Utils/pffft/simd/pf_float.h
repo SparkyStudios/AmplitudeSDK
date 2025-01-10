@@ -61,6 +61,10 @@ typedef float vsfscalar;
 
 #include <SparkyStudios/Audio/Amplitude/Core/Common/Config.h>
 
+#if defined(AM_SIMD_ARCH_NEON)
+#define PFFFT_ENABLE_NEON
+#endif
+
 #include "pf_sse1_float.h"
 #include "pf_neon_float.h"
 #include "pf_altivec_float.h"
